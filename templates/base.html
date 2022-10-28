@@ -1,0 +1,22 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bitu</title>
+    <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
+  </head>
+  <body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">
+        {% block title %}Bitu{% endblock %}
+      </h1>
+      {% block content %}
+      {% endblock %}
+    </div>
+  </section>
+  </body>
+</html>

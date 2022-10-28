@@ -1,0 +1,16 @@
+dn: dc=example,dc=org
+objectClass: domain
+objectClass: top
+dc: example
+
+dn: ou=people,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: people
+description: ou for all users
+
+dn: ou=groups,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: groups
+description: ou for LDAP groups

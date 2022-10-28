@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% translate "Log In" %}{% endblock %}
+
+{% block content %}
+<div class="notification">
+<h2>{% translate "Log In" %}</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="button is-primary">{% translate "Log In" %}</button>
+</form>
+</div>
+{% endblock %}
