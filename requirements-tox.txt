@@ -1,3 +1,4 @@
 Django==3.2.12
+django-rq==2.5.1
 mypy==0.982
 flake8==5.0.4

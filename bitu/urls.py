@@ -17,6 +17,7 @@ favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
 urlpatterns = [
     path('favicon.ico', favicon_view),
     path('admin/', admin.site.urls),
+    path('rq/', include('django_rq.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('accounts.urls'))
 ]

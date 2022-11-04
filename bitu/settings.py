@@ -34,31 +34,11 @@ STATICFILES_DIRS = [
     BASE_DIR / "static", # noqa
 ]
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'django': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': '/tmp/django.log',
-        },
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': '/tmp/bitu.log',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['django'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'bitu': {
-            'handlers': ['file'],
-            'level': 'INFO',
-            'propagate': True,
-        },
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'redis.local.wmftest.net',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 360,
     },
 }
