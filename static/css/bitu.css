@@ -1,0 +1,9 @@
+.errorlist > li {
+    border-width: 2px;
+    border-style: solid;
+    border-color: brown;
+    border-radius: 10px;
+    background-color: lightcoral;
+    padding: 5px;
+    margin-bottom: 10px;
+}

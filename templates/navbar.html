@@ -1,0 +1,64 @@
+{% load i18n %}
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/Key_video_game.jpg" height="28">
+      </a>
+  
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+  
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item">
+          Home
+        </a>
+
+        <a class="navbar-item">
+          Documentation
+        </a>
+        {% if not user.is_anonymous %}
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">
+            More
+          </a>
+            <div class="navbar-dropdown">
+            <a class="navbar-item">
+              About
+            </a>
+            <a class="navbar-item" href="https://phabricator.wikimedia.org">
+              Report an issue
+            </a>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+  
+      <div class="navbar-end">
+        {% if user.is_anonymous %}
+        <div class="navbar-item">
+          <div class="buttons">
+            <a class="button is-primary" href="{% url 'signups:signup' %}">
+              <strong>{% translate "Sign up" %}</strong>
+            </a>
+            <a class="button is-light" href="{% url 'accounts:login' %}">
+                {% translate "Log In" %}
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <div class="navbar-item">
+          <div class="buttons">
+            <a class="button is-primary" href="{% url 'admin:logout' %}">
+              <strong>{% translate "Sign out" %}</strong>
+            </a>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </nav>

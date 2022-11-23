@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 FROM docker-registry.wikimedia.org/bullseye
 
 RUN export DEBIAN_FRONTEND=noninteractive \

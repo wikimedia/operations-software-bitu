@@ -26,6 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_rq',
     'accounts',
+    'signups',
+    'ldapbackend',
 ]
 
 MIDDLEWARE = [
@@ -76,6 +78,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'ldapbackend.validators.LDAPPasswordValidator',
+    }
 ]
 
 
@@ -107,4 +112,6 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator', 'ldapbackend.validators.unix_username_validator']
 LOGIN_REDIRECT_URL = 'accounts:overview'
+LOGOUT_REDIRECT_URL = 'accounts:login'

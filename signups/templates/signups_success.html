@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% translate "Signup Successful" %}{% endblock %}
+
+{% block content %}
+
+<h2>{% translate "Thank you for activating your account." %}</h2>
+{% blocktrans %}
+Your account is now confirmed and is currently being created.
+Please allow a few minutes for the creation to complete, after which you will
+be able to sign in using your selected password.
+
+From where you can request further permissions.
+{% endblocktrans %}
+
+{% endblock %}

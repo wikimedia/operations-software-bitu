@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "Please signin" %}{% endblock %}
+
+{% block content %}
+<div class="columns">
+    <div class="column"></div>
+    <div class="column is-half">
+        <form method="POST">{% csrf_token %}
+
+        <!-- form variable -->
+         {{ form.as_p }}
+
+        <button type="submit" class="button is-primary">{% translate "Log In" %}</button>
+        </form>
+
+        <div>
+        {% url 'signups:signup' as signup_url %}
+        {% blocktrans %}
+        Don't have an account? Go to our <a href="{{ signup_url }}">signup page</a>.
+        {% endblocktrans %}
+        </div>
+    </div>
+<div class="column"></div>
+</div>
+{% endblock %}

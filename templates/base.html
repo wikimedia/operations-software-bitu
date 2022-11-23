@@ -7,16 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bitu</title>
     <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bitu.css' %}">
   </head>
   <body>
-  <section class="section">
+  {% include "navbar.html" %}
     <div class="container">
+      <div class="notification">
       <h1 class="title">
         {% block title %}Bitu{% endblock %}
       </h1>
       {% block content %}
       {% endblock %}
+      </div>
     </div>
-  </section>
+    </div>
   </body>
 </html>
