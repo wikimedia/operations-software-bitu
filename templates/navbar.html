@@ -37,7 +37,6 @@
         </div>
         {% endif %}
       </div>
-  
       <div class="navbar-end">
         {% if user.is_anonymous %}
         <div class="navbar-item">
@@ -45,7 +44,7 @@
             <a class="button is-primary" href="{% url 'signups:signup' %}">
               <strong>{% translate "Sign up" %}</strong>
             </a>
-            <a class="button is-light" href="{% url 'accounts:login' %}">
+            <a class="button is-light" href="{% url 'social:begin' 'cas' %}">
                 {% translate "Log In" %}
             </a>
           </div>

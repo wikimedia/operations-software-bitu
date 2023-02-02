@@ -1,0 +1,6 @@
+Django==3.2.12
+django-rq==2.5.1
+ldap3==2.9.1
+redis==4.4.0
+git+https://github.com/slyngshede/social-core.git@cas_backend
+social-auth-app-django==5.0.0
