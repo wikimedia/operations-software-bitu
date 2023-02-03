@@ -20,6 +20,7 @@ urlpatterns = [
     path('favicon.ico', favicon_view),
     path('admin/', admin.site.urls),
     path('rq/', include('django_rq.urls')),
+    path('', include('social_django.urls', namespace='social')),
     path('signup/', include('signups.urls')),
     path('accounts/', include('accounts.urls')),
     path('', login_required(TemplateView.as_view(template_name='overview.html')), name='overview'),
