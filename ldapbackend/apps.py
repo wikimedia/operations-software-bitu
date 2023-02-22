@@ -7,7 +7,7 @@ from django.db.models.signals import post_save
 
 class LdapConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'ldap'
+    name = 'ldapbackend'
 
     def ready(self) -> None:
         if not hasattr(settings, 'LDAP_USER_CONF'):

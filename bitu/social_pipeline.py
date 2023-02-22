@@ -33,7 +33,7 @@ def add_user_to_groups(strategy, details, backend, user=None, *args, **kwargs):
 
         g, created = Group.objects.get_or_create(name=group_name)
         if created:
-            logger.info(f'backend: {backend}, group created: {group.name}')
+            logger.info(f'backend: {backend}, group created: {group_name}')
 
         logger.info(f'backend: {backend}, user:{user.normalize_username}')
         user.groups.add(g)

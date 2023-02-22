@@ -4,3 +4,4 @@ ldap3==2.9.1
 redis==4.4.0
 git+https://github.com/slyngshede/social-core.git@cas_backend
 social-auth-app-django==5.0.0
+git+https://gerrit.wikimedia.org/r/operations/software/bitu-ldap
