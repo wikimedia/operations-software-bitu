@@ -118,4 +118,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.User'
 SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator', 'ldapbackend.validators.unix_username_validator']
 LOGIN_REDIRECT_URL = 'accounts:overview'
-LOGOUT_REDIRECT_URL = 'accounts:login'
+LOGOUT_REDIRECT_URL = 'wikimedia:login'

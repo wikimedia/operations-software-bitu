@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% endblock %}
+
+{% block content %}
+<div class="columns">
+    <div class="column"></div>
+    <div class="column is-half">
+        <div class="columns is-centered">
+            <figure class="image is-128x128">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Wikimedia_Foundation_logo_-_vertical.svg/512px-Wikimedia_Foundation_logo_-_vertical.svg.png" />
+            </figure>
+        </div>
+        <div class="columns is-centered">
+            <h5 class="title is-5">{% translate "Authenticate using your Wikimedia Developer Single Sign-On" %}</h2>
+            <a class="button is-primary" href="{% url 'social:begin' 'cas' %}">{% translate "Log In" %}</a>
+        </div>
+        <br>
+        <div class="columns is-centered">
+            <div>
+                {% url 'signups:signup' as signup_url %}
+                {% blocktrans %}
+                Don't have an account? Go to our <a href="{{ signup_url }}">signup page</a>.
+                {% endblocktrans %}
+            </div>
+        </div>
+    </div>
+<div class="column"></div>
+</div>
+{% endblock %}

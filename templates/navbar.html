@@ -14,7 +14,7 @@
   
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
-        <a class="navbar-item">
+        <a class="navbar-item" href="{% url 'accounts:overview' %}">
           Home
         </a>
 
@@ -38,18 +38,7 @@
         {% endif %}
       </div>
       <div class="navbar-end">
-        {% if user.is_anonymous %}
-        <div class="navbar-item">
-          <div class="buttons">
-            <a class="button is-primary" href="{% url 'signups:signup' %}">
-              <strong>{% translate "Sign up" %}</strong>
-            </a>
-            <a class="button is-light" href="{% url 'social:begin' 'cas' %}">
-                {% translate "Log In" %}
-            </a>
-          </div>
-        </div>
-        {% else %}
+        {% if not user.is_anonymous %}
         <div class="navbar-item">
           <div class="buttons">
             <a class="button is-primary" href="{% url 'accounts:logout' %}">
