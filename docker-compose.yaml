@@ -2,7 +2,7 @@
 services:
   ldap:
     build: ./docker/openldap/build
-    image: docker-registry.wikimedia.org/dev/bullseye-openldap:1.0.0
+    image: docker-registry.wikimedia.org/dev/bullseye-openldap:1.0.1-dev
     healthcheck:
       test: ["CMD", "ldapsearch", "-x", "-H", "ldap://localhost:389", "-D", "cn=admin,dc=example,dc=org", "-w", "adminpassword", "-b", "dc=example,dc=org", "|", "grep", "-q", "cn=www"]
     ports:

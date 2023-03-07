@@ -14,6 +14,7 @@ from ldap3 import HASHED_SALTED_SHA
 
 
 from .base_settings import *  # noqa
+from .local_settings import * # noqa
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-kcwxu%sx251dqdnyjn_cb(t3n=ud_v^o)#px9wy=g3=94)@zrz'
@@ -63,7 +64,7 @@ BITU_LDAP = {
     'users': {
         'dn': 'ou=people,dc=example,dc=org',
         'object_classes': ['inetOrgPerson'],
-        'auxiliary_classes': ['posixAccount'],
+        'auxiliary_classes': ['posixAccount', 'wikimediaPerson'],
     }
 }
 
@@ -82,6 +83,7 @@ BITU_SUB_SYSTEMS = {
 
 AUTHENTICATION_BACKENDS = [
     "django_auth_ldap.backend.LDAPBackend",
+    "social_core.backends.mediawiki.MediaWiki",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
@@ -112,3 +114,25 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
     "is_staff": "cn=staff,ou=groups,dc=example,dc=org",
     "is_superuser": "cn=sudoers,ou=groups,dc=example,dc=org",
 }
+
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
+# Byparse most pipelines to avoid issues with groups and
+# prevent logging in with MediaWiki account.
+SOCIAL_AUTH_MEDIAWIKI_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'wikimedia.social_pipeline.global_account_link',)
+
+SOCIAL_AUTH_MEDIAWIKI_URL = 'https://meta.wikimedia.org/w/index.php'
+SOCIAL_AUTH_MEDIAWIKI_CALLBACK = 'http://localhost:8000/complete/mediawiki'

@@ -26,9 +26,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_django',
     'django_rq',
+    'social_django',
     'accounts',
     'signups',
     'ldapbackend',
+    'wikimedia'
 ]
 
 MIDDLEWARE = [
@@ -40,6 +42,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'wikimedia.middleware.global_account_valid_middleware',
 ]
 
 ROOT_URLCONF = 'bitu.urls'
