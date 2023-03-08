@@ -1,6 +1,8 @@
-from typing import Tuple
-import bituldap
+import logging
 
+from typing import Tuple
+
+import bituldap
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -8,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 User = get_user_model()
+logger = logging.getLogger('bitu')
 
 
 def wikimedia_global_account(request, user:'User') -> bool:
@@ -24,9 +27,10 @@ def wikimedia_global_account(request, user:'User') -> bool:
 
     ldap_user = bituldap.get_user(user.get_username())
     if not ldap_user:
+        logger.warning(f'wikimedia global account validation failure, error getting ldap user: {user.get_username()}')
         return True
 
-    if not ldap_user.wikimediaGlobalAccountId:
+    if not getattr(ldap_user, 'wikimediaGlobalAccountId', False):
         return False
 
     # User has already linked their accounts.
