@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "SSH Key Management" %}{% endblock %}
+
+{% block content %}
+<a href="{% url "keymanagement:create" %}" class="is-primary button">Upload new key</a>
+
+
+<table class="table">
+    <thead>
+        <th>{% translate "Active" %}</th>
+        <th>{% translate "System" %}</th>
+        <th>{% translate "SSH Key" %}</th>
+        <th></th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for key in object_list %}
+        <tr>
+            <td>{% if key.active %}✅{% endif %}</td>
+            <td>{{ key.get_system_display }}</td>
+            <td>{{ key }}</td>
+            <td>{% if not key.active %}
+                <a href="{% url "keymanagement:activate" pk=key.id %}" class="is-info button">{% translate "Activate key" %}</a>{% else %}
+                <a href="{% url "keymanagement:deactivate" pk=key.id %}" class="is-warning button">{% translate "Deactivate key" %}</a>{% endif %}
+            </td>
+            <td>
+                {% if not key.active %}
+                <a href="{% url "keymanagement:delete" pk=key.id %}" class="is-danger button">{% translate "Delete" %}</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

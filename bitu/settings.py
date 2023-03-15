@@ -65,7 +65,7 @@ BITU_LDAP = {
     'users': {
         'dn': 'ou=people,dc=example,dc=org',
         'object_classes': ['inetOrgPerson'],
-        'auxiliary_classes': ['posixAccount', 'wikimediaPerson'],
+        'auxiliary_classes': ['posixAccount', 'wikimediaPerson', 'ldapPublicKey'],
     }
 }
 
@@ -75,6 +75,8 @@ LDAP_USER_CONF = {
 
 BITU_SUB_SYSTEMS = {
     'ldapbackend': {
+        'manage_ssh_keys': True,
+        'ssh_keys_display_name': 'WikiMedia Cloud Service SSH keys',
         'default_gid': 2000,
         'password_hash': 'ldapbackend.helpers.hash_password',
         'password_hash_method': HASHED_SALTED_SHA,
@@ -97,6 +99,18 @@ BITU_SUB_SYSTEMS = {
                       {'name': 'gidNumber', 'display': 'POSIX Group ID'},
                     ]
         },
+        'default_groups': ['staff',]
+    },
+    'puppet': {
+        'manage_ssh_keys': True,
+    }
+}
+
+BITU_SSH_KEY_VALIDATOR = {
+    'allowed_key_type': {
+        'ssh-rsa': {'min_key_size': 2048},
+        'ssh-ecdsa': {},
+        'ssh-ed25519': {}
     }
 }
 

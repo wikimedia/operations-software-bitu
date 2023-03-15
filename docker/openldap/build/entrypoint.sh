@@ -27,9 +27,10 @@ include         /etc/ldap/schema/core.schema
 include         /etc/ldap/schema/cosine.schema
 include         /etc/ldap/schema/rfc2307bis.schema
 include         /etc/ldap/schema/inetorgperson.schema
+include         /etc/ldap/schema/openssh-ldap.schema
 include         /etc/ldap/schema/dyngroup.schema
 include         /etc/ldap/schema/samba.schema
-include		    /etc/ldap/schema/wmf-user.schema
+include         /etc/ldap/schema/wmf-user.schema
 #include         /etc/ldap/schema/ppolicy.schema
 
 pidfile /var/run/slapd/ldap.pid

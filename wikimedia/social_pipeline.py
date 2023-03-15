@@ -21,7 +21,8 @@ def global_account_link(strategy, details, backend, user=None, *args, **kwargs):
         return
 
     # Enqueue LDAP attribute job.
-    update_ldap_attributes.delay(user, {'wikimediaGlobalAccountId': details['userID']})
+    update_ldap_attributes.delay(user, {'wikimediaGlobalAccountId': details['userID'],
+                                        'wikimediaGlobalAccountName': details['username']})
 
     # Flush messages, to ensure that our "please link accounts"
     # message is not present from previus validations.

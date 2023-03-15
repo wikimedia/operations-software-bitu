@@ -30,12 +30,15 @@
               <a class="navbar-item" href="{% url "ldapbackend:properties" %}">
                 🌳 LDAP Properties
               </a>
-            <a class="navbar-item">
-              🤔 About
-            </a>
-            <a class="navbar-item" href="https://phabricator.wikimedia.org">
-              🐛 Report an issue
-            </a>
+              <a class="navbar-item" href="{% url "keymanagement:list" %}">
+                🔑 SSH Keys
+              </a>
+              <a class="navbar-item">
+                🤔 About
+              </a>
+              <a class="navbar-item" href="https://phabricator.wikimedia.org" target="_blank">
+                🐛 Report an issue
+              </a>
           </div>
         </div>
         {% endif %}

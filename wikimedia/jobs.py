@@ -26,8 +26,8 @@ def update_ldap_attributes(user:'User', attributes:Dict):
 
     for k,v in attributes.items():
         setattr(ldap_user, k, v)
+        ldap_user.entry_commit_changes()
 
-    ldap_user.entry_commit_changes()
     logger.info(f'update ldap user: {ldap_user} with attributes: {attributes}')
 
 @job('notification')

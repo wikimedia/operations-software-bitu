@@ -30,7 +30,8 @@ INSTALLED_APPS = [
     'captcha',
     'signups',
     'ldapbackend.apps.LdapConfig',
-    'wikimedia.apps.WikimediaConfig'
+    'wikimedia.apps.WikimediaConfig',
+    'keymanagement.apps.KeymanagementConfig'
 ]
 
 MIDDLEWARE = [

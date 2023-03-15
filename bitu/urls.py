@@ -26,6 +26,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('wikimedia/', include('wikimedia.urls')),
     path('ldapbackend/', include('ldapbackend.urls')),
+    path('keymanagement/', include('keymanagement.urls')),
     path('', login_required(TemplateView.as_view(template_name='overview.html')), name='overview'),
 ]
 

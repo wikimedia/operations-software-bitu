@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "SSH Key Management" %}{% endblock %}
+
+{% block content %}
+<div class="columns">
+    <div class="column"></div>
+    <div class="column is-half">
+        {% if object.active %}
+        {% blocktranslate with key=object.ssh_public_key system=object.get_system_display %}
+        <strong>Unable to remove key:<br/></strong> {{ key }}<br/>
+        <strong>The key is currently applied to:</strong> {{ system }}
+        {% endblocktranslate %}
+        {% else %}
+        <form method="post">{% csrf_token %}
+            <p>Are you sure you want to delete "{{ object }}"?</p>
+            <input type="submit" value="Confirm">
+        </form>
+        {% endif %}
+        <div>
+        </div>
+    </div>
+<div class="column"></div>
+</div>
+{% endblock %}

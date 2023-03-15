@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "SSH Key Management" %}{% endblock %}
+
+{% block content %}
+<div class="columns">
+    <div class="column"></div>
+    <div class="column is-half">
+        {% blocktranslate with key=object.ssh_public_key system=object.get_system_display %}
+        <strong>This will remove the key:<br/></strong> {{ key }}<br/>
+        <strong>The key is currently associated with:</strong> {{ system }}
+        {% endblocktranslate %}
+        <form method="post">{% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="button is-danger">{% translate "Deactivate" %}</button>
+        </form>
+        <div>
+        </div>
+    </div>
+<div class="column"></div>
+</div>
+{% endblock %}
