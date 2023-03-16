@@ -156,5 +156,8 @@ SOCIAL_AUTH_MEDIAWIKI_PIPELINE = (
 SOCIAL_AUTH_MEDIAWIKI_URL = 'https://meta.wikimedia.org/w/index.php'
 SOCIAL_AUTH_MEDIAWIKI_CALLBACK = 'http://localhost:8000/complete/mediawiki'
 LOGOUT_REDIRECT_URL = 'wikimedia:login'
+LOGIN_URL = LOGOUT_REDIRECT_URL
 CAPTCHA_LENGTH = 5
+PASSWORD_RESET_TIMEOUT = 60 * 3 # Three minutes, rather low, but for testing.
+
 
