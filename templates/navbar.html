@@ -15,11 +15,11 @@
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
         <a class="navbar-item" href="{% url 'accounts:overview' %}">
-          Home
+          🏡 Home
         </a>
 
         <a class="navbar-item">
-          Documentation
+          📚 Documentation
         </a>
         {% if not user.is_anonymous %}
         <div class="navbar-item has-dropdown is-hoverable">
@@ -27,11 +27,14 @@
             More
           </a>
             <div class="navbar-dropdown">
+              <a class="navbar-item" href="{% url "ldapbackend:properties" %}">
+                🌳 LDAP Properties
+              </a>
             <a class="navbar-item">
-              About
+              🤔 About
             </a>
             <a class="navbar-item" href="https://phabricator.wikimedia.org">
-              Report an issue
+              🐛 Report an issue
             </a>
           </div>
         </div>

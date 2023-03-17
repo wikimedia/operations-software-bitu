@@ -10,6 +10,7 @@ and any other environments should go into base_settings.py.
 import ldap
 
 from django_auth_ldap.config import LDAPSearch,GroupOfNamesType
+from django.urls import reverse_lazy
 from ldap3 import HASHED_SALTED_SHA
 
 
@@ -77,7 +78,25 @@ BITU_SUB_SYSTEMS = {
         'default_gid': 2000,
         'password_hash': 'ldapbackend.helpers.hash_password',
         'password_hash_method': HASHED_SALTED_SHA,
-        'default_groups': ['staff',]
+        'default_groups': ['staff',],
+        'attributes': {
+            'edit': [{'name': 'sn', 'display': 'Firstname'},
+                     {'name': 'givenName', 'display': 'Lastname'},
+                     {'name': 'loginShell', 'display': 'Shell', 'choices':(
+                        ('/bin/sh', '/bin/sh'),
+                        ('/bin/bash', '/bin/bash'),
+                        ('/usr/bin/tmux', '/usr/bin/tmux')),
+                      'validators': ['ldapbackend.validators.login_shell_validator',]
+                     },
+                     {'name': 'fumble','display': 'invalid attribute'}
+                     ],
+            'view': [{'name': 'mail', 'display': 'e-mail',},
+                      {'name': 'wikimediaGlobalAccountName', 'display': 'WikiMedia Global Account (SUL)',
+                       'action': reverse_lazy('social:begin', args=['mediawiki']), 'action_label': 'refresh ↺'},
+                      {'name': 'uidNumber', 'display': 'POSIX User ID'},
+                      {'name': 'gidNumber', 'display': 'POSIX Group ID'},
+                    ]
+        },
     }
 }
 
@@ -137,6 +156,5 @@ SOCIAL_AUTH_MEDIAWIKI_PIPELINE = (
 SOCIAL_AUTH_MEDIAWIKI_URL = 'https://meta.wikimedia.org/w/index.php'
 SOCIAL_AUTH_MEDIAWIKI_CALLBACK = 'http://localhost:8000/complete/mediawiki'
 LOGOUT_REDIRECT_URL = 'wikimedia:login'
-LOGIN_URL = LOGOUT_REDIRECT_URL
-
 CAPTCHA_LENGTH = 5
+

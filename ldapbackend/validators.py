@@ -5,7 +5,9 @@ import re
 
 import bituldap as b
 
+from django.conf import settings
 from django.core import validators
+from django.forms import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger(__name__)
@@ -45,3 +47,21 @@ class LDAPPasswordValidator:
         return _(
             "Some rule for LDAP, if needed."
         )
+
+def login_shell_validator(shell: str):
+    shells = ['/bin/sh',
+              '/bin/bash',
+              '/usr/bin/bash',
+              '/bin/rbash',
+              '/usr/bin/rbash',
+              '/bin/dash',
+              '/bin/ksh',
+              '/usr/bin/dash',
+              '/usr/bin/tmux',
+              '/usr/bin/screen',
+              '/bin/zsh',
+              '/usr/bin/zsh',]
+
+    if shell not in settings.BITU_SUB_SYSTEMS.get('valid_shells', shells):
+        raise ValidationError(
+            _("Does not appear to be a valid shell path."))

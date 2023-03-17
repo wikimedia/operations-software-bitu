@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'accounts',
     'captcha',
     'signups',
-    'ldapbackend',
+    'ldapbackend.apps.LdapConfig',
     'wikimedia'
 ]
 

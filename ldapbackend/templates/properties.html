@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "Profile" %}{% endblock %}
+{% block content %}
+<div class="columns">
+    <div class="column">
+        <ul>
+            <li><strong>Username: </strong>{{ user.username }}</li>
+        {% for attr in ro_attrs|dictsort:"display" %}
+            <li><strong>{{ attr.display }}: </strong>{{ attr.value }} {% if attr.action %}<a href="{{ attr.action }}">{{ attr.action_label }}</a>{% endif %}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="column">
+        <form action="{% url 'ldapbackend:properties' %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <br />
+            <input type="submit" class="button is-primary" value="{% translate "Update" %}">
+        </form>
+    </div>
+</div>
+{% endblock %}
