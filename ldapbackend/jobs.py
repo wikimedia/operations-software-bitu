@@ -34,5 +34,3 @@ def add_to_default_groups(user_dn):
             continue
         group.member.add(user_dn)
         group.entry_commit_changes()
-
-create_user.delay()

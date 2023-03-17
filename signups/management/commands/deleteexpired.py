@@ -30,5 +30,4 @@ class Command(BaseCommand):
                         f"- {signup.username}; {signup.email} {signup.created_date}"))
             return
 
-        for signup in signups:
-            signup.delete()
+        signups.delete()
