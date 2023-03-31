@@ -5,12 +5,13 @@ from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
+from captcha.fields import CaptchaField
 
 from .models import Signup
 
 
 class SignupForm(ModelForm):
-
+    captcha = CaptchaField()
     error_messages = {
         "password_mismatch": _("The two password fields didn’t match."),
     }
