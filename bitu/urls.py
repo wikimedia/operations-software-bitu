@@ -19,6 +19,7 @@ favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
 urlpatterns = [
     path('favicon.ico', favicon_view),
     path('admin/', admin.site.urls),
+    path('captcha/', include('captcha.urls')),
     path('rq/', include('django_rq.urls')),
     path('', include('social_django.urls', namespace='social')),
     path('signup/', include('signups.urls')),

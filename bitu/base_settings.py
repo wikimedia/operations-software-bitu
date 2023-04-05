@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django_rq',
     'social_django',
     'accounts',
+    'captcha',
     'signups',
     'ldapbackend',
     'wikimedia'
