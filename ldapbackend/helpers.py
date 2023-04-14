@@ -27,6 +27,26 @@ default_ldap_user_data_fill = user_data_fill
 
 
 def hash_password(password: str) -> str:
+    """Provide as hash appropriate for the LDAP backend
+
+    The hashing function can be configured in the Django
+    settings file. The default hashing method is SSHA1,
+    see: https://www.openldap.org/faq/data/cache/347.html
+
+    .. code-block:: python
+
+       BITU_SUB_SYSTEMS: {
+         'ldapbackend': {
+            'password_hash_method': HASHED_SALTED_SHA
+         }
+       }
+
+    Args:
+        password: plaintext password
+
+    Returns:
+        str: password hash
+    """
     hash_method = settings.BITU_SUB_SYSTEMS.get('ldapbackend', {}).get('password_hash_method', HASHED_SALTED_SHA)
     return hashed(hash_method, password)
 
