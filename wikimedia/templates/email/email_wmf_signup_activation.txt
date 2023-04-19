@@ -1,0 +1,4 @@
+{% load i18n %}
+{% blocktrans %}
+You have signed up for a Wikimedia Developer Account. To confirm the account signup, please go to {{ url }}."
+{% endblocktrans %}
