@@ -15,7 +15,6 @@ from ldap3 import HASHED_SALTED_SHA
 
 
 from .base_settings import *  # noqa
-from .local_settings import * # noqa
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-kcwxu%sx251dqdnyjn_cb(t3n=ud_v^o)#px9wy=g3=94)@zrz'
@@ -173,5 +172,12 @@ LOGOUT_REDIRECT_URL = 'wikimedia:login'
 LOGIN_URL = LOGOUT_REDIRECT_URL
 CAPTCHA_LENGTH = 5
 PASSWORD_RESET_TIMEOUT = 60 * 3 # Three minutes, rather low, but for testing.
+BITU_DOMAIN = 'http://localhost:8000'
 
-
+# For testing purposes only. In production use a real SMTP server.
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+BITU_NOTIFICATION = {
+    'default_sender': 'noc@example.org',
+    'signup_template_prefix': 'email_wmf_signup_activation',
+    'signup_subject': 'Wikimedia Developer Account activation'
+}

@@ -1,0 +1,7 @@
+{% load i18n %}
+{% blocktrans %}
+You have signed up for a on a Bitu IDM installation.
+To confirm the account signup, please go to {{ url }}."
+
+This link will expire within {{ timeout }} minutes.
+{% endblocktrans %}
