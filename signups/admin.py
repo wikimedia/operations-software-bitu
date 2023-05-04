@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 from django.contrib import admin
 
-from .models import Signup, SignupPassword
+from .models import BlockListUsername, Signup, SignupPassword
 
 
 def send_activation_link(modeladmin, request, queryset):
@@ -10,6 +10,9 @@ def send_activation_link(modeladmin, request, queryset):
 
 
 send_activation_link.short_description = "Resend activation link"
+
+class BlockListUsernameAdmin(admin.ModelAdmin):
+    list_display = ['regex', 'comment']
 
 
 class SignupAdmin(admin.ModelAdmin):
@@ -31,5 +34,6 @@ class SignupAdminPassword(admin.ModelAdmin):
         return obj.signup.username
 
 
+admin.site.register(BlockListUsername, BlockListUsernameAdmin)
 admin.site.register(Signup, SignupAdmin)
 admin.site.register(SignupPassword, SignupAdminPassword)

@@ -4,10 +4,26 @@
 {% block title %}{% translate "Signup" %}{% endblock %}
 
 {% block content %}
-
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" class="button is-primary" value="{% translate "Signup" %}">
-</form>
-
-{% endblock %}
+<div class="columns is-mobile">
+    <div class="column"></div>
+    <div class="column">
+        <form method="post">{% csrf_token %}
+            {% for field in form %}
+            <div class="field">
+                <label class="label">{{ field.label_tag }} </label>
+                <div class="control">
+                  {{ field }}
+                </div>
+                {% for error in field.errors %}
+                <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+                <input type="submit" class="button is-primary" value="{% translate "Signup" %}">
+        </form>
+    </div>
+    <div class="column"></div>
+    <div class="column is-half">{% include signup_info_template %}</div>
+    <div class="column"></div>
+</div>
+ {% endblock %}

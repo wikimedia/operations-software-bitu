@@ -181,3 +181,10 @@ BITU_NOTIFICATION = {
     'signup_template_prefix': 'email_wmf_signup_activation',
     'signup_subject': 'Wikimedia Developer Account activation'
 }
+
+SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator',
+                              'ldapbackend.validators.unix_username_validator',
+                              'signups.validators.UsernameValidator'
+                              ]
+
+SIGNUP_INFO_TEMPLATE = 'signup_info_wmf.html'

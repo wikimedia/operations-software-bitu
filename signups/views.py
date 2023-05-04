@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 from typing import Any, Optional
 
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.db import models
 from django.http import HttpResponseRedirect
@@ -19,12 +20,19 @@ from .tokens import default_token_generator
 
 class SignupFormView(CreateView):
     template_name: str = 'signups_signup.html'
+    form_template_name = "form_template.html"
     form_class = SignupForm
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['signup_info_template'] = settings.SIGNUP_INFO_TEMPLATE
+        return context
+
 
     def get_success_url(self) -> str:
         return reverse('signups:thanks')
