@@ -36,8 +36,8 @@ class LDAPUserForm(forms.Form):
             raise ObjectDoesNotExist(uid)
 
         self.id_list = []
-
-        for attr in get_ldap_attributes_editable():
+        self.editable = get_ldap_attributes_editable()
+        for attr in self.editable:
             if not hasattr(self.user, attr['name']):
                 continue
 

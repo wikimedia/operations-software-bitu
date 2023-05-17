@@ -9,7 +9,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from django.views.generic.base import RedirectView, TemplateView
+from django.views.generic.base import RedirectView
 from django.contrib.auth.decorators import login_required
 
 
@@ -27,7 +27,7 @@ urlpatterns = [
     path('wikimedia/', include('wikimedia.urls')),
     path('ldapbackend/', include('ldapbackend.urls')),
     path('keymanagement/', include('keymanagement.urls')),
-    path('', login_required(TemplateView.as_view(template_name='overview.html')), name='overview'),
+    path('', login_required(RedirectView.as_view(pattern_name=settings.LOGIN_REDIRECT_URL),), name='overview'),
 ]
 
 # When developing, allow the built in Django webserver to serve static

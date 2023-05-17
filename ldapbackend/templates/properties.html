@@ -11,6 +11,7 @@
         {% endfor %}
         </ul>
     </div>
+    {% if form.editable %}
     <div class="column">
         <form action="{% url 'ldapbackend:properties' %}" method="post">
             {% csrf_token %}
@@ -19,5 +20,6 @@
             <input type="submit" class="button is-primary" value="{% translate "Update" %}">
         </form>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
