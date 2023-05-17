@@ -14,6 +14,15 @@ logger = logging.getLogger(__name__)
 
 
 def LDAPUsernameValidator(username):
+    """_summary_
+
+    Args:
+        username (_type_): _description_
+
+    Raises:
+        ValidationError: _description_
+        ValidationError: _description_
+    """
     try:
         user = b.get_user(username)
     except Exception as e:
@@ -39,6 +48,8 @@ unix_username_validator = UnixUsernameValidator()
 
 
 class LDAPPasswordValidator:
+    """Validator for LDAP password policy
+    """
     def validate(self, password, user=None):
         pass
         # raise ValidationError("Your password did not match the requirements of the LDAP subsystem.")

@@ -75,7 +75,7 @@ LDAP_USER_CONF = {
 BITU_SUB_SYSTEMS = {
     'ldapbackend': {
         'manage_ssh_keys': True,
-        'ssh_keys_display_name': 'WikiMedia Cloud Service SSH keys',
+        'ssh_keys_display_name': 'Wikimedia Cloud Service SSH keys',
         'default_gid': 2000,
         'password_hash': 'ldapbackend.helpers.hash_password',
         'password_hash_method': HASHED_SALTED_SHA,
@@ -92,7 +92,7 @@ BITU_SUB_SYSTEMS = {
                      {'name': 'fumble','display': 'invalid attribute'}
                      ],
             'view': [{'name': 'mail', 'display': 'e-mail',},
-                      {'name': 'wikimediaGlobalAccountName', 'display': 'WikiMedia Global Account (SUL)',
+                      {'name': 'wikimediaGlobalAccountName', 'display': 'Wikimedia Global Account (SUL)',
                        'action': reverse_lazy('social:begin', args=['mediawiki']), 'action_label': 'refresh ↺'},
                       {'name': 'uidNumber', 'display': 'POSIX User ID'},
                       {'name': 'gidNumber', 'display': 'POSIX Group ID'},

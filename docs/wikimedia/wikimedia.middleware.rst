@@ -1,0 +1,4 @@
+middleware
+==========
+
+.. automodule:: wikimedia.middleware

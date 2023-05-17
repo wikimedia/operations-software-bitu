@@ -1,3 +1,5 @@
+from typing import Callable, TYPE_CHECKING
+
 from .validators import wikimedia_global_account
 
 from django.contrib import messages
@@ -7,14 +9,37 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 
-User = get_user_model()
+if TYPE_CHECKING:
+    User = get_user_model()
 
 
-def global_account_valid_middleware(get_response):
+def global_account_valid_middleware(get_response: Callable):
+    """Middleware for inject "please link accounts" message.
+
+    To be used as a middleware for incoming requests. If the
+    current user has not yet linked their IDM account with
+    their Wikimedia global account (https://wikitech.wikimedia.org/wiki/Terminology)
+    inject a prompt requesting that they do so, with a link.
+
+    To enable this middleware function, add the module path to
+    the MIDDLEWARE section in the Django settings file:
+
+    .. code-block:: python
+
+        MIDDLEWARE = [
+            ...
+            'wikimedia.middleware.global_account_valid_middleware',
+        ]
+
+
+    Args:
+        get_response: Middleware callable
+
+    """
 
     def middleware(request):
         # Check if we need to ask the user to link their account
-        # to their WikiMedia Global Account (Wiki account).
+        # to their Wikimedia Global Account (Wiki account).
         user: 'User' = request.user
         storage = messages.get_messages(request)
 

@@ -1,0 +1,4 @@
+validators
+==========
+
+.. automodule:: wikimedia.validators
