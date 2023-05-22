@@ -1,15 +1,17 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% block title %}{% translate "Thank you" %}{% endblock %}
-
+{% block title %}{% translate "Thank you for signing up" %}{% endblock %}
 {% block content %}
-
-<h2>{% translate "Thank you for signing up." %}</h2>
-{% blocktrans %}
-Thank you for signing up. A verification link has been sent to your email address.
-You must follow the verification link and confirm your account because you are able
-to sign in.
-{% endblocktrans %}
-
+<div class="columns">
+    <div class="column is-one-fifth"></div>
+    <div class="column">
+        {% blocktrans %}
+        A verification link has been sent to your email address.
+        You must follow the verification link and confirm your account before you are able
+        to sign in.
+        {% endblocktrans %}
+    </div>
+    <div class="column is-one-fifth"></div>
+</div>
 {% endblock %}
