@@ -1,5 +1,6 @@
-# SPDX-License-Identifier: GPL-3.0-or-later
+import random
 from django import forms
+from django.conf import settings
 from django.contrib.auth import password_validation
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
@@ -9,6 +10,15 @@ from captcha.fields import CaptchaField
 
 from .models import Signup
 
+
+# Generate challanges with a limited alphabet, but
+# avoid characthers that look similar to confuse
+# users.
+def captcha_input_generator():
+    lenght = getattr(settings, 'CAPTCHA_LENGTH', 5)
+    alphabet = 'abcedefghkmnprstwxyz23456789'
+    challenge = ''.join(random.sample(alphabet, lenght))
+    return (challenge, challenge)
 
 class SignupForm(ModelForm):
     captcha = CaptchaField()
