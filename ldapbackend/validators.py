@@ -32,7 +32,7 @@ def LDAPUsernameValidator(username):
 
     if user:
         raise ValidationError(
-            _("Invalid username, may already be used by subsystem"))
+            _("Invalid username, may already be used."))
 
 
 class UnixUsernameValidator(validators.RegexValidator):
