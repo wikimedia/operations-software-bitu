@@ -13,6 +13,8 @@ send_activation_link.short_description = "Resend activation link"
 
 class BlockListUsernameAdmin(admin.ModelAdmin):
     list_display = ['regex', 'comment']
+    list_filter = ['origin']
+    readonly_fields = ['created_date', 'last_modified']
 
 
 class SignupAdmin(admin.ModelAdmin):

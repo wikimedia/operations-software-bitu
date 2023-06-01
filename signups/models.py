@@ -70,5 +70,6 @@ class SignupPassword(models.Model):
 class BlockListUsername(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
+    origin = models.CharField(null=False, default='manual', max_length=255)
     regex = models.CharField(null=False, max_length=255)
     comment = models.CharField(null=False, max_length=255)
