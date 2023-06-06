@@ -6,7 +6,11 @@ import bituldap
 
 from django.conf import settings
 from django_rq import job
+
+from bitu import utils
 from . import helpers
+
+
 if TYPE_CHECKING:
     from signups.models import Signup
     from keymanagement.models import SSHKey
@@ -26,7 +30,20 @@ def create_user(signup: 'Signup'):
     success = user.entry_commit_changes()
 
     if success:
-        add_to_default_groups(user.entry_dn)
+        try:
+            add_to_default_groups(user.entry_dn)
+        except Exception as exception:
+            utils.send_service_message(
+                'Error creating user',
+                f"""Failed to add user: {uid} to groups.
+                exception was: {exception}
+                """
+            )
+    else:
+        # Error notification
+        logger.error('Failed to create user %s' % uid)
+        utils.send_service_message('Error creating user',
+                                   f"""Failed to create user: {uid}""")
 
     return success
 
@@ -91,6 +108,9 @@ def load_ssh_key(user: 'User'):
     from keymanagement.models import SSHKey
     system = __name__.split('.')[0]
     ldap_user = bituldap.get_user(user.get_username())
+
+    if ldap_user.sshPublicKey.value is None:
+        return
 
     ssh_key, created = SSHKey.objects.get_or_create(user=user,
                                            ssh_public_key=ldap_user.sshPublicKey.value.decode('utf-8'))

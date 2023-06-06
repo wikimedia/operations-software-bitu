@@ -5,3 +5,4 @@ __pycache__/
 bitu/local_settings.py
 .vscode
 Bitu.egg-info
+docs/build
