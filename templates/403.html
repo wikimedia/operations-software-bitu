@@ -1,0 +1,32 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bitu</title>
+    <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bitu.css' %}">
+  </head>
+  <body>
+    <br>
+    <div class="columns is-centered">
+      <div class="column"></div>
+      <div class="column is-half has-text-centered">
+        <article class="message is-danger">
+            <div class="message-header">
+              <p>{% translate "Bitu Permission denied" %}</p>
+            </div>
+            <div class="message-body">
+                {% blocktrans %}
+                You do not have access to this page or functionality.
+                Click <a href=/>here to return to the frontpage.</a>
+                {% endblocktrans %}
+            </div>
+          </article>
+      </div>
+      <div class="column"></div>
+    </div>
+  </body>
+</html>
