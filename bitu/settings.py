@@ -187,4 +187,6 @@ SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator',
                               'signups.validators.UsernameValidator'
                               ]
 
+SIGNUP_EMAIL_VALIDATORS = ['ldapbackend.validators.LDAPEmailValidator',]
+
 SIGNUP_INFO_TEMPLATE = 'signup_info_wmf.html'

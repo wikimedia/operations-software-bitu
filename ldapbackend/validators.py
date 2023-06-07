@@ -13,16 +13,18 @@ from django.utils.translation import gettext_lazy as _
 logger = logging.getLogger(__name__)
 
 
-def LDAPUsernameValidator(username):
-    """_summary_
+def LDAPUsernameValidator(username: str):
+    """LDAP username validator.
+
+    Check that the provided username is not in use by the LDAP backend.
 
     Args:
-        username (_type_): _description_
+        username (str): Desired username
 
     Raises:
-        ValidationError: _description_
-        ValidationError: _description_
+        ValidationError: Raise if the username cannot be used.
     """
+
     try:
         user = b.get_user(username)
     except Exception as e:
@@ -32,7 +34,35 @@ def LDAPUsernameValidator(username):
 
     if user:
         raise ValidationError(
-            _("Invalid username, may already be used."))
+            _("Invalid username, may already in use."))
+
+
+def LDAPEmailValidator(email: str):
+    """LDAP email validator.
+
+    Check that the provided email is not already in use by
+    another LDAP user.
+
+    Args:
+        email (str): Email address to check
+
+    Raises:
+        ValidationError: Raised when email address cannot be used.
+    """
+
+    try:
+        user = b.get_single_object(b.read_configuration().users, 'mail', email)
+    except Exception as e:
+        # TODO: Bitu-LDAP needs to be expanded with a specialised exception.
+        # The exception could be a communication error, or a result of multiple
+        # user objects with the same email address. This should be two separate
+        # errors.
+        logger.warning("LDAP email validation error; email %s; %s", email, e)
+        raise ValidationError(
+            _("Invalid email, already in use."))
+
+    if user:
+            raise ValidationError(_("Invalid email, already in use."))
 
 
 class UnixUsernameValidator(validators.RegexValidator):

@@ -12,7 +12,7 @@ from .tokens import SignupActivationTokenGenerator, default_token_generator
 from . import jobs
 
 username_validators = [import_string(module) for module in getattr(settings, 'SIGNUP_USERNAME_VALIDATORS', [])]
-
+email_validators = [import_string(module) for module in getattr(settings, 'SIGNUP_EMAIL_VALIDATORS', [])]
 
 class Signup(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -32,7 +32,9 @@ class Signup(models.Model):
             "unique": _("A user with that username already exists."),
         },
     )
-    email = models.EmailField(_("email address"), unique=True)
+    email = models.EmailField(_("email address"),
+                              validators=email_validators,
+                              unique=True)
 
     def set_password(self, password):
         for name, module in settings.BITU_SUB_SYSTEMS.items():
