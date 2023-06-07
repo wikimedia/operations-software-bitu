@@ -59,7 +59,8 @@ class Command(BaseCommand):
                 if line.startswith('#') or not line:
                     continue
 
-                regex = line.split(' ')[0]
+
+                regex = line.split('<')[0].strip()
                 if check_mode and regex:
                     print(regex)
                     continue
