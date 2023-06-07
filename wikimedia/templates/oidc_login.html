@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load static %}
 {% block title %}{% endblock %}
 
 {% block content %}
@@ -8,7 +9,7 @@
     <div class="column is-half">
         <div class="columns is-centered">
             <figure class="image is-128x128">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Wikimedia_Foundation_logo_-_vertical.svg/512px-Wikimedia_Foundation_logo_-_vertical.svg.png" />
+                <img src="{% static 'wikimedia/wmf_logo_vertical.png' %}" />
             </figure>
         </div>
         <div class="columns is-centered">

@@ -1,3 +1,4 @@
+{% load static %}
 <div class="box">
   <article class="message is-info">
     <div class="message-header">
@@ -15,7 +16,7 @@
     <article class="media">
       <div class="media-left">
         <figure class="image is-64x64">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Wikimedia_Foundation_logo_-_vertical.svg/512px-Wikimedia_Foundation_logo_-_vertical.svg.png" />
+            <img src="{% static 'wikimedia/wmf_logo_vertical.png' %}" />
         </figure>
       </div>
       <div class="media-content">
