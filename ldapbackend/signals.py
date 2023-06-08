@@ -12,4 +12,4 @@ def create_user(sender, instance: 'Signup', created: bool, **kwargs):
         return
 
     if instance.is_active:
-        jobs.create_user(instance)
+        jobs.create_user.delay(instance)
