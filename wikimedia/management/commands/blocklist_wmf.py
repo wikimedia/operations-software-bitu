@@ -24,10 +24,7 @@ class Command(BaseCommand):
             'name': 'wikitech',
             'uri': 'https://wikitech.wikimedia.org/w/api.php?action=parse&formatversion=2&page=MediaWiki%3ATitleblacklist&prop=text&format=json'
         },
-        {
-            'name': 'meta',
-            'uri': 'https://meta.wikimedia.org/w/api.php?action=parse&formatversion=2&page=Title_blacklist&format=json'
-        }]
+    ]
 
     def add_arguments(self, parser):
         parser.add_argument(
