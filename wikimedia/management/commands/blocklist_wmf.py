@@ -1,3 +1,6 @@
+import logging
+import re
+
 from datetime import timedelta
 
 import requests
@@ -7,6 +10,9 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from signups.models import BlockListUsername
+
+
+logger = logging.getLogger('bitu')
 
 
 class Command(BaseCommand):
@@ -64,6 +70,15 @@ class Command(BaseCommand):
                 if check_mode and regex:
                     print(regex)
                     continue
+
+                # Attempt to validate the regex. We get regex patterns from
+                # PHP, and there are some patterns that will not work for us.
+                try:
+                    m = re.search(regex, 'testuser')
+                except re.error as e:
+                    logger.warning('invalid blocklist regex: %s; %s' % (regex, e))
+                    continue
+
 
                 block, created = BlockListUsername.objects.get_or_create(
                     regex=regex,
