@@ -92,7 +92,7 @@ BITU_SUB_SYSTEMS = {
                      {'name': 'fumble','display': 'invalid attribute'}
                      ],
             'view': [{'name': 'mail', 'display': 'e-mail',},
-                      {'name': 'wikimediaGlobalAccountName', 'display': 'Wikimedia Global Account (SUL)',
+                      {'name': 'wikimediaGlobalAccountName', 'display': 'Wikimedia Global Account (SUL)', 'tooltip': 'This is the account you use when signing into one of our wikis, including Wikipedia.',
                        'action': reverse_lazy('social:begin', args=['mediawiki']), 'action_label': 'refresh ↺'},
                       {'name': 'uidNumber', 'display': 'POSIX User ID'},
                       {'name': 'gidNumber', 'display': 'POSIX Group ID'},
@@ -190,3 +190,4 @@ SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator',
 SIGNUP_EMAIL_VALIDATORS = ['ldapbackend.validators.LDAPEmailValidator',]
 
 SIGNUP_INFO_TEMPLATE = 'signup_info_wmf.html'
+LOGIN_REDIRECT_URL = 'ldapbackend:properties'

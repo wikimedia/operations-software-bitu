@@ -53,7 +53,7 @@ def global_account_valid_middleware(get_response: Callable):
         if not valid and m == 0:
             messages.warning(request, mark_safe(
                 _("""If you have a "Wikimedia global account" to edit the wikis, please connect it to your account <a href="%(action)s">here</a>.
-                (you will be prompted for your wiki password). If you don't have a Wikimedia global account yet, you can create one
+                (you will be prompted to confirm)<br /> If you don't have a Wikimedia global account yet, you can create one
                  <a href="https://meta.wikimedia.org/w/index.php?title=Special:CreateAccount&returnto=Main+Page">here</a>.<br><br>
                  <strong>Note:</strong> if you have multiple Wiki accounts, e.g. a Wikimedia Foundation staff account in addition to your personal account, please ensure
                  that you are signed in with the correct account on <a href="https://meta.wikimedia.org">meta.wikimedia.org</a> before clicking approve.

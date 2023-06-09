@@ -1,22 +1,34 @@
 from django import forms
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from .helpers import ssh_key_string_to_object
 from .models import SSHKey
-#from .forms import SSHKeyAssignmentForm
 
 
-class SSHKeyListView(ListView):
+class IsSuperUserViewMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """Mixin for limiting access to views to superusers."""
+
+    def test_func(self):
+        """Overwrites test function for UserPassesTestMixin.
+
+        Returns:
+            bool: User passes test (true/false)
+        """
+        return self.request.user.is_superuser
+
+
+class SSHKeyListView(IsSuperUserViewMixin, ListView):
     model = SSHKey
 
     def get_queryset(self):
         return SSHKey.objects.filter(user=self.request.user).order_by('-active')
 
 
-class SSHKeyCreateView(CreateView):
+class SSHKeyCreateView(IsSuperUserViewMixin, CreateView):
     model = SSHKey
     fields = ('ssh_public_key',)
     success_url = reverse_lazy('keymanagement:list')
@@ -29,12 +41,12 @@ class SSHKeyCreateView(CreateView):
         return super().form_valid(form)
 
 
-class SSHKeyDeleteView(DeleteView):
+class SSHKeyDeleteView(IsSuperUserViewMixin, DeleteView):
     model = SSHKey
     success_url = reverse_lazy('keymanagement:list')
 
 
-class SSHKeyActivateView(UpdateView):
+class SSHKeyActivateView(IsSuperUserViewMixin, UpdateView):
     model = SSHKey
     success_url = reverse_lazy('keymanagement:list')
     fields = ('system',)
@@ -53,7 +65,8 @@ class SSHKeyActivateView(UpdateView):
         form.instance.user.ssh_keys.filter(system=instance.system).exclude(pk=instance.pk).update(active=False)
         return reponse
 
-class SSHKeyDeactiveView(UpdateView):
+
+class SSHKeyDeactiveView(IsSuperUserViewMixin, UpdateView):
     model = SSHKey
     success_url = reverse_lazy('keymanagement:list')
     template_name = 'keymanagement/sshkey_deactivate.html'

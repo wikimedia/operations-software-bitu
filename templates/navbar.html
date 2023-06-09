@@ -25,12 +25,16 @@
             More
           </a>
             <div class="navbar-dropdown">
+              {% if user.is_superuser %}
+              <!-- Beta features, superusers only -->
               <a class="navbar-item" href="{% url "ldapbackend:properties" %}">
                 🌳 LDAP Properties
               </a>
               <a class="navbar-item" href="{% url "keymanagement:list" %}">
                 🔑 SSH Keys
               </a>
+              <!-- End beta features -->
+              {% endif %}
               <a class="navbar-item">
                 🤔 About
               </a>
