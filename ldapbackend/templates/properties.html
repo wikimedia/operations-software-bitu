@@ -8,7 +8,7 @@
     </div>
     <div class="message-body">
         Initially the IDM only creates accounts (further functionality is being developed and will be enabled over time).
-        Currently, it you want to add/edit SSH keys to access Cloud VPS instances you need to login into <a href="https://wikitech.wikimedia.org/">wikitech.wikimedia.org</a>
+        Currently, it you want to add/edit SSH keys to access Cloud VPS instances you need to log into <a href="https://wikitech.wikimedia.org/">wikitech.wikimedia.org</a>
         with your user name/password and add them under <a href="https://wikitech.wikimedia.org/wiki/Special:Preferences#mw-prefsection-openstack">Preferences->OpenStack</a>
     </div>
   </article>
@@ -20,7 +20,7 @@
             <li>
                 <strong>{{ attr.display }}{% if attr.tooltip %}<sup class="has-tooltip-multiline" data-tooltip="{{ attr.tooltip }}">?</sup>{% endif %}: </strong>
                 {{ attr.value }}
-                {% if attr.action is not None %}<a href="{{ attr.action }}">{{ attr.action_label }}</a>{% endif %}
+                {% if attr.action is not None %}<a href="{{ attr.action }}">{% if not attr.value and attr.action_label2 %}{{ attr.action_label2 }}{% else %}{{ attr.action_label }}{% endif %}</a>{% endif %}
             </li>
         {% endfor %}
         </ul>

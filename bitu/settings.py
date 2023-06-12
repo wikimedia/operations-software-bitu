@@ -93,7 +93,7 @@ BITU_SUB_SYSTEMS = {
                      ],
             'view': [{'name': 'mail', 'display': 'e-mail',},
                       {'name': 'wikimediaGlobalAccountName', 'display': 'Wikimedia Global Account (SUL)', 'tooltip': 'This is the account you use when signing into one of our wikis, including Wikipedia.',
-                       'action': reverse_lazy('social:begin', args=['mediawiki']), 'action_label': 'refresh ↺'},
+                       'action': reverse_lazy('social:begin', args=['mediawiki']), 'action_label': 'refresh ↺', 'action_label2': 'Link account'},
                       {'name': 'uidNumber', 'display': 'POSIX User ID'},
                       {'name': 'gidNumber', 'display': 'POSIX Group ID'},
                     ]

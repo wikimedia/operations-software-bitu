@@ -24,7 +24,8 @@ class RequestPasswordResetView(FormView):
 
     def form_valid(self, form):
         valid = super().form_valid(form)
-        jobs.send_email_password_reset.delay('acarr')
+        if valid:
+            jobs.send_email_password_reset.delay(form.cleaned_data['username'])
         return valid
 
 class PasswordResetView(FormView):
