@@ -46,11 +46,11 @@ def global_account_valid_middleware(get_response: Callable):
         # Check that we don't already have messages on the
         # 'queue'. This is to avoid duplicate messages for
         # this check.
-        m = len(storage._loaded_messages)
+        loaded_messages = storage._loaded_messages
 
         valid = wikimedia_global_account(request, user)
 
-        if not valid and m == 0:
+        if not valid and len(loaded_messages) == 0:
             messages.warning(request, mark_safe(
                 _("""If you have a "Wikimedia global account" to edit the wikis please connect it to your account <a href="%(action)s">here</a>
                 (you will be prompted to confirm)<br /> If you don't have a Wikimedia global account yet you can create one
@@ -58,7 +58,17 @@ def global_account_valid_middleware(get_response: Callable):
                  <strong>Note:</strong> if you have multiple Wiki accounts, e.g. a Wikimedia Foundation staff account in addition to your personal account, please ensure
                  that you are signed in with the correct account on <a href="https://meta.wikimedia.org">meta.wikimedia.org</a> before clicking approve.
                 """
-                % {'action': reverse('social:begin', args=['mediawiki'])})))
+                % {'action': reverse('social:begin', args=['mediawiki'])})), extra_tags='wmf_link')
+        elif valid:
+            # We may already have pushed the banner message to the message framework.
+            # Check if the messages is in the load messages and remove it if found.
+            # This happens because of the multiple requests and redirects associated
+            # with the OAuth request and callbacks.
+            i = 0
+            for message in loaded_messages:
+                if message.extra_tags == 'wmf_link':
+                    storage._loaded_messages.pop(i)
+                i+= 1
 
         return get_response(request)
 

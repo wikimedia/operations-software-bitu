@@ -42,14 +42,9 @@ def global_account_link(strategy, details, backend, user=None, *args, **kwargs):
     update_ldap_attributes.delay(user, {'wikimediaGlobalAccountId': details['userID'],
                                         'wikimediaGlobalAccountName': details['username']})
 
-    # Flush messages, to ensure that our "please link accounts"
-    # message is not present from previus validations.
-    request = kwargs['request']
-    storage = messages.get_messages(request)
-    storage._queued_messages = []
-
     # The LDAP update is queued, but may not be stored when
     # rendering the next page. Set the session to indicate
     # that we expect the attribute to be successfully
     # updated in the near future.
+    request = kwargs['request']
     request.session['wikimedia_global'] = True

@@ -1,3 +1,4 @@
+{% load bulma %}
 {% load i18n %}
 {% load static %}
 <!DOCTYPE html>
@@ -16,7 +17,7 @@
       <div>
       {% if messages %}
       {% for message in messages %}
-      <article class="message is-{{ message.tags }}">
+      <article class="message {{ message.tags|django_message_tags_to_bulma_classes }}">
         <div class="message-body">
           {{ message }}
         </div>
