@@ -44,19 +44,19 @@ def send_email_password_reset(username):
     token = default_token_generator.make_token(ldap_user)
     uid = base64.b64encode(bytes(ldap_user.uid.value, 'utf8'))
     url = reverse('wikimedia:reset', kwargs={'token': token, 'uidb64': uid.decode(encoding='utf8')})
-    
-    timeout = settings.PASSWORD_RESET_TIMEOUT / 60  # From seconds to minutes.
 
-    plaintext = get_template('email/email_signup_activation.txt')
-    html = get_template('email/email_signup_activation.html')
-    context = { 'url': settings.BITU_DOMAIN + url , 'timeout': timeout }    
-    subject =  _('Account activation')
-    from_email = settings.BITU_NOTIFICATION_DEFAULT_SENDER
-    to_email = ldap_user.email
+    timeout = int(settings.PASSWORD_RESET_TIMEOUT / 60)  # From seconds to minutes.
+
+    plaintext = get_template('email/email_password_reset.txt')
+    html = get_template('email/email_password_reset.html')
+    context = { 'url': settings.BITU_DOMAIN + url , 'timeout': timeout }
+    subject =  _('Password reset')
+    from_email = settings.BITU_NOTIFICATION['default_sender']
+    to_email = ldap_user.mail
     
     msg = EmailMultiAlternatives(subject,
                                  plaintext.render(context),
-                                 from_email, 
+                                 from_email,
                                  [to_email])
     msg.attach_alternative(html.render(context), "text/html")
     msg.send()
