@@ -1,9 +1,3 @@
-Django==3.2.12
-django-simple-captcha>=0.5.12
-django-rq==2.5.1
-tox==3.27.0
-paramiko==3.1.0
-git+https://github.com/slyngshede/social-core.git@cas_backend
-social-auth-app-django==5.0.0
-git+https://gerrit.wikimedia.org/r/operations/software/bitu-ldap
-redis
+-r requirements.txt
+django-auth-ldap==4.3.0
+tox==4.6.0

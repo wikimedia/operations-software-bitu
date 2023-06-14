@@ -1,6 +1,4 @@
-Django==3.2.12
-django-simple-captcha>=0.5.12
-django-rq==2.5.1
+-r requirements-dev.txt
 mypy==0.982
 flake8==5.0.4
 paramiko==3.1.0
@@ -8,8 +6,3 @@ sphinx
 sphinx-argparse
 sphinx_autodoc_typehints
 sphinx-rtd-theme
-git+https://github.com/slyngshede/social-core.git@cas_backend
-social-auth-app-django==5.0.0
-git+https://gerrit.wikimedia.org/r/operations/software/bitu-ldap
-redis
-
