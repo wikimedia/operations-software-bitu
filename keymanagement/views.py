@@ -56,15 +56,6 @@ class SSHKeyActivateView(IsSuperUserViewMixin, UpdateView):
         kw['instance'].active = True
         return kw
 
-    def form_valid(self, form):
-        reponse = super().form_valid(form)
-
-        # Deactivate any other keys assigned to the same system.
-        # Backends will be updated in the background.
-        instance = form.instance
-        form.instance.user.ssh_keys.filter(system=instance.system).exclude(pk=instance.pk).update(active=False)
-        return reponse
-
 
 class SSHKeyDeactiveView(IsSuperUserViewMixin, UpdateView):
     model = SSHKey

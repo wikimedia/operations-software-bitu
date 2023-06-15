@@ -27,6 +27,10 @@ def update_ssh_key(sender, instance: 'SSHKey', created: bool, **kwargs):
     try:
         import_string(f'{instance.system}.helpers.update_ssh_key')(instance)
         import_string(f'{instance.system}.helpers.remove_ssh_key')(instance)
+
+        # Deactivate any other keys assigned to the same system.
+        # Backends will be updated in the background.
+        instance.user.ssh_keys.filter(system=instance.system).exclude(pk=instance.pk).update(active=False)
     except:
         pass
 

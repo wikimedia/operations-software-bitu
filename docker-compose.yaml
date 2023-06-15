@@ -23,4 +23,14 @@ services:
       default:
         aliases:
           - redis.local.wmftest.net
-
+  db:
+    image: mariadb
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+    networks:
+      default:
+        aliases:
+          - db.local.wmftest.net

@@ -38,4 +38,8 @@ class SSHKey(models.Model):
         return self.get_display()
 
     class Meta:
-        unique_together = ('user', 'system', 'active', 'ssh_public_key')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['system', 'ssh_public_key', 'active'],
+                name='unique_active_key'
+            ),]

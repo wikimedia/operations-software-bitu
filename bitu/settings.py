@@ -29,8 +29,12 @@ ALLOWED_HOSTS = []
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3', # noqa
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'idm_dev',
+        'HOST': '127.0.0.1',
+        'PORT': 3306,
+        'USER': 'idm',
+        'PASSWORD': 'idm',
     }
 }
 
