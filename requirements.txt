@@ -7,3 +7,4 @@ git+https://github.com/slyngshede/social-core.git@cas_backend
 social-auth-app-django==5.0.0
 git+https://gerrit.wikimedia.org/r/operations/software/bitu-ldap
 paramiko==3.1.0
+mysql-connector-python==8.0.33
