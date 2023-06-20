@@ -15,7 +15,8 @@ if TYPE_CHECKING:
     from keymanagement.models import SSHKey
 
 def user_data_fill(signup: 'Signup', entry: 'Entry'):
-    entry.sn = signup.username
+    entry.sn = signup.username.capitalize()
+    entry.cn = signup.username.capitalize()
     entry.uidNumber = bituldap.next_uid_number()
     entry.homeDirectory = f'/home/{signup.username.lower()}'
     entry.gidNumber = settings.LDAP_USER_CONF['default_gid']
