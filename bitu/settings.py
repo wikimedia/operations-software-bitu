@@ -16,6 +16,14 @@ from ldap3 import HASHED_SALTED_SHA
 
 from .base_settings import *  # noqa
 
+# Allow developers to define local variables in
+# .local_settings.py for debugging and testing
+# purposes.
+try:
+    from .local_settings import *  # noqa
+except ImportError:
+    pass
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-kcwxu%sx251dqdnyjn_cb(t3n=ud_v^o)#px9wy=g3=94)@zrz'
 
