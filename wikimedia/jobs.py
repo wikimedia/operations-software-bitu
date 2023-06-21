@@ -41,6 +41,9 @@ def send_email_password_reset(username):
     if not ldap_user:
         return
 
+    if not ldap_user.mail.value:
+        logger.warning('password reset requested for user: %s, but no email address is defined in LDAP', username)
+
     token = default_token_generator.make_token(ldap_user)
     uid = base64.b64encode(bytes(ldap_user.uid.value, 'utf8'))
     url = reverse('wikimedia:reset', kwargs={'token': token, 'uidb64': uid.decode(encoding='utf8')})
@@ -53,11 +56,11 @@ def send_email_password_reset(username):
     subject =  _('Password reset')
     from_email = settings.BITU_NOTIFICATION['default_sender']
     to_email = ldap_user.mail
-    
+
     msg = EmailMultiAlternatives(subject,
                                  plaintext.render(context),
                                  from_email,
                                  [to_email])
-    msg.attach_alternative(html.render(context), "text/html")
+    msg.attach_alternative(html.render(context), 'text/html')
     msg.send()
-
+    logger.info('sending password reset to user: %s, email: %s', username, to_email)
