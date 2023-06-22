@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load ldapattr %}
 {% block title %}{% translate "Profile" %}{% endblock %}
 {% block content %}
 <article class="message is-info">
@@ -18,9 +19,9 @@
             <li><strong>Username: </strong>{{ user.username }}</li>
         {% for attr in ro_attrs|dictsort:"display" %}
             <li>
-                <strong>{{ attr.display }}{% if attr.tooltip %}<sup class="has-tooltip-multiline" data-tooltip="{{ attr.tooltip }}">?</sup>{% endif %}: </strong>
+                <strong>{{ attr.display }}{{ attr|tooltip }}: </strong>
                 {{ attr.value }}
-                {% if attr.action is not None %}<a href="{{ attr.action }}">{% if not attr.value and attr.action_label2 %}{{ attr.action_label2 }}{% else %}{{ attr.action_label }}{% endif %}</a>{% endif %}
+                {{ attr|action }}
             </li>
         {% endfor %}
         </ul>
