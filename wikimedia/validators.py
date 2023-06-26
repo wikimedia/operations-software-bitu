@@ -31,6 +31,12 @@ def wikimedia_global_account(request: HttpRequest, user:'User') -> bool:
     Returns:
         bool: Account has been linked True/False
     """
+
+    # Check that the user has not previously dismissed
+    # the request to link accounts.
+    if request.COOKIES.get('wmf_link', False):
+        return True
+
     # The user should be authenticated at this point
     # but let's check. If anonymous, lie and say that
     # the user isn't required to link the accounts.

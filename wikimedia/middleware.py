@@ -58,7 +58,7 @@ def global_account_valid_middleware(get_response: Callable):
                  <strong>Note:</strong> if you have multiple Wiki accounts, e.g. a Wikimedia Foundation staff account in addition to your personal account, please ensure
                  that you are signed in with the correct account on <a href="https://meta.wikimedia.org">meta.wikimedia.org</a> before clicking approve.
                 """
-                % {'action': reverse('social:begin', args=['mediawiki'])})), extra_tags='wmf_link')
+                % {'action': reverse('social:begin', args=['mediawiki'])})), extra_tags='wmf_link dismissable')
         elif valid:
             # We may already have pushed the banner message to the message framework.
             # Check if the messages is in the load messages and remove it if found.
