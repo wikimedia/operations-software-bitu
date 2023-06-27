@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/bulma-tooltip.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/bitu.css' %}">
+    <script type="text/javascript" src="{% static 'bitu.js' %}"></script>
   </head>
   <body>
     {% include "navbar.html" %}
@@ -18,6 +19,12 @@
       {% if messages %}
       {% for message in messages %}
       <article class="message {{ message.tags|django_message_tags_to_bulma_classes }}">
+        {% if 'dismissable' in message.tags %}
+        <div class="message-header">
+          <p></p>
+          <button class="delete" aria-label="delete"></button>
+        </div>
+        {% endif %}
         <div class="message-body">
           {{ message }}
         </div>
