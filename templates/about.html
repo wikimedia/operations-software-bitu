@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% block title %}{% endblock %}
+
+{% block content %}
+<div class="columns">
+    <div class="column"></div>
+    <div class="column is-half">
+        <div class="columns is-centered">
+            <figure class="image is-128x128">
+                <img src="{% static 'wikimedia/wmf_logo_vertical.png' %}" />
+            </figure>
+        </div>
+        <div class="column">
+
+            <h5 class="title is-5">About</h5>
+            <p>
+                The Bitu Identity Manager is a developed by the <a href="https://www.wikimediafoundation.org">Wikimedia Foundation</a> and released under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0 license</a>
+            </p>
+            <br />
+            <p>
+                <a href="{% static 'key.jpg' %}">Video game key logo</a> was created by "Ails Devnewton" and released under the <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.en">CC BY-SA 3.0 licens</a>.
+                See <a href="https://commons.wikimedia.org/wiki/File:Key_video_game.jpg">https://commons.wikimedia.org/wiki/File:Key_video_game.jpg</a> for more information
+            </p>
+        </div>
+    </div>
+<div class="column"></div>
+</div>
+{% endblock %}
