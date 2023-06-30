@@ -1,0 +1,17 @@
+{% load i18n %}
+{% load i18n %}
+<html>
+<body>
+    {% blocktrans %}
+    <h1>Update email address</h1>
+    <p>
+        Someone, hopefully you, has requested that your email address for your Wikimedia Developer Account ({{ username }})
+        be updated from {{ old_email }} to {{ new_email }}.
+        To confirm this change please click here: <a href="{{ url }}">{{ url }}</a>.
+    </p>
+    <p>
+        <strong style="color: red;">This link will expire within {{ timeout }} minutes.</strong>
+    </p>
+    {% endblocktrans %}
+</body>
+</html>

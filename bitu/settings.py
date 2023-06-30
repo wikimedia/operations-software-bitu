@@ -103,7 +103,7 @@ BITU_SUB_SYSTEMS = {
                      },
                      {'name': 'fumble','display': 'invalid attribute'}
                      ],
-            'view': [{'name': 'mail', 'display': 'e-mail',},
+            'view': [{'name': 'mail', 'display': 'e-mail', 'action': reverse_lazy('accounts:email'), 'action_label': 'Update',},
                       {'name': 'wikimediaGlobalAccountName', 'display': 'Wikimedia Global Account (SUL)', 'tooltip': 'This is the account you use when signing into one of our wikis, including Wikipedia.',
                        'action': reverse_lazy('social:begin', args=['mediawiki']), 'action_label': 'refresh ↺', 'action_label2': 'Link account'},
                       {'name': 'uidNumber', 'display': 'POSIX User ID'},

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "My overview" %}{% endblock %}
+
+{% block content %}
+<div>
+    <div>
+    <p>
+    {% blocktranslate %}
+    To update your email address you will need to prove ownership of the new address.
+    We will send a confirmation email with a link to your new email address, click this
+    link to verify that you have access to that email account.
+    {% endblocktranslate %}
+    </p></div>
+    <br />
+    <div>
+    <form method="post">{% csrf_token %}
+        {% for field in form %}
+        <div class="field">
+            <label class="label">{{ field.label_tag }} </label>
+            <div class="control">
+              {{ field }}
+            </div>
+            {% for error in field.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+            <input type="submit" class="button is-primary" value="{% translate "Send verification email" %}">
+    </form>
+    </div>
+</div>
+{% endblock %}
