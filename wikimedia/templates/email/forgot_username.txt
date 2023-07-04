@@ -1,0 +1,5 @@
+{% load i18n %}
+{% blocktrans %}
+Your Wikimedia Developer username is {{ username }}.
+Go to {{ site }} to sign in.
+{% endblocktrans %}

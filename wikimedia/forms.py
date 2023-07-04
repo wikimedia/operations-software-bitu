@@ -3,6 +3,10 @@ from django.contrib.auth import password_validation
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
+
+class ForgotUsernameForm(forms.Form):
+    email = forms.EmailField()
+
 class RequestPasswordResetForm(forms.Form):
     username = forms.CharField(max_length=256)
 

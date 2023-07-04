@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "Forgot your username?" %}{% endblock %}
+
+{% block content %}
+<div>
+    {% if not user.is_anonymous %}
+    {% translate "You're already signed in and your username is" %}{{ user.get_username }}
+    {% elif form %}
+    {% blocktranslate %}
+    If you have forgotten your username, please enter the email address you used for signup and we will send you an email with your username.
+    {% endblocktranslate %}
+    <form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="is-primary button">{% translate "Send" %}</button>
+    </form>
+    {% else %}
+    Invalid token
+    {% endif %}
+</div>
+{% endblock %}

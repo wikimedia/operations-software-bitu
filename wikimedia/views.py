@@ -1,21 +1,34 @@
 import bituldap
 
+from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_decode
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import FormView
 
 from . import jobs
-from .forms import RequestPasswordResetForm, PasswordResetForm
+from .forms import ForgotUsernameForm, RequestPasswordResetForm, PasswordResetForm
 from .tokens import default_token_generator
 
 INTERNAL_RESET_SESSION_TOKEN = "_password_reset_token"
 
+class ForgotUsernameView(FormView):
+    template_name = 'forgot_username.html'
+    form_class = ForgotUsernameForm
+    success_url = '/'
+
+    def form_valid(self, form) -> HttpResponse:
+        valid = super().form_valid(form)
+        if valid:
+            messages.success(self.request, _('If the provided email address is in our system we will send you an email with your username'))
+            jobs.send_forgot_username_email.delay(form.cleaned_data['email'])
+        return valid
 
 class RequestPasswordResetView(FormView):
     template_name = 'request_password_reset.html'

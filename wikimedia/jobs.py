@@ -64,3 +64,25 @@ def send_email_password_reset(username):
     msg.attach_alternative(html.render(context), 'text/html')
     msg.send()
     logger.info('sending password reset to user: %s, email: %s', username, to_email)
+
+
+@job('notification')
+def send_forgot_username_email(email):
+    config = bituldap.read_configuration()
+    entry = bituldap.get_single_object(config.users, 'mail', email)
+    if not entry:
+        logger.info(f'request for username, by unknown email: {email}')
+        return
+
+    plaintext = get_template('email/forgot_username.txt')
+    html = get_template('email/forgot_username.html')
+    context = { 'site': settings.BITU_DOMAIN, 'username': entry.uid }
+    subject =  _('Reminder for your Wikimedia Developer username')
+    from_email = settings.BITU_NOTIFICATION['default_sender']
+    msg = EmailMultiAlternatives(subject,
+                                 plaintext.render(context),
+                                 from_email,
+                                 [email])
+    msg.attach_alternative(html.render(context), 'text/html')
+    msg.send()
+    logger.info('sending username reminder to user: %s, email: %s', entry.uid, email)

@@ -1,0 +1,12 @@
+{% load i18n %}
+<html>
+<body>
+    {% blocktrans %}
+    <h1>Reminder for your Wikimedia Developer username</h1>
+    <p>
+        Your Wikimedia Developer username is {{ username }}
+        Go to <a href="{{ site }}">{{ site }}</a> to sign in.
+    </p>
+    {% endblocktrans %}
+</body>
+</html>
