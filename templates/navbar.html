@@ -2,7 +2,7 @@
 {% load static %}
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="/">
+      <a class="navbar-item" href="/about">
         <img src="{% static 'key.jpg' %}" height="28">
       </a>
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -18,6 +18,9 @@
         </a>
         <a class="navbar-item" href="https://wikitech.wikimedia.org/wiki/Wikimedia_IDM">
           📚 Documentation
+        </a>
+        <a class="navbar-item" href="{% url "about" %}">
+          🤔 About
         </a>
         {% if not user.is_anonymous %}
         <div class="navbar-item has-dropdown is-hoverable">
@@ -35,9 +38,6 @@
               </a>
               <!-- End beta features -->
               {% endif %}
-              <a class="navbar-item" href="https://wikitech.wikimedia.org/wiki/Wikimedia_IDM">
-                🤔 About
-              </a>
               <a class="navbar-item" href="https://phabricator.wikimedia.org/maniphest/task/edit/form/43/?tags=bitu%2Cinfrastructure-foundations&title=IDM%20Bug-Report" target="_blank">
                 🐛 Report an issue
               </a>
