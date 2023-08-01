@@ -1,0 +1,7 @@
+{% load i18n %}
+{% blocktrans %}
+Someone, hopefully you, has requested that your email address for your Wikimedia Developer Account ({{ username }})
+be updated from {{ old_email }} to {{ new_email }}.
+To confirm this change please go here: {{ url }}.
+This link will expire within {{ timeout }} minutes.
+{% endblocktrans %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "Verify new email address" %}{% endblock %}
+
+{% block content %}
+<div>
+    {% if form %}
+    <p>{% translate "Please verify that you wish to update your email address" %}</p>
+    <p>
+        <ul>
+            <li><strong>{% translate "Current email" %}:</strong> {{ user.email }}</li>
+            <li><strong>{% translate "New email" %}:</strong> {{ email }}</li>
+        </ul>
+    </p>
+
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="button is-primary">{% translate "Update" %}</button>
+    </form>
+    {% else %}
+    <p class="is-danger">
+        {% translate "The link you used has expired or is invalid" %}
+    </p>
+    {% endif %}
+</div>
+{% endblock %}
