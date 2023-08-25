@@ -17,8 +17,9 @@ if TYPE_CHECKING:
 def user_data_fill(signup: 'Signup', entry: 'Entry'):
     entry.sn = signup.username.capitalize()
     entry.cn = signup.username.capitalize()
+    entry.uid = signup.uid.lower()
     entry.uidNumber = bituldap.next_uid_number()
-    entry.homeDirectory = f'/home/{signup.username.lower()}'
+    entry.homeDirectory = f'/home/{signup.uid.lower()}'
     entry.gidNumber = settings.LDAP_USER_CONF['default_gid']
     entry.userPassword = signup.signuppassword_set.get(module='ldapbackend').value
     entry.mail = signup.email

@@ -183,7 +183,8 @@ SOCIAL_AUTH_MEDIAWIKI_CALLBACK = 'http://localhost:8000/complete/mediawiki'
 LOGOUT_REDIRECT_URL = 'wikimedia:login'
 LOGIN_URL = LOGOUT_REDIRECT_URL
 CAPTCHA_CHALLENGE_FUNCT = 'signups.forms.captcha_input_generator'
-CAPTCHA_IMAGE_SIZE =(130,40)
+CAPTCHA_IMAGE_SIZE = (130,40)
+CAPTCHA_FONT_SIZE = 28
 PASSWORD_RESET_TIMEOUT = 60 * 3 # Three minutes, rather low, but for testing.
 BITU_DOMAIN = 'http://localhost:8000'
 
@@ -196,9 +197,10 @@ BITU_NOTIFICATION = {
 }
 
 SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator',
-                              'ldapbackend.validators.unix_username_validator',
-                              'signups.validators.UsernameValidator'
-                              ]
+                              'signups.validators.UsernameValidator']
+
+SIGNUP_UID_VALIDATORS = ['ldapbackend.validators.unix_username_regex_validator',
+                         'ldapbackend.validators.unix_username_length_validator']
 
 SIGNUP_EMAIL_VALIDATORS = ['ldapbackend.validators.LDAPEmailValidator',]
 

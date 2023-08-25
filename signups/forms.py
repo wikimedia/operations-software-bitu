@@ -3,6 +3,8 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth import password_validation
 from django.forms import ModelForm
+from django.utils.functional import lazy
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
@@ -10,6 +12,8 @@ from captcha.fields import CaptchaField
 
 from .models import Signup
 
+
+mark_safe_lazy = lazy(mark_safe, str)
 
 # Generate challanges with a limited alphabet, but
 # avoid characthers that look similar to confuse
@@ -21,7 +25,7 @@ def captcha_input_generator():
     return (challenge, challenge)
 
 class SignupForm(ModelForm):
-    captcha = CaptchaField()
+    captcha = CaptchaField(help_text=mark_safe_lazy(_('Learn more about <a href="https://en.wikipedia.org/wiki/CAPTCHA">CAPTCHAs</a>')))
     error_messages = {
         "password_mismatch": _("The two password fields didn’t match."),
     }
@@ -32,7 +36,7 @@ class SignupForm(ModelForm):
             attrs={"autocomplete": "new-password"}
         ),
         strip=False,
-        help_text=password_validation.password_validators_help_text_html(),
+        help_text="It is recommended to use a unique password that you are not using on any other website.",
     )
     password2 = forms.CharField(
         label=_("Password (again)"),
@@ -40,6 +44,15 @@ class SignupForm(ModelForm):
         strip=False,
         help_text=_("Enter the same password as before, for verification."),
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs['placeholder'] = _('Enter your username')
+        self.fields['uid'].widget.attrs['placeholder'] = _('Enter your shell account name')
+        self.fields['email'].widget.attrs['placeholder'] = _('Enter your email address')
+        self.fields['captcha'].widget.attrs['placeholder'] = _('Enter captcha text')
+        self.fields['password1'].widget.attrs['placeholder'] = _('Enter a password')
+        self.fields['password2'].widget.attrs['placeholder'] = _('Enter password again')
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -63,7 +76,7 @@ class SignupForm(ModelForm):
 
     class Meta:
         model = Signup
-        fields = ['username', 'email']
+        fields = ['username', 'uid', 'email']
 
 
 class SignupActivationForm(ModelForm):

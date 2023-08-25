@@ -21,11 +21,10 @@ logger = logging.getLogger('bitu')
 
 @job
 def create_user(signup: 'Signup'):
-    uid = signup.username.lower()
-    if bituldap.get_user(uid):
+    if bituldap.get_user(signup.uid):
         return
 
-    user = bituldap.new_user(uid)
+    user = bituldap.new_user(signup.uid)
     user = helpers.default_ldap_user_data_fill(signup, user)
     success = user.entry_commit_changes()
 
@@ -35,15 +34,15 @@ def create_user(signup: 'Signup'):
         except Exception as exception:
             utils.send_service_message(
                 'Error creating user',
-                f"""Failed to add user: {uid} to groups.
+                f"""Failed to add user: {signup.uid} to groups.
                 exception was: {exception}
                 """
             )
     else:
         # Error notification
-        logger.error('Failed to create user %s' % uid)
+        logger.error('Failed to create user %s' % signup.uid)
         utils.send_service_message('Error creating user',
-                                   f"""Failed to create user: {uid}""")
+                                   f"""Failed to create user: {signup.uid}""")
 
     return success
 

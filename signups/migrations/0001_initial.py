@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=False)),
                 ('created_date', models.DateTimeField(auto_now_add=True)),
                 ('last_modified', models.DateTimeField(auto_now=True)),
-                ('username', models.CharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer.', max_length=150, unique=True, validators=[ldapbackend.validators.LDAPUsernameValidator, ldapbackend.validators.UnixUsernameValidator()], verbose_name='username')),
+                ('username', models.CharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer.', max_length=150, unique=True, validators=[ldapbackend.validators.LDAPUsernameValidator, ldapbackend.validators.UnixUsernameRegExValidator()], verbose_name='username')),
                 ('email', models.EmailField(max_length=254, unique=True, verbose_name='email address')),
             ],
         ),

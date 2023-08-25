@@ -65,8 +65,8 @@ def LDAPEmailValidator(email: str):
             raise ValidationError(_("Invalid email, already in use."))
 
 
-class UnixUsernameValidator(validators.RegexValidator):
-    regex = r"^[a-z0-9]+\Z"
+class UnixUsernameRegExValidator(validators.RegexValidator):
+    regex = r"^[a-z0-9 \. \- \_]+\Z"
     message = _(
         "Enter a valid username. This value may contain only ASCII letters and "
         "numbers."
@@ -74,7 +74,13 @@ class UnixUsernameValidator(validators.RegexValidator):
     flags = re.ASCII
 
 
-unix_username_validator = UnixUsernameValidator()
+unix_username_regex_validator = UnixUsernameRegExValidator()
+
+
+def unix_username_length_validator(username: str):
+    if len(username) > 32:
+        raise ValidationError(
+            _("SSH access (shell) usernames can be no more than 32 characters in length"))
 
 
 class LDAPPasswordValidator:

@@ -4,6 +4,8 @@ import uuid
 from django.conf import settings
 from django.db import models
 from django.utils.module_loading import import_string
+from django.utils.functional import lazy
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.forms import ValidationError
 
@@ -11,7 +13,11 @@ from .tokens import SignupActivationTokenGenerator, default_token_generator
 
 from . import jobs
 
+
+mark_safe_lazy = lazy(mark_safe, str)
+
 username_validators = [import_string(module) for module in getattr(settings, 'SIGNUP_USERNAME_VALIDATORS', [])]
+uid_validators = [import_string(module) for module in getattr(settings, 'SIGNUP_UID_VALIDATORS', [])]
 email_validators = [import_string(module) for module in getattr(settings, 'SIGNUP_EMAIL_VALIDATORS', [])]
 
 class Signup(models.Model):
@@ -25,13 +31,28 @@ class Signup(models.Model):
         max_length=150,
         unique=True,
         help_text=_(
-            "Required. 150 characters or fewer."
+            "Developer account usernames are commonly either the same as a user's Wikimedia account username or their real name. 150 characters or fewer."
         ),
         validators=username_validators,
         error_messages={
             "unique": _("A user with that username already exists."),
         },
     )
+
+    # uid - Systems username, for systems with stricter rules.
+    uid = models.CharField(
+        _("SSH access (shell) username"),
+        max_length=32,
+        unique=True,
+        validators=uid_validators,
+        blank=False,
+        null=True,
+        help_text=mark_safe_lazy(_('Your shell username will be used when logging into <a href="https://wikitech.wikimedia.org/wiki/Portal:Toolforge">Toolforge</a>, other <a href="https://wikitech.wikimedia.org/wiki/Portal:Cloud_VPS">Wikimedia VPS</a> or Wikimedia production hosts using <a href="https://en.wikipedia.org/wiki/Secure_Shell">SSH</a>. This name is typically shorter than a wiki username. It must be no more than 32 characters, start with a-z, and can only contain lowercase a-z, 0-9 and - characters.')),
+        error_messages={
+            "unique": _("A user with that username already exists."),
+        },
+    )
+
     email = models.EmailField(_("email address"),
                               validators=email_validators,
                               unique=True)
