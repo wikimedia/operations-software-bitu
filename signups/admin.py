@@ -18,8 +18,8 @@ class BlockListUsernameAdmin(admin.ModelAdmin):
 
 
 class SignupAdmin(admin.ModelAdmin):
-    list_display = ['username', 'email', 'created_date', 'last_modified']
-    fields = ['username', 'email']
+    list_display = ['username', 'uid', 'email', 'created_date', 'last_modified']
+    fields = ['username', 'uid', 'email']
     actions = [send_activation_link]
 
 

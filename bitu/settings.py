@@ -206,3 +206,5 @@ SIGNUP_EMAIL_VALIDATORS = ['ldapbackend.validators.LDAPEmailValidator',]
 
 SIGNUP_INFO_TEMPLATE = 'signup_info_wmf.html'
 LOGIN_REDIRECT_URL = 'ldapbackend:properties'
+
+ADMINS_LIMITED = []

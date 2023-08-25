@@ -1,3 +1,4 @@
 -r requirements.txt
 django-auth-ldap==4.3.0
+fakeredis==2.18.0
 tox==4.6.0

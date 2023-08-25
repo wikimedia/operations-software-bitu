@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 """
 Minimum required settings for running tests.
 """
@@ -30,7 +31,6 @@ SECRET_KEY = 'TESTING'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 TESTING = True
-
 ALLOWED_HOSTS = []
 
 # Database
@@ -56,6 +56,10 @@ RQ_QUEUES = {
         'DB': 0,
         'DEFAULT_TIMEOUT': 360,
     },
+}
+
+LDAP_USER_CONF = {
+    'default_gid': 2000
 }
 
 BITU_SUB_SYSTEMS = {

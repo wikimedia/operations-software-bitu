@@ -16,7 +16,6 @@ def load_templates() -> dict[str:Any]:
                                           'email_signup_activation')
     plaintext = f'email/{name}.txt'
     html = f'email/{name}.html'
-    print(plaintext)
     return {'plaintext': get_template(plaintext),
             'html': get_template(html) }
 

@@ -5,6 +5,7 @@ from typing import Dict, NewType, TYPE_CHECKING
 import bituldap
 
 from django.conf import settings
+from django.utils.timezone import localtime
 from django_rq import job
 
 from bitu import utils
@@ -44,6 +45,15 @@ def create_user(signup: 'Signup'):
         utils.send_service_message('Error creating user',
                                    f"""Failed to create user: {signup.uid}""")
 
+    utils.send_service_message(f'LDAP user created: {signup.uid}',
+                               f"""New user created successfully by Bitu.
+                               Username: {signup.username} as been created.
+                               UID: {signup.uid}
+                               Email: {signup.email}
+                               Creation time: {localtime()}
+                               Signup time: {signup.created_date}
+                               """,
+                               limited=True)
     return success
 
 
