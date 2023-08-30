@@ -66,10 +66,10 @@ def LDAPEmailValidator(email: str):
 
 
 class UnixUsernameRegExValidator(validators.RegexValidator):
-    regex = r"^[a-z0-9 \. \- \_]+\Z"
+    regex = r"^[a-z0-9\-]+\Z"
     message = _(
-        "Enter a valid username. This value may contain only ASCII letters and "
-        "numbers."
+        "Enter a valid username. This value may contain only ASCII letters, "
+        "numbers and -"
     )
     flags = re.ASCII
 

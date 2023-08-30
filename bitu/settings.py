@@ -200,7 +200,8 @@ SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator',
                               'signups.validators.UsernameValidator']
 
 SIGNUP_UID_VALIDATORS = ['ldapbackend.validators.unix_username_regex_validator',
-                         'ldapbackend.validators.unix_username_length_validator']
+                         'ldapbackend.validators.unix_username_length_validator',
+                         'signups.validators.UsernameValidator']
 
 SIGNUP_EMAIL_VALIDATORS = ['ldapbackend.validators.LDAPEmailValidator',]
 

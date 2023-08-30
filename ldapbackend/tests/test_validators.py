@@ -8,14 +8,15 @@ from ldapbackend.validators import unix_username_regex_validator, login_shell_va
 class ValidatorTestCase(TestCase):
     def test_unix_username(self):
         self.assertRaises(ValidationError, unix_username_regex_validator, 'invalid#username')
+        self.assertRaises(ValidationError, unix_username_regex_validator, 'invalid.username')
 
         # Do not delete, this is an actual test. If the validator fails an exception is
         # raised, counting as a failed test within the unit test framework. This check
         # must not raise an exception.
-        unix_username_regex_validator('valid_test.username')
+        unix_username_regex_validator('valid-test-username')
 
-        self.assertRaises(ValidationError, unix_username_length_validator, 'abcdefghijklmnopvwxy1234567890._-')
-        unix_username_length_validator('abcdefghijklmnopvwxy1234567890._')
+        self.assertRaises(ValidationError, unix_username_length_validator, 'abcdefghijklmnopvwxy12345678901234567890')
+        unix_username_length_validator('abcdefghijklmnopvwxy1234567890-')
 
 
     def test_shell_validator(self):

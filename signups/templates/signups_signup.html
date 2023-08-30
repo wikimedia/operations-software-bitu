@@ -75,7 +75,7 @@
     document.getElementById('id_username').onchange = function() {
       var username = document.getElementById("id_username").value.toLowerCase();
       // Remove non-ascii characters
-      document.getElementById("id_uid").value = username.replace(/[^A-Za-z 0-9 \.-_]*/g, '').slice(0,32);
+      document.getElementById("id_uid").value = username.replace(/[^A-Za-z 0-9 -]*/g, '').slice(0,32);
     };
     </script>
 
