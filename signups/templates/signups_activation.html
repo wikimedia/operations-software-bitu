@@ -7,7 +7,7 @@
 {% if validlink %}
 <form method="post">{% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" class="button is-primary" value="Confirm account creation">
+    <input type="submit" class="button is-info" value="Confirm account creation">
 </form>
 {% else %}
 <div class="notification is-warning">

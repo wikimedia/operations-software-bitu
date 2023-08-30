@@ -2,7 +2,7 @@
 {% load static %}
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="/about">
+      <a class="navbar-item" href="/">
         <img src="{% static 'key.jpg' %}" height="28">
       </a>
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -13,14 +13,11 @@
     </div>
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
-        <a class="navbar-item" href="/">
-          🏡 Home
-        </a>
-        <a class="navbar-item" href="https://wikitech.wikimedia.org/wiki/Wikimedia_IDM">
-          📚 Documentation
+        <a class="navbar-item" href="https://wikitech.wikimedia.org/wiki/IDM" target="_blank">
+          Documentation
         </a>
         <a class="navbar-item" href="{% url "about" %}">
-          🤔 About
+          About
         </a>
         {% if not user.is_anonymous %}
         <div class="navbar-item has-dropdown is-hoverable">
@@ -38,9 +35,6 @@
               </a>
               <!-- End beta features -->
               {% endif %}
-              <a class="navbar-item" href="https://phabricator.wikimedia.org/maniphest/task/edit/form/43/?tags=bitu%2Cinfrastructure-foundations&title=IDM%20Bug-Report" target="_blank">
-                🐛 Report an issue
-              </a>
           </div>
         </div>
         {% endif %}
@@ -49,7 +43,7 @@
         {% if not user.is_anonymous %}
         <div class="navbar-item">
           <div class="buttons">
-            <a class="button is-primary" href="{% url 'accounts:logout' %}">
+            <a class="button is-info" href="{% url 'accounts:logout' %}">
               <strong>{% translate "Sign out" %}</strong>
             </a>
           </div>
