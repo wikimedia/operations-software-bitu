@@ -22,7 +22,7 @@ def user_data_fill(signup: 'Signup', entry: 'Entry'):
     entry.homeDirectory = f'/home/{signup.uid.lower()}'
     entry.gidNumber = settings.LDAP_USER_CONF['default_gid']
     entry.userPassword = signup.signuppassword_set.get(module='ldapbackend').value
-    entry.mail = signup.email
+    entry.mail = signup.email.lower()
     entry.loginShell = '/bin/bash'
     return entry
 
