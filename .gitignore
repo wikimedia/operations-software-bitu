@@ -6,3 +6,5 @@ bitu/local_settings.py
 .vscode
 Bitu.egg-info
 docs/build
+build
+debian/*.debhelper

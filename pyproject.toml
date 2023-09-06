@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src/"]  # list of folders that contain the packages (["."] by default)
+include = ["*"]  # package names should match these glob patterns (["*"] by default)
+exclude = ["**/__pycache__/*"]  # exclude packages matching these glob patterns (empty by default)
+
+# Allow the build system to pick up template and assets.
+[tool.setuptools.package-data]
+bitu = ["**/*.html", "**/*.txt", "**/*.js", "**/*.css", "**/*.ico", "**/*.png", "**/*.jpg"]
+
+[project]
+name = "bitu"
+dynamic = ["dependencies"]
+version = "0.0.1"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}

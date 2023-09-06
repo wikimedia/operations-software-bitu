@@ -1,0 +1,47 @@
+Source: bitu
+Section: net
+Priority: optional
+Maintainer: Simon Lyngshede <slyngshede@wikimedia.org>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13),
+ dh-sequence-python3,
+ python3-setuptools,
+ python3-all,
+ python3-sphinx-argparse,
+ python3-sphinx-autodoc-typehints,
+Standards-Version: 4.6.2
+Homepage: https://gerrit.wikimedia.org/g/operations/software/bitu
+Vcs-Browser: https://gerrit.wikimedia.org/g/operations/software/bitu
+Vcs-Git: https://gerrit.wikimedia.org/g/operations/software/bitu
+
+Package: python3-bitu
+Architecture: all
+Depends:
+ ${python3:Depends},
+ ${misc:Depends},
+ python3-bitu-ldap,
+ libjs-jquery,
+Suggests:
+ python-bitu-doc,
+Description: Bitu is a Django based identity manager
+ Bitu is a Django based identity manager with support
+ for pluggable backend systems and integrations.
+ By default Bitu ships with support for an LDAP backend.
+ .
+ This package installs the library for Python 3.
+
+Package: python-bitu-doc
+Section: doc
+Architecture: all
+Depends:
+ ${sphinxdoc:Depends},
+ ${misc:Depends},
+ python3-sphinx-argparse,
+ python3-sphinx-autodoc-typehints,
+Description: Bitu is a Django based identify manager (common documentation)
+ Bitu is a Django based identity manager with a support
+ for plugable backend systems and integrations.
+ By default Bitu ships with support for an LDAP backend.
+ .
+ This is the common documentation package.

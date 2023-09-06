@@ -1,0 +1,11 @@
+[Unit]
+Description=Bitu Identity Manager - RQ Worker
+After=network.target
+
+[Service]
+Environment="PYTHONPATH=/etc/bitu" "DJANGO_SETTINGS_MODULE=settings"
+User=www-data
+ExecStart=bitu rqworker default notification
+
+[Install]
+WantedBy=multi-user.target

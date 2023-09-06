@@ -1,0 +1,6 @@
+#!/bin/bash
+export PYTHONPATH=/etc/bitu/:$PYTHONPATH
+export DJANGO_SETTINGS_MODULE=settings
+
+cd /usr/lib/python3/dist-packages/bitu/
+python3 manage.py $@

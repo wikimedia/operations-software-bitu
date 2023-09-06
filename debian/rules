@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+
+# See debhelper(7) (uncomment to enable).
+# Output every command that modifies files on the build system.
+export DH_VERBOSE = 1
+
+export PYBUILD_NAME=bitu
+
+%:
+	dh $@ --with-systemd --buildsystem=pybuild --with=sphinxdoc --requires=requirements.txt
+
+override_dh_installsystemd:
+	dh_installsystemd --name=uwsgi-bitu
+	dh_installsystemd --name=rq-bitu --no-start --no-enable
+
+# If you need to rebuild the Sphinx documentation:
+# Add sphinxdoc to the dh --with line.
+#
+# And uncomment the following lines.
+execute_after_dh_auto_build-indep:
+	PYTHONPATH=./docs/source/ python3 -m sphinx -N -bhtml \
+	docs/source build/html # HTML generator
+	PYTHONPATH=./docs/source/ python3 -m sphinx -N -bman \
+	docs/source build/man # Manpage generator

@@ -110,6 +110,10 @@ LOCALE_PATHS = [
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/usr/share/bitu'
+STATICFILES_DIRS = [
+  '/usr/lib/python3/dist-packages/bitu/static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

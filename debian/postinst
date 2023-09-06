@@ -1,0 +1,6 @@
+#!/bin/sh
+# postinst script for bitu
+
+set -e
+
+/usr/bin/bitu collectstatic --no-input
