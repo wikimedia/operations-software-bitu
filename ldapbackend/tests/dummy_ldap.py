@@ -34,3 +34,29 @@ def connect():
 def setup():
     _, connection = connect()
     b.singleton.shared_connection = connection
+
+
+def create_test_users():
+    user = b.new_user('test1')
+    user.cn = 'Test1'
+    user.sn = 'test1'
+    user.uidNumber = 1000
+    user.gidNumber = 1000
+    user.homeDirectory = '/home/test1'
+    user.entry_commit_changes()
+
+    user = b.new_user('test2')
+    user.cn = 'Test2'
+    user.sn = 'test2'
+    user.uidNumber = 2000
+    user.gidNumber = 2000
+    user.homeDirectory = '/home/test2'
+    user.entry_commit_changes()
+
+    user = b.new_user('test3')
+    user.cn = 'Test3'
+    user.sn = 'test3'
+    user.uidNumber = 3000
+    user.gidNumber = 3000
+    user.homeDirectory = '/home/test3'
+    user.entry_commit_changes()

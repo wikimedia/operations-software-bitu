@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 def LDAPUsernameValidator(username: str):
     """LDAP username validator.
 
-    Check that the provided username is not in use by the LDAP backend.
+    Check that the provided username is not used as a UID by the LDAP backend.
 
     Args:
         username (str): Desired username
@@ -29,6 +29,30 @@ def LDAPUsernameValidator(username: str):
         user = b.get_user(username)
     except Exception as e:
         logger.warning(f"LDAP username validation error; username: {username}; {e}")
+        raise ValidationError(
+            _("Cannot validate username availability, please try again at later time"))
+
+    if user:
+        raise ValidationError(
+            _("Invalid username, may already in use."))
+
+
+def LDAPCommonNameValidator(username: str):
+    """LDAP username validator.
+
+    Check that the provided username is not used as a CommonName by the LDAP backend.
+
+    Args:
+        username (str): Desired username
+
+    Raises:
+        ValidationError: Raise if the username cannot be used.
+    """
+
+    try:
+        user = b.get_single_object(b.read_configuration().users, 'cn', username)
+    except Exception as e:
+        logger.warning(f"LDAP CommonName validation error; username: {username}; {e}")
         raise ValidationError(
             _("Cannot validate username availability, please try again at later time"))
 
