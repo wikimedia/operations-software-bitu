@@ -180,8 +180,11 @@ SOCIAL_AUTH_MEDIAWIKI_PIPELINE = (
 
 SOCIAL_AUTH_MEDIAWIKI_URL = 'https://meta.wikimedia.org/w/index.php'
 SOCIAL_AUTH_MEDIAWIKI_CALLBACK = 'http://localhost:8000/complete/mediawiki'
-LOGOUT_REDIRECT_URL = 'wikimedia:login'
-LOGIN_URL = LOGOUT_REDIRECT_URL
+
+# Uncomment the lines below to test wikimedia IDP integration, leave commented
+# in developer environment to use LDAP backend directly.
+#LOGOUT_REDIRECT_URL = 'wikimedia:login'
+#LOGIN_URL = LOGOUT_REDIRECT_URL
 CAPTCHA_CHALLENGE_FUNCT = 'signups.forms.captcha_input_generator'
 CAPTCHA_IMAGE_SIZE = (130,40)
 CAPTCHA_FONT_SIZE = 28

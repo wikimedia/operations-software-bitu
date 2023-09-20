@@ -9,26 +9,14 @@ from .helpers import ssh_key_string_to_object
 from .models import SSHKey
 
 
-class IsSuperUserViewMixin(LoginRequiredMixin, UserPassesTestMixin):
-    """Mixin for limiting access to views to superusers."""
-
-    def test_func(self):
-        """Overwrites test function for UserPassesTestMixin.
-
-        Returns:
-            bool: User passes test (true/false)
-        """
-        return self.request.user.is_superuser
-
-
-class SSHKeyListView(IsSuperUserViewMixin, ListView):
+class SSHKeyListView(ListView):
     model = SSHKey
 
     def get_queryset(self):
         return SSHKey.objects.filter(user=self.request.user).order_by('-active')
 
 
-class SSHKeyCreateView(IsSuperUserViewMixin, CreateView):
+class SSHKeyCreateView(CreateView):
     model = SSHKey
     fields = ('ssh_public_key',)
     success_url = reverse_lazy('keymanagement:list')
@@ -41,12 +29,12 @@ class SSHKeyCreateView(IsSuperUserViewMixin, CreateView):
         return super().form_valid(form)
 
 
-class SSHKeyDeleteView(IsSuperUserViewMixin, DeleteView):
+class SSHKeyDeleteView(DeleteView):
     model = SSHKey
     success_url = reverse_lazy('keymanagement:list')
 
 
-class SSHKeyActivateView(IsSuperUserViewMixin, UpdateView):
+class SSHKeyActivateView(UpdateView):
     model = SSHKey
     success_url = reverse_lazy('keymanagement:list')
     fields = ('system',)
@@ -57,7 +45,7 @@ class SSHKeyActivateView(IsSuperUserViewMixin, UpdateView):
         return kw
 
 
-class SSHKeyDeactiveView(IsSuperUserViewMixin, UpdateView):
+class SSHKeyDeactiveView(UpdateView):
     model = SSHKey
     success_url = reverse_lazy('keymanagement:list')
     template_name = 'keymanagement/sshkey_deactivate.html'
