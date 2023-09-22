@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'codex.html' %}
 {% load i18n %}
 {% block title %}{% translate "Please signin" %}{% endblock %}
 
@@ -10,8 +10,11 @@
 
         <!-- form variable -->
          {{ form.as_p }}
-
-        <button type="submit" class="button is-primary">{% translate "Log In" %}</button>
+        <div>
+        <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-quiet">
+            {% translate "Log In" %}
+        </button>
+        </div>
         </form>
 
         <div>
@@ -22,5 +25,8 @@
         </div>
     </div>
 <div class="column"></div>
+<button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-quiet">
+    {% translate "Log In" %}
+</button>
 </div>
 {% endblock %}

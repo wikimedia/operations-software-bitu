@@ -1,15 +1,16 @@
-{% extends 'base.html' %}
+{% extends 'hero_codex.html' %}
 {% load i18n %}
 
-{% block title %}{% translate "Signup successful" %}{% endblock %}
-
 {% block content %}
-
-<h2>{% translate "Thank you for activating your account." %}</h2>
-{% blocktrans %}
-Your account is now confirmed and is currently being created.
-Please allow for up to a few minutes for the creation to complete, after which you will
-be able to <a href="/">sign in</a> using your selected password.
-{% endblocktrans %}
-
+<div class="content">
+    <div class="hero">
+    <h2>{% translate "Thank you for activating your account." %}</h2>
+    <p class="center">
+        {% blocktrans %}
+        Thank you for activating your account. Your account is now confirmed and is currently being created. Please allow for up to a few minutes for the creation to complete, after which you will be able to log in using your selected password.
+        {% endblocktrans %}
+    </p>
+</div>
+{% endblock %}
+{% block footer %}
 {% endblock %}

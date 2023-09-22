@@ -1,10 +1,166 @@
 {# SPDX-License-Identifier: GPL-3.0-or-later #}
-{% extends 'base.html' %}
+{% extends 'two_column_codex.html' %}
 {% load i18n %}
+{% load static %}
 
-{% block title %}{% translate "Create a Wikimedia developer account" %}{% endblock %}
+{% block heading %}
+{% translate "Create account" %}
+{% endblock %}
 
-{% block content %}
+{% block left %}
+<form method="post">{% csrf_token %}
+  {% for field in form %}
+  <div class="form-field">
+  <div class="cdx-field">
+    <div class="cdx-label">
+      <label class="cdx-label__label" for="cdx-{{ field.name }}">
+        <span class="cdx-label__label__text">{{ field.label }}</span>
+      </label>
+    </div>
+    <div class="cdx-field__control cdx-field__control--has-help-text">
+      <div class="cdx-text-input">
+        {{ field }}
+      </div>
+    </div>
+    {% if field.errors %}
+    <div class="cdx-field__validation-message">
+      <div class="cdx-message cdx-message--inline cdx-message--error" role="alert">
+        <span class="cdx-message__icon"></span>
+        {% for error in field.errors %}
+        <div class="cdx-message__content">{{ error }}</div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    <div class="form-help">
+    <small id="cdx-{{ field.name }}" class="cdx-field__help-text">
+      {{ field.help_text }}
+    </small>
+    {% if field.field.widget.attrs.max_length %}
+    <small id="id_{{ field.name }}_max" data-default-max="{{ field.field.widget.attrs.max_length }}" class="field-max">{{ field.field.widget.attrs.max_length }} </small>
+    {% endif %}
+    </div>
+  </div>
+</div>
+  {% endfor %}
+
+<small>
+  {% blocktrans %}
+  Creating an account means complying with the <a href="https://wikitech.wikimedia.org/wiki/Wikitech:Cloud_Services_Terms_of_use">Terms of Use</a> for <a href="https://wikitech.wikimedia.org/wiki/Help:Cloud_Services_introduction">Wikimedia Cloud Services</a> and the <a href="https://www.mediawiki.org/wiki/Code_of_Conduct">Code of Conduct for Wikimedia</a> technical spaces.
+  {% endblocktrans %}
+</small>
+
+<div class="center-block">
+  <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
+    {% translate "Create account" %}
+  </button>
+  <p>
+    {% blocktrans %}
+    Already have an account? Go to <a href="/">Log In</a>
+    {% endblocktrans %}
+  </p>
+</div>
+</form>
+{% endblock %}
+
+{% block right %}
+<div class="warning">
+  <div class="cdx-message cdx-message--block cdx-message--warning" aria-live="polite">
+    <span class="cdx-message__icon"></span>
+    <div class="cdx-message__content">
+      {% translate "Creating or using a Wikimedia developer account will publicly expose information to other users of Wikimedia Cloud Services: The email address you associate with your Wikimedia developer account will be publicly visible. When connecting to virtual machines in Wikimedia Cloud VPS using SSH, your IP address will be recorded and may be visible to other users of Cloud VPS or Toolforge." %}
+    </div>
+  </div>
+</div>
+<div class="warning">
+  <div class="cdx-message cdx-message--block cdx-message--warning" aria-live="polite">
+    <span class="cdx-message__icon"></span>
+    <div class="cdx-message__content">
+      {% blocktrans %}
+      By creating an account you are agreeing not to collect, store, or share private data or personally identifiable information, such as user names, passwords, or IP addresses from the individuals using my project, except when complying with the conditions listed in the <a href="https://wikitech.wikimedia.org/wiki/Wikitech:Cloud_Services_Terms_of_use">Terms of Use.</a>
+      {% endblocktrans %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+Questions? Contact&nbsp;<a href="mailto:sre-foundations@wikimedia.org">sre-foundations@wikimedia.org</a>
+{% endblock %}
+
+{% block script %}
+<script>
+  const captchas = document.querySelectorAll('img.captcha')
+
+  function headers(options) {
+    options = options || {}
+    options.headers = options.headers || {}
+    options.headers['X-Requested-With'] = 'XMLHttpRequest'
+    return options
+  }
+
+  for (const captcha of captchas) {
+    const anchor = document.createElement('button')
+    anchor.href = '#'
+    anchor.classList.add('captcha-refresh')
+    anchor.classList.add('cdx-button')
+    anchor.textContent = '↺'
+    anchor.addEventListener('click', ({ target }) => {
+      const url = `${window.location.origin}/captcha/refresh/`
+      let formEl = target.parentElement
+
+      while (formEl && formEl.tagName.toLowerCase() !== 'form') {
+        formEl = formEl.parentElement
+      }
+
+      fetch(url, headers())
+        .then(res => res.json())
+        .then(json => {
+          formEl.querySelector('input[name="captcha_0"]').value = json.key
+          captcha.setAttribute('src', json.image_url)
+          //document.getElementById('audioSource').setAttribute('src', json.audio_url)
+          document.getElementById('audio').load()
+        })
+        .catch(console.error)
+
+      return false
+    })
+
+    captcha.after(anchor)
+  }
+
+  function update_username_counter(name){
+      var value = document.getElementById(name).value;
+      var max = document.getElementById(name).attributes['max_length'].value;
+      remainder = max - value.length;
+      document.getElementById(name + '_max').innerText = remainder;
+      if (remainder < 0 ){
+        document.getElementById(name + '_max').classList.add('negative')
+      }
+  }
+
+  document.getElementById('id_username').addEventListener("keyup", (event) => { update_username_counter("id_username"); });
+  document.getElementById('id_uid').addEventListener("keyup", (event) => { update_username_counter("id_uid"); });
+
+  document.getElementById('id_username').onchange = function() {
+    var username = document.getElementById("id_username").value.toLowerCase();
+    // Remove non-ascii characters
+    document.getElementById("id_uid").value = username.replace(' ', '').replace(/[^A-Za-z 0-9 -]*/g, '').slice(0,32);
+    update_username_counter("id_username");
+    update_username_counter("id_uid");
+  };
+
+  document.getElementById('id_uid').onchange = function() {
+    update_username_counter("id_uid");
+  };
+
+  update_username_counter("id_username");
+  update_username_counter("id_uid");
+
+  </script>
+{% endblock %}
+
+{% block old %}
 <div class="columns is-mobile">
     <div class="column"></div>
     <div class="column">
@@ -29,54 +185,6 @@
     <div class="column"></div>
 </div>
 
-<script>
-    const captchas = document.querySelectorAll('img.captcha')
 
-    function headers(options) {
-      options = options || {}
-      options.headers = options.headers || {}
-      options.headers['X-Requested-With'] = 'XMLHttpRequest'
-      return options
-    }
-
-    for (const captcha of captchas) {
-      const anchor = document.createElement('a')
-      anchor.href = '#'
-      anchor.classList.add('captcha-refresh')
-      anchor.classList.add('button')
-      anchor.classList.add('is-info')
-      anchor.classList.add('is-light')
-      anchor.classList.add('is-pulled-right')
-      anchor.textContent = '↺'
-      anchor.addEventListener('click', ({ target }) => {
-        const url = `${window.location.origin}/captcha/refresh/`
-        let formEl = target.parentElement
-
-        while (formEl && formEl.tagName.toLowerCase() !== 'form') {
-          formEl = formEl.parentElement
-        }
-
-        fetch(url, headers())
-          .then(res => res.json())
-          .then(json => {
-            formEl.querySelector('input[name="captcha_0"]').value = json.key
-            captcha.setAttribute('src', json.image_url)
-            document.getElementById('audioSource').setAttribute('src', json.audio_url)
-            document.getElementById('audio').load()
-          })
-          .catch(console.error)
-
-        return false
-      })
-
-      captcha.after(anchor)
-    }
-
-    document.getElementById('id_username').onchange = function() {
-      var username = document.getElementById("id_username").value.toLowerCase();
-      // Remove non-ascii characters
-      document.getElementById("id_uid").value = username.replace(/[^A-Za-z 0-9 -]*/g, '').slice(0,32);
-    };
-    </script>
 
  {% endblock %}

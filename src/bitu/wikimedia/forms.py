@@ -10,6 +10,18 @@ class ForgotUsernameForm(forms.Form):
 class RequestPasswordResetForm(forms.Form):
     username = forms.CharField(max_length=256)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Add codex stylesheet class.
+        for field_name in self.fields:
+            field = self.fields[field_name]
+            field.widget.attrs['class'] = 'cdx-text-input__input'
+            field.widget.attrs['aria-describedby'] = f'cdx-{field_name}'
+
+        self.fields['username'].widget.attrs['placeholder'] = _('Username')
+        self.fields['username'].widget.attrs['max_length'] = 150
+
 
 class PasswordResetForm(forms.Form):
     error_messages = {
@@ -30,6 +42,15 @@ class PasswordResetForm(forms.Form):
         strip=False,
         help_text=_("Enter the same password as before, for verification."),
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Add codex stylesheet class.
+        for field_name in self.fields:
+            field = self.fields[field_name]
+            field.widget.attrs['class'] = 'cdx-text-input__input'
+            field.widget.attrs['aria-describedby'] = f'cdx-{field_name}'
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")

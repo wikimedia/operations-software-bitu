@@ -1,36 +1,22 @@
-{% extends 'base.html' %}
+{% extends 'hero_codex.html' %}
 {% load i18n %}
 {% load static %}
-{% block title %}{% endblock %}
 
 {% block content %}
-<div class="columns">
-    <div class="column"></div>
-    <div class="column is-half">
-        <div class="columns is-centered">
-            <figure class="image is-128x128">
-                <img src="{% static 'wikimedia/wmf_logo_vertical.png' %}" />
-            </figure>
-        </div>
-        <div class="columns is-centered">
-            <h5 class="title is-5">{% translate "Authenticate using your Wikimedia Developer Single Sign-On" %}</h2>
-        </div>
-        <br />
-        <div class="columns is-centered">
-            <a class="button is-info" href="{% url 'social:begin' 'cas' %}">{% translate "Log In" %}</a>
-        </div>
-        <br>
-        <div class="columns is-centered">
-            <div>
-                {% url 'signups:signup' as signup_url %}
-                {% url 'wikimedia:password_reset' as password_reset_url %}
-                {% blocktrans %}
-                Don't have an account? Go to our <a href="{{ signup_url }}">signup page</a>.<br/>
-                Forgot your password? Go to our <a href="{{ password_reset_url }}">password reset page</a>.
-                {% endblocktrans %}
-            </div>
-        </div>
+<div class="content">
+    <div class="hero">
+    <h2>Log in to your account</h2>
+    <form action="{% url 'social:begin' 'cas' %}">
+    <button id="auth" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary" data-short-text="{% translate "Continue with Wikimedia" %}">
+        <span>{% translate "Continue with Wikimedia Developer Sign-On" %}</span>
+    </button>
+    </form>
+    <p>
+        {% url 'signups:signup' as signup_url %}
+        {% blocktrans %}
+        Don't have an account? Go to <a href="{{ signup_url }}">Create Account</a>
+        {% endblocktrans %}
+    </p>
     </div>
-<div class="column"></div>
 </div>
 {% endblock %}

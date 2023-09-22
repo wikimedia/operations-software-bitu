@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from captcha.fields import CaptchaField
+from captcha.fields import CaptchaTextInput
 
 from .models import Signup
 
@@ -24,8 +25,10 @@ def captcha_input_generator():
     challenge = ''.join(random.sample(alphabet, lenght))
     return (challenge, challenge)
 
+
 class SignupForm(ModelForm):
-    captcha = CaptchaField(help_text=mark_safe_lazy(_('Learn more about <a href="https://en.wikipedia.org/wiki/CAPTCHA">CAPTCHAs</a>')))
+    captcha = CaptchaField(
+        help_text=mark_safe_lazy(_('Learn more about <a href="https://en.wikipedia.org/wiki/CAPTCHA">CAPTCHAs</a>')))
     error_messages = {
         "password_mismatch": _("The two password fields didn’t match."),
     }
@@ -47,12 +50,23 @@ class SignupForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs['placeholder'] = _('Enter your username')
-        self.fields['uid'].widget.attrs['placeholder'] = _('Enter your shell account name')
-        self.fields['email'].widget.attrs['placeholder'] = _('Enter your email address')
+
+        # Add codex stylesheet class.
+        for field_name in self.fields:
+            field = self.fields[field_name]
+            field.widget.attrs['class'] = 'cdx-text-input__input'
+            field.widget.attrs['aria-describedby'] = f'cdx-{field_name}'
+
+        self.fields['username'].widget.attrs['placeholder'] = _('Username')
+        self.fields['username'].widget.attrs['autocomplete'] = 'off'
+        self.fields['username'].widget.attrs['max_length'] = 150
+        self.fields['uid'].widget.attrs['placeholder'] = _('Shell username')
+        self.fields['uid'].widget.attrs['autocomplete'] = 'off'
+        self.fields['uid'].widget.attrs['max_length'] = 32
+        self.fields['email'].widget.attrs['placeholder'] = _('Email address')
         self.fields['captcha'].widget.attrs['placeholder'] = _('Enter captcha text')
-        self.fields['password1'].widget.attrs['placeholder'] = _('Enter a password')
-        self.fields['password2'].widget.attrs['placeholder'] = _('Enter password again')
+        self.fields['password1'].widget.attrs['placeholder'] = _('Unique password')
+        self.fields['password2'].widget.attrs['placeholder'] = _('Confirm password')
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")

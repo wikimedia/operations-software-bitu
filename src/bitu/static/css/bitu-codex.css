@@ -1,0 +1,133 @@
+html body {
+    margin: auto;
+    width: 80%;
+    background-color: white;
+    font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Inter", "Helvetica", "Arial", sans-serif;
+}
+
+header.hero {
+    display: flex;
+    justify-content: center;
+    margin-top: 5vh;
+}
+
+header.hero img {
+    min-width: 15vw;
+    max-width: 15vw;
+}
+
+div.hero {
+    min-height: calc(100vh * 0.5);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.content {
+    width: 100%;
+    margin-top: 2vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.content header {
+    width: 100%;
+    padding-left: 0.5vw;
+    justify-content: left;
+}
+
+.columns {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.column {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.left {
+    padding-left: 0.5vw;
+}
+
+.right {
+    margin-left: 2vw;
+}
+
+footer {
+    display: flex;
+    justify-content: right;
+    margin-bottom: 2vh;
+}
+
+.form-field {
+    margin-bottom: 1vh;
+}
+
+.form-help {
+    display: flex;
+    flex-direction: row;
+}
+
+.center-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 2vh 0 2vh 0;
+}
+
+.right div.warning {
+    margin-bottom: 2vh;
+}
+
+div.warning a {
+    color: black;
+}
+
+.field-max {
+    float: right;
+}
+
+.captcha-refresh {
+    float: right;
+}
+
+p.center {
+    text-align: center;
+}
+
+.single-field {
+    width: 50vw;
+}
+
+@media (max-width: 800px) {
+    header.hero img {
+        min-width: 30vw;
+        max-width: 40vw;
+    }
+
+    .columns {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+
+    .single-field {
+        width: 75vw;
+    }
+
+    #auth span {
+        display: none;
+    }
+
+    #auth:after {
+        content: attr(data-short-text);
+    }
+}
