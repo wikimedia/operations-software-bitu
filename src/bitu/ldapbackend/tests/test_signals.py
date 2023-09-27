@@ -49,7 +49,6 @@ class LDAPSignalTest(TestCase):
     def test_worker_function(self):
         signup:Signup = Signup(username='Test2', uid='test2', email='test2@example.com')
         signup.set_password('password')
-        signup.save()
         signup.is_active = True
         signup.save()
 

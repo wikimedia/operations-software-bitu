@@ -24,15 +24,14 @@ def load_ssh_key(sender, instance: 'User', created: bool, **kwargs):
 
 
 def update_ssh_key(sender, instance: 'SSHKey', created: bool, **kwargs):
+    if not instance.system:
+        return
     try:
         import_string(f'{instance.system}.helpers.update_ssh_key')(instance)
         import_string(f'{instance.system}.helpers.remove_ssh_key')(instance)
-
-        # Deactivate any other keys assigned to the same system.
-        # Backends will be updated in the background.
-        instance.user.ssh_keys.filter(system=instance.system).exclude(pk=instance.pk).update(active=False)
+        import_string(f'{instance.system}.helpers.load_ssh_key')(instance.user)
     except:
-        pass
+        logger.warning(f'Error calling ssh key handler, instance: {instance.system}, user: {instance.user}, key_id: {instance.pk}')
 
     if created and instance.system == '':
         for system in settings.BITU_SUB_SYSTEMS:

@@ -209,3 +209,7 @@ SIGNUP_INFO_TEMPLATE = 'signup_info_wmf.html'
 LOGIN_REDIRECT_URL = 'ldapbackend:properties'
 
 ADMINS_LIMITED = []
+
+if DEBUG:
+    for queueConfig in RQ_QUEUES.values():
+        queueConfig['ASYNC'] = False

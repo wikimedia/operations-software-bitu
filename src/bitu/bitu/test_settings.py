@@ -49,6 +49,7 @@ RQ_QUEUES = {
         'PORT': 6379,
         'DB': 0,
         'DEFAULT_TIMEOUT': 360,
+        'ASYNC': False
     },
     'notification': {
         'HOST': 'localhost',
@@ -64,7 +65,8 @@ LDAP_USER_CONF = {
 
 BITU_SUB_SYSTEMS = {
     'ldapbackend': {
-        'manage_ssh_keys': False,
+        'manage_ssh_keys': True,
+        'ssh_keys_display_name': 'LDAP',
         'default_gid': 2000,
         'password_hash': 'ldapbackend.helpers.hash_password',
         'password_hash_method': HASHED_SALTED_SHA,

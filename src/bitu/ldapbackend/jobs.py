@@ -9,7 +9,7 @@ from django.utils.timezone import localtime
 from django_rq import job
 
 from bitu import utils
-from . import helpers
+from ldapbackend import helpers
 
 
 if TYPE_CHECKING:
@@ -23,7 +23,7 @@ logger = logging.getLogger('bitu')
 @job
 def create_user(signup: 'Signup'):
     if bituldap.get_user(signup.uid):
-        return
+        return True
 
     user = bituldap.new_user(signup.uid)
     user = helpers.default_ldap_user_data_fill(signup, user)
@@ -84,7 +84,7 @@ def update_ldap_attributes(user:'User', attributes:Dict):
 @job
 def check_ssh_key(key: 'SSHKey'):
     ldap_user = bituldap.get_user(key.user.get_username())
-    if ldap_user.sshPublicKey == key.key_as_byte_string:
+    if key.key_as_byte_string in ldap_user.sshPublicKey:
         key.active = True
         key.system = __name__.split('.')[0]
         key.save()
@@ -95,37 +95,36 @@ def update_ssh_key(key: 'SSHKey'):
     if not key.active:
         return
 
-    from keymanagement.models import SSHKey
-    keys = SSHKey.objects.filter(system=key.system, user=key.user, active=True).exclude(pk=key.pk)
-    for invalid in keys:
-        invalid.active = False
-        invalid.save()
-
     ldap_user = bituldap.get_user(key.user.get_username())
-    ldap_user.sshPublicKey = key.ssh_public_key
-    ldap_user.entry_commit_changes()
+    if key.key_as_byte_string not in ldap_user.sshPublicKey:
+        ldap_user.sshPublicKey.add(key.key_as_byte_string)
+        ldap_user.entry_commit_changes()
 
 @job
 def remove_ssh_key(key: 'SSHKey'):
+    if key.active:
+        return
+
     ldap_user = bituldap.get_user(key.user.get_username())
-    if ldap_user.sshPublicKey == key.key_as_byte_string and not key.active:
-        ldap_user.sshPublicKey = ''
-        ldap_user.entry_commit_changes()
+    ldap_user.sshPublicKey.delete(key.key_as_byte_string)
+    ldap_user.entry_commit_changes()
+
 
 @job
 def load_ssh_key(user: 'User'):
     from keymanagement.models import SSHKey
     system = __name__.split('.')[0]
+
     ldap_user = bituldap.get_user(user.get_username())
 
     if ldap_user.sshPublicKey.value is None:
         return
 
-    ssh_key, created = SSHKey.objects.get_or_create(user=user,
-                                           ssh_public_key=ldap_user.sshPublicKey.value.decode('utf-8'))
-    if created:
-        ssh_key.comment=f'Imported from {system}'
-
-    ssh_key.active = True
-    ssh_key.save()
+    for key in ldap_user.sshPublicKey.values:
+        ssh_key, created = SSHKey.objects.get_or_create(user=user, ssh_public_key=key.decode('utf-8'))
+        if created:
+            ssh_key.system = system
+            ssh_key.comment=f'Imported from {system}'
+            ssh_key.active = True
+            ssh_key.save()
 

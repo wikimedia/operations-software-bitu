@@ -9,13 +9,13 @@ def connect():
 
     users = b.types.LdapQueryOptions(
         'ou=people,dc=example,dc=org',
-        ['inetOrgPerson'], ['posixAccount'])
+        ['inetOrgPerson'], ['posixAccount', 'ldapPublicKey'])
 
     groups = b.types.LdapQueryOptions(
         'ou=groups,dc=example,dc=org',
         ['groupOfNames'], ['posixGroup'])
 
-    server = Server.from_definition('mock_server', slapd_2_4_dsa_info, slapd_2_4_schema)
+    server = Server.from_definition('mock_server', 'ldapbackend/tests/data/server_info.json', 'ldapbackend/tests/data/server_schema.json')
     b.singleton.shared_configuration = b.types.Configuration(
         servers=[server],
         username=username,

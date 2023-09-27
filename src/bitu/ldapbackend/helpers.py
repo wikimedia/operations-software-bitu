@@ -67,6 +67,6 @@ def remove_ssh_key(key: 'SSHKey'):
     jobs.remove_ssh_key.delay(key)
 
 
-def load_ssh_key(key: 'SSHKey'):
-    jobs.load_ssh_key.delay(key)
+def load_ssh_key(user):
+    jobs.load_ssh_key.delay(user)
 
