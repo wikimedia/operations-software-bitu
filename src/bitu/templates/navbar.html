@@ -16,28 +16,17 @@
         <a class="navbar-item" href="https://wikitech.wikimedia.org/wiki/IDM" target="_blank">
           Documentation
         </a>
+        {% if not user.is_anonymous %}
+        <a class="navbar-item" href="{% url "ldapbackend:properties" %}">
+          🌳 LDAP Properties
+        </a>
+        <a class="navbar-item" href="{% url "keymanagement:list" %}">
+          🔑 SSH Keys
+        </a>
+        {% endif %}
         <a class="navbar-item" href="{% url "about" %}">
           About
         </a>
-        {% if not user.is_anonymous %}
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link">
-            More
-          </a>
-            <div class="navbar-dropdown">
-              {% if user.is_superuser %}
-              <!-- Beta features, superusers only -->
-              <a class="navbar-item" href="{% url "ldapbackend:properties" %}">
-                🌳 LDAP Properties
-              </a>
-              <a class="navbar-item" href="{% url "keymanagement:list" %}">
-                🔑 SSH Keys
-              </a>
-              <!-- End beta features -->
-              {% endif %}
-          </div>
-        </div>
-        {% endif %}
       </div>
       <div class="navbar-end">
         {% if not user.is_anonymous %}
