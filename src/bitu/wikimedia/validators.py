@@ -1,36 +1,38 @@
 import logging
 
-from typing import Tuple, TYPE_CHECKING
 
 import bituldap
 
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.http import HttpRequest
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-
-if TYPE_CHECKING:
-    User = get_user_model()
 
 
 logger = logging.getLogger('bitu')
 
 
-def wikimedia_global_account(request: HttpRequest, user:'User') -> bool:
-    """Check if a Wikimedia Global Account (SUL) have already been queried.
+def wikimedia_global_account(request: HttpRequest) -> bool:
+    """Check if a Wikimedia Global Account (SUL) linking is desired.
 
     Note that a HttpRequest is required as a session cookie is being set.
     The cookie ensures that LDAP is not queries on all requests. This
-    happens because the function is intended to be used as part of a
-    middleware function.
+    is required as there might be a small delay between linking and LDAP
+    updated. Querying the session cookie also allows users to acknowledge
+    the banner, but not actually link the accounts.
+
+    This feature can be disabled completely by setting:
+    WIKIMEDIA_GLOBAL_ACCOUNT_LINKING = False in the configuration.
 
     Args:
         request: Django HttpRequest
-        user: Django User object
 
     Returns:
         bool: Account has been linked True/False
     """
+
+    # Account linking can be disabled completely in settings
+    if hasattr(settings, "WIKIMEDIA_GLOBAL_ACCOUNT_LINKING"):
+        return not settings.WIKIMEDIA_GLOBAL_ACCOUNT_LINKING
 
     # Check that the user has not previously dismissed
     # the request to link accounts.
@@ -40,7 +42,7 @@ def wikimedia_global_account(request: HttpRequest, user:'User') -> bool:
     # The user should be authenticated at this point
     # but let's check. If anonymous, lie and say that
     # the user isn't required to link the accounts.
-    if user.is_anonymous:
+    if request.user.is_anonymous:
         return True
 
     # Use session storage to avoid querying LDAP more
@@ -48,9 +50,9 @@ def wikimedia_global_account(request: HttpRequest, user:'User') -> bool:
     if request.session.get('wikimedia_global', False):
         return True
 
-    ldap_user = bituldap.get_user(user.get_username())
+    ldap_user = bituldap.get_user(request.user.get_username())
     if not ldap_user:
-        logger.warning(f'wikimedia global account validation failure, error getting ldap user: {user.get_username()}')
+        logger.warning(f'wikimedia global account validation failure, error getting ldap user: {request.user.get_username()}')
         return True
 
     if not getattr(ldap_user, 'wikimediaGlobalAccountId', False):
