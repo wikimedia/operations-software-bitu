@@ -1,9 +1,9 @@
 import logging
 import re
 
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.utils.translation import gettext_lazy as _
-from django.forms import ValidationError
-
 
 logger = logging.getLogger('bitu')
 
@@ -16,3 +16,19 @@ def UsernameValidator(username):
             logger.info('username blocked; blocklist id: %s, regex: %s' % (blocklist.id, blocklist.regex))
             raise ValidationError(
             _("Invalid username, blocked"))
+
+
+def IsURLValidator(username):
+    validator = URLValidator()
+    is_url = False
+    try:
+        validator(username)
+        is_url = True
+    except ValidationError:
+        pass
+
+    if is_url:
+        logger.info(f'username blocked, URIs are not allowed, username: {username}')
+        raise ValidationError(
+            _("Invalid username, invalid format")
+        )
