@@ -1,14 +1,28 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% block title %}{% translate "SSH Key Management" %}{% endblock %}
+{% block title %}{% translate "SSH key activation" %}{% endblock %}
 
 {% block content %}
 <div class="columns">
     <div class="column"></div>
     <div class="column is-half">
+        <p class="content"></p>
+        {% if systems|length == 1 %}
+
+            {% blocktranslate with system_name=systems.0.1 %}
+            Activate the following SSH key for use with <em>{{ system_name }}</em>
+            {% endblocktranslate %}
+        {% else %}
+        {% translate "Select the system or services you wish access using the following SSH key" %}
+        {% endif %}
+        <pre>{{ object.ssh_public_key }}</pre>
+        </p>
+        <br>
         <form method="POST">{% csrf_token %}
+        <div class="content">
          {{ form.as_p }}
-        <button type="submit" class="button is-primary">{% translate "Upload" %}</button>
+        </div>
+        <button type="submit" class="button is-primary">{% translate "Activate" %}</button>
         </form>
 
         <div>

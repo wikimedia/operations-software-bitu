@@ -22,7 +22,7 @@
             <td>{{ key }}</td>
             <td>{% if not key.active %}
                 <a href="{% url "keymanagement:activate" pk=key.id %}" class="is-info button">{% translate "Activate key" %}</a>{% else %}
-                <a href="{% url "keymanagement:deactivate" pk=key.id %}" class="is-warning button">{% translate "Deactivate key" %}</a>{% endif %}
+                <a href="{% url "keymanagement:deactivate" pk=key.id %}" class="is-warning button">{% translate "Suspend key" %}</a>{% endif %}
             </td>
             <td>
                 {% if not key.active %}

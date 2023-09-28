@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.forms import Textarea
 
+from .helpers import ssh_key_string_to_object
 from .validators import ssh_key_validator
 
 User = get_user_model()
@@ -12,7 +14,6 @@ class SSHKey(models.Model):
         (k, v.get('ssh_keys_display_name', k))
         for k, v in settings.BITU_SUB_SYSTEMS.items() if v.get('manage_ssh_keys', False)
     ]
-    systems.append(('',''))
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name='ssh_keys')
     system = models.CharField(max_length=256, choices=systems, default='')
     ssh_public_key = models.TextField(unique=True, validators=(ssh_key_validator.validate,))
@@ -24,6 +25,12 @@ class SSHKey(models.Model):
     @property
     def key_as_byte_string(self):
         return bytes(self.ssh_public_key, 'utf-8')
+
+    def get_key_type(self):
+        return ssh_key_string_to_object(self.ssh_public_key).get_name()
+
+    def get_key_length(self):
+        return ssh_key_string_to_object(self.ssh_public_key).get_bits()
 
     def get_display(self):
         if len(self.ssh_public_key) <= 100:

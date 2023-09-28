@@ -1,18 +1,29 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% block title %}{% translate "SSH Key Management" %}{% endblock %}
+{% block title %}{% translate "SSH Key Suspension" %}{% endblock %}
 
 {% block content %}
 <div class="columns">
     <div class="column"></div>
     <div class="column is-half">
         {% blocktranslate with key=object.ssh_public_key system=object.get_system_display %}
-        <strong>This will remove the key:<br/></strong> {{ key }}<br/>
-        <strong>The key is currently associated with:</strong> {{ system }}
+
+        <p class="content">This will suspend the use of your key with: <em>{{ system }}</em>.</p>
+
+        <div class="content">
+            <pre>{{ key }}</pre>
+        </div>
+
+        <p class="content">Once suspended this key can no longer be used for logging into {{ system }}.</p>
         {% endblocktranslate %}
+
+        <p class="content">This action is non-destructive and you can at any time reactivate this key.</p>
+
+
         <form method="post">{% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="button is-danger">{% translate "Deactivate" %}</button>
+            <button type="submit" class="button is-danger">{% translate "Suspend" %}</button>
+            <a class="button" href="{% url "keymanagement:list" %}">{% translate "Cancel" %}</a>
         </form>
         <div>
         </div>

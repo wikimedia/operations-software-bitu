@@ -1,22 +1,31 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% block title %}{% translate "SSH Key Management" %}{% endblock %}
+{% block title %}{% translate "SSH key deletion" %}{% endblock %}
 
 {% block content %}
 <div class="columns">
     <div class="column"></div>
     <div class="column is-half">
-        {% if object.active %}
-        {% blocktranslate with key=object.ssh_public_key system=object.get_system_display %}
-        <strong>Unable to remove key:<br/></strong> {{ key }}<br/>
-        <strong>The key is currently applied to:</strong> {{ system }}
-        {% endblocktranslate %}
-        {% else %}
+        <article class="message is-danger">
+            <div class="message-header">
+                {% translate "Danger" %}
+            </div>
+            <div class="message-body">
+                {% translate "This is a destructive action. Deleted keys cannot be recovered!" %}
+            </div>
+          </article>
+
+          <p class="content">{% translate "Delete the following SSH key" %}</p>
+
+          <div class="content">
+              <pre>{{ object.ssh_public_key }}</pre>
+          </div>
+
         <form method="post">{% csrf_token %}
-            <p>Are you sure you want to delete "{{ object }}"?</p>
-            <input type="submit" value="Confirm">
+            {{ form.as_p }}
+            <button type="submit" class="button is-danger">{% translate "Delete" %}</button>
+            <a class="button" href="{% url "keymanagement:list" %}">{% translate "Cancel" %}</a>
         </form>
-        {% endif %}
         <div>
         </div>
     </div>

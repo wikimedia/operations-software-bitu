@@ -1,10 +1,9 @@
-from django import forms
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
+from .forms import SSHKeyCreateForm, SSHKeyActivateFormSingle
 from .helpers import ssh_key_string_to_object
 from .models import SSHKey
 
@@ -30,7 +29,7 @@ class SSHKeyListView(IsSuperUserViewMixin, ListView):
 
 class SSHKeyCreateView(IsSuperUserViewMixin, CreateView):
     model = SSHKey
-    fields = ('ssh_public_key',)
+    form_class = SSHKeyCreateForm
     success_url = reverse_lazy('keymanagement:list')
 
     def form_valid(self, form):
@@ -48,8 +47,13 @@ class SSHKeyDeleteView(IsSuperUserViewMixin, DeleteView):
 
 class SSHKeyActivateView(IsSuperUserViewMixin, UpdateView):
     model = SSHKey
+    form_class = SSHKeyActivateFormSingle
     success_url = reverse_lazy('keymanagement:list')
-    fields = ('system',)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['systems'] = SSHKey.systems
+        return context
 
     def get_form_kwargs(self):
         kw = super().get_form_kwargs()

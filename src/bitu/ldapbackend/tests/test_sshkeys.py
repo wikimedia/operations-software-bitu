@@ -26,8 +26,8 @@ class LDAPSSHPublicKeyTest(TestCase):
         # Hook up fakeredis
         # django_rq.queues.get_redis_connection = get_fake_connection
 
-        self.test_key1 = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBDsXepRu0Iv4+Z5Hw5gcLJ/n0cwKU//qypZ9Tgcsd7rSb+JWAZx2LenxN3FS998VL9k5Rz6Td4+P/ZH1TUvCS5Q= Bitu Test Key"
-        self.test_key2 = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBDqa1IgcSw6SDtgFdfnVDnhMbaacXnBaGxibqO/ga6c3Z3/dgFQVgHkFyqaPAg3XSHEK3uNPOa1unyiQT9WPRVw= Bitu Test Key"
+        self.test_key1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE98KdrOV7JohIuejhoxwkhU4tXmyrscPCWDqeVAVXj3 Bitu test key 1"
+        self.test_key2 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOxNideuQLvciH5ssbXrJAGUW4oPNVOcBJ/RlLQ5CEOI Bitu test key 2"
 
     def test_ldap_key_storage(self):
         user = User(username='scott72')
@@ -93,6 +93,8 @@ class LDAPSSHPublicKeyTest(TestCase):
 
         for key in key_objects:
             self.assertIn(key.key_as_byte_string, ldap.sshPublicKey)
+            self.assertEqual(key.key_type, 'ssh-ed25519')
+            self.assertEqual(key.key_size, 256)
 
         ssh_key = SSHKey.objects.filter(user=user).first()
         self.assertTrue(ssh_key.active)

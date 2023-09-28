@@ -4,18 +4,21 @@ from django.conf import settings
 
 from .models import SSHKey
 
-class SSHKeyAssignmentForm(forms.ModelForm):
-    system = forms.MultipleChoiceField(
-        widget=forms.RadioSelect,
-        choices=()
-    )
 
-    def __init__(self, *args, **kwargs):
-        systems = [(k, k) for k, v in settings.BITU_SUB_SYSTEMS.items() if v.get('ssh_keys', {}).get('managed', False)]
-
-        super().__init__(*args, **kwargs)
-        self.fields['system'].choices = systems
-
+class SSHKeyCreateForm(forms.ModelForm):
     class Meta:
         model = SSHKey
-        fields = ['system']
+        fields = ('comment', 'ssh_public_key')
+        widgets = {
+            'comment': forms.TextInput(attrs={'size': 96}),
+            'ssh_public_key': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
+        }
+
+
+class SSHKeyActivateFormSingle(forms.ModelForm):
+    class Meta:
+        model = SSHKey
+        fields = ('system',)
+        widgets = {
+            'system': forms.Select() if len(SSHKey.systems) > 1 else forms.HiddenInput()
+        }

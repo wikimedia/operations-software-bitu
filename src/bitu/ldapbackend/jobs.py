@@ -122,9 +122,12 @@ def load_ssh_key(user: 'User'):
 
     for key in ldap_user.sshPublicKey.values:
         ssh_key, created = SSHKey.objects.get_or_create(user=user, ssh_public_key=key.decode('utf-8'))
+
         if created:
             ssh_key.system = system
             ssh_key.comment=f'Imported from {system}'
             ssh_key.active = True
+            ssh_key.key_type = ssh_key.get_key_type()
+            ssh_key.key_size = ssh_key.get_key_length()
             ssh_key.save()
 

@@ -87,7 +87,7 @@ LDAP_USER_CONF = {
 BITU_SUB_SYSTEMS = {
     'ldapbackend': {
         'manage_ssh_keys': True,
-        'ssh_keys_display_name': 'Wikimedia Cloud Service SSH keys',
+        'ssh_keys_display_name': 'Wikimedia Cloud Services',
         'default_gid': 2000,
         'password_hash': 'ldapbackend.helpers.hash_password',
         'password_hash_method': HASHED_SALTED_SHA,
@@ -113,7 +113,7 @@ BITU_SUB_SYSTEMS = {
         'default_groups': ['staff',]
     },
     'puppet': {
-        'manage_ssh_keys': True,
+        'manage_ssh_keys': False,
     }
 }
 
