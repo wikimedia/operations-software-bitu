@@ -110,7 +110,6 @@ BITU_SUB_SYSTEMS = {
                       {'name': 'gidNumber', 'display': 'POSIX Group ID'},
                     ]
         },
-        'default_groups': ['staff',]
     },
     'puppet': {
         'manage_ssh_keys': False,

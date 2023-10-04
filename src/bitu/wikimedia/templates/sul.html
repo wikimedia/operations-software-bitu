@@ -1,0 +1,21 @@
+{% load i18n %}
+{% if linking_wanted %}
+<div>     
+    <article class="message is-wmf_link is-dismissable is-success">
+      <div class="message-header">
+        <p></p>
+        <button class="delete" aria-label="delete"></button>
+      </div>
+      <div class="message-body">
+        {% blocktrans %}
+        If you have a "Wikimedia global account" to edit the wikis please connect it to your account <a href="/login/mediawiki/">here</a>
+        (you will be prompted to confirm)<br> If you don't have a Wikimedia global account yet you can create one
+        <a href="https://meta.wikimedia.org/w/index.php?title=Special:CreateAccount&amp;returnto=Main+Page">here</a><br><br>
+        <strong>Note:</strong> if you have multiple Wiki accounts, e.g. a Wikimedia Foundation staff account in addition to your personal account, please ensure
+        that you are signed in with the correct account on <a href="https://meta.wikimedia.org">meta.wikimedia.org</a> before clicking approve.
+        {% endblocktrans %}
+      </div>
+    </article>
+</div>
+<br>
+{% endif %}

@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% load i18n %}
 {% load ldapattr %}
+{% load sul %}
 {% block title %}{% translate "Profile" %}{% endblock %}
 {% block content %}
+{% wikimedia_global_account_linking %}
 <article class="message is-info">
     <div class="message-header">
       <p>Info</p>
