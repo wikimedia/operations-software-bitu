@@ -122,12 +122,4 @@ p.center {
     .single-field {
         width: 50vw;
     }
-
-    #auth span {
-        display: none;
-    }
-
-    #auth:after {
-        content: attr(data-long-text);
-    }
 }
