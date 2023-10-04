@@ -12,8 +12,8 @@ header.hero {
 }
 
 header.hero img {
-    min-width: 15vw;
-    max-width: 15vw;
+    min-width: 30vw;
+    max-width: 40vw;
 }
 
 div.hero {
@@ -41,7 +41,7 @@ div.hero {
 .columns {
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-around;
 }
 
@@ -103,24 +103,24 @@ p.center {
 }
 
 .single-field {
-    width: 50vw;
+    width: 75vw;
 }
 
-@media (max-width: 800px) {
+@media (min-width: 800px) {
     header.hero img {
-        min-width: 30vw;
-        max-width: 40vw;
+        min-width: 15vw;
+        max-width: 15vw;
     }
 
     .columns {
         width: 100%;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         justify-content: space-around;
     }
 
     .single-field {
-        width: 75vw;
+        width: 50vw;
     }
 
     #auth span {
@@ -128,6 +128,6 @@ p.center {
     }
 
     #auth:after {
-        content: attr(data-short-text);
+        content: attr(data-long-text);
     }
 }
