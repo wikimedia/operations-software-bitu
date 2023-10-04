@@ -30,7 +30,7 @@ class Signup(models.Model):
         _("username"),
         max_length=150,
         unique=True,
-        help_text=_(
+                help_text=_(
             "Developer account usernames are commonly either the same as a user's Wikimedia account username or their real name. 150 characters or fewer."
         ),
         validators=username_validators,

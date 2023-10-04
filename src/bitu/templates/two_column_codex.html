@@ -1,0 +1,16 @@
+{% extends 'base_codex.html' %}
+{% load static %}
+{% block main %}
+    <header class="hero">
+        <img src="{% static 'wikimedia/wmf_logo_vertical.png' %}">
+    </header>
+    <div class="content">
+        <header>
+            <h2>{% block heading %}{% endblock %}</h2>
+        </header>
+        <div class="columns">
+            <div class="column left">{% block left %}{% endblock %}</div>
+            <div class="column right">{% block right %}{% endblock %}</div>
+        </div>
+    </div>
+{% endblock %}
