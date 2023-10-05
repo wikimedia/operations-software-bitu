@@ -1,36 +1,46 @@
-{% extends 'base.html' %}
+{% extends 'single_column_codex_with_nav.html' %}
 {% load i18n %}
-{% block title %}{% translate "SSH Key Management" %}{% endblock %}
 
 {% block content %}
-<a href="{% url "keymanagement:create" %}" class="is-primary button">Upload new key</a>
-
-
-<table class="table">
+<table>
     <thead>
-        <th>{% translate "Active" %}</th>
-        <th>{% translate "System" %}</th>
-        <th>{% translate "SSH Key" %}</th>
-        <th></th>
-        <th></th>
+        <tr>
+            <th>active</th>
+            <th>system</th>
+            <th>SSH key</th>
+            <th>Actions</th>
+        </tr>
     </thead>
     <tbody>
         {% for key in object_list %}
         <tr>
-            <td>{% if key.active %}✅{% endif %}</td>
-            <td>{{ key.get_system_display }}</td>
-            <td>{{ key }}</td>
-            <td>{% if not key.active %}
-                <a href="{% url "keymanagement:activate" pk=key.id %}" class="is-info button">{% translate "Activate key" %}</a>{% else %}
-                <a href="{% url "keymanagement:deactivate" pk=key.id %}" class="is-warning button">{% translate "Suspend key" %}</a>{% endif %}
+            <td data-label="{% translate "Active" %}">
+                {% if key.active %}{% translate "Yes" %}{% else %}{% translate "No" %}{% endif %}
             </td>
-            <td>
-                {% if not key.active %}
-                <a href="{% url "keymanagement:delete" pk=key.id %}" class="is-danger button">{% translate "Delete" %}</a>
+            <td data-label="{% translate "System" %}">{% if key.get_system_display %}{{ key.get_system_display }}{% else %}-{% endif %}</td>
+            <td data-label="{% translate "Comment" %}">{{ key.comment }}</td>
+            <td class="sshkey">{{ key }}</td>
+            <td>{% if not key.active %}
+                <a class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive cdx-button--weight-primary"
+                href="{% url "keymanagement:activate" pk=key.id %}">
+                    {% translate "Activate" %}
+                </a>
+                <a class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-destructive"
+                href="{% url "keymanagement:delete" pk=key.id %}">
+                    {% translate "Delete" %}
+                </a>
+                {% else %}
+                <a class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive"
+                href="{% url "keymanagement:deactivate" pk=key.id %}">
+                    {% translate "Suspend" %}
+                </a>
                 {% endif %}
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+<div class="center-block">
+    <a href="{% url "keymanagement:create" %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled  cdx-button--weight-primary cdx-button--action-progressive">Upload new key</a>
+</div>
 {% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base_codex.html' %}
+{% load static %}
+
+{% block main %}
+        {% include "navbar_codex.html" %}
+        {% block message %}
+        {% include "messages_codex.html" %}
+        {% endblock %}
+        {% block content %}
+        {% endblock %}
+{% endblock %}

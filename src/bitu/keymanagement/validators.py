@@ -19,7 +19,8 @@ class SSHKeyValidator:
             return
 
         if pkey.key_type not in allowed_key_types.keys():
-            raise ValidationError(f'Key type {pkey.key_type} is insecure. Supported keys are: {allowed_key_types.keys()}')
+            key_names = ','.join(allowed_key_types.keys())
+            raise ValidationError(f'Key type {pkey.key_type} is insecure. Supported keys are: {key_names}')
 
         key_type = allowed_key_types[pkey.key_type]
         if pkey.key_type == 'ssh-rsa' and 'min_key_size' in key_type:

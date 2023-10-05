@@ -1,33 +1,76 @@
-{% extends 'base.html' %}
+{% extends 'single_column_codex_with_nav.html' %}
 {% load i18n %}
-{% block title %}{% translate "SSH Key Suspension" %}{% endblock %}
-
 {% block content %}
-<div class="columns">
-    <div class="column"></div>
-    <div class="column is-half">
+<div class="content">
+    <div class="message-box-narrow">
+        <header>
+            <h3>Suspend key key</h3>
+        </header>
         {% blocktranslate with key=object.ssh_public_key system=object.get_system_display %}
+        <p>This will suspend the use of your key with: <em>{{ system }}</em>.</p>
 
-        <p class="content">This will suspend the use of your key with: <em>{{ system }}</em>.</p>
-
-        <div class="content">
-            <pre>{{ key }}</pre>
-        </div>
-
-        <p class="content">Once suspended this key can no longer be used for logging into {{ system }}.</p>
+        <p>Once suspended this key can no longer be used for logging into <em>{{ system }}</em>.</p>
         {% endblocktranslate %}
 
-        <p class="content">This action is non-destructive and you can at any time reactivate this key.</p>
+        <p>This action is non-destructive and you can at any time reactivate this key.</p>
 
-
-        <form method="post">{% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="button is-danger">{% translate "Suspend" %}</button>
-            <a class="button" href="{% url "keymanagement:list" %}">{% translate "Cancel" %}</a>
-        </form>
-        <div>
+        <div class="sshkey">
+            {{ object.ssh_public_key }}
+        </div>
+        <div class="sshkey-data-card">
+        {% if object.comment %}
+        <span class="cdx-card__text__supporting-text">
+        {% blocktranslate  with comment=object.comment %}
+        Comment: {{ comment }}
+        {% endblocktranslate %}
+        </span>
+        {% endif %}
+        <span class="cdx-card__text__supporting-text">
+            {% blocktranslate with key_type=object.get_key_type key_size=object.get_key_length  %}
+            Key type: {{ key_type }} / {{ key_size }} bits
+            {% endblocktranslate %}
+        </span>
         </div>
     </div>
-<div class="column"></div>
+    <form method="post">{% csrf_token %}
+        {% for field in form %}
+            <div class="form-field">
+            <div class="cdx-field">
+              <div class="cdx-label">
+                <label class="cdx-label__label" for="cdx-{{ field.name }}">
+                  <span class="cdx-label__label__text">{{ field.label }}</span>
+                </label>
+              </div>
+              <div class="cdx-field__control cdx-field__control--has-help-text">
+                <div class="cdx-text-input">
+                  {{ field }}
+                </div>
+              </div>
+              {% if field.errors %}
+              <div class="cdx-field__validation-message">
+                <div class="cdx-message cdx-message--inline cdx-message--error" role="alert">
+                  <span class="cdx-message__icon"></span>
+                  {% for error in field.errors %}
+                  <div class="cdx-message__content">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
+              <div class="form-help">
+              <small id="cdx-{{ field.name }}" class="cdx-field__help-text field-help">
+                {{ field.help_text }}
+              </small>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          <div class="center-block">
+            <button type="submit" class="cdx-button cdx-button--action-destructive">
+                {% translate "Suspend" %}
+            </button>
+            <a href="{% url "keymanagement:list" %}"
+            class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Cancel" %}</a>
+          </div>
+    </form>
 </div>
 {% endblock %}

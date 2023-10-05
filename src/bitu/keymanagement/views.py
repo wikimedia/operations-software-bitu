@@ -49,6 +49,8 @@ class SSHKeyActivateView(IsSuperUserViewMixin, UpdateView):
     model = SSHKey
     form_class = SSHKeyActivateFormSingle
     success_url = reverse_lazy('keymanagement:list')
+    template_name = 'keymanagement/sshkey_update.html'
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
