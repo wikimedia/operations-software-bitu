@@ -1,9 +1,86 @@
-{% extends 'base.html' %}
+{% extends 'two_column_codex_with_nav.html' %}
 {% load i18n %}
 {% load ldapattr %}
 {% load sul %}
-{% block title %}{% translate "Profile" %}{% endblock %}
-{% block content %}
+
+{% block message %}
+{% include "messages_codex.html" %}
+{% wikimedia_global_account_linking %}
+{% endblock %}
+
+{% block left %}
+<form>
+    {% for field in  ro_attrs|dictsort:"display" %}
+    <div class="form-field">
+    <div class="cdx-field">
+      <div class="cdx-label">
+        <label class="cdx-label__label" for="cdx-{{ field.name }}">
+          <span class="cdx-label__label__text">{{ field.display }}</span>
+        </label>
+      </div>
+      <div class="cdx-field__control cdx-field__control--has-help-text">
+        <div class="cdx-text-input">
+            <input class="cdx-text-input__input" type="text" placeholder="{{ field.value }}" disabled />
+        </div>
+      </div>
+      <div class="form-help">
+      <small id="cdx-{{ field.name }}" class="cdx-field__help-text field-help">
+        {{ field.tooltip }}
+      </small>
+      <small class="field-action">{{ field|action }}</small>
+      </div>
+    </div>
+  </div>
+    {% endfor %}
+</form>
+{% endblock %}
+
+{% block right %}
+{% if form.editable %}
+        <form action="{% url 'ldapbackend:properties' %}" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-field">
+            <div class="cdx-field">
+              <div class="cdx-label">
+                <label class="cdx-label__label" for="cdx-{{ field.name }}">
+                  <span class="cdx-label__label__text">{{ field.label }}</span>
+                </label>
+              </div>
+              <div class="cdx-field__control cdx-field__control--has-help-text">
+                <div class="cdx-text-input">
+                  {{ field }}
+                </div>
+              </div>
+              {% if field.errors %}
+              <div class="cdx-field__validation-message">
+                <div class="cdx-message cdx-message--inline cdx-message--error" role="alert">
+                  <span class="cdx-message__icon"></span>
+                  {% for error in field.errors %}
+                  <div class="cdx-message__content">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
+              <div class="form-help">
+              <small id="cdx-{{ field.name }}" class="cdx-field__help-text field-help">
+                {{ field.help_text }}
+              </small>
+              </div>
+            </div>
+          </div>
+            {% endfor %}
+            <div class="center-block">
+                <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
+                  {% translate "Update user information" %}
+                </button>
+                </p>
+            </div>
+        </form>
+{% endif %}
+{% endblock %}
+
+{% block old %}
 {% wikimedia_global_account_linking %}
 <article class="message is-info">
     <div class="message-header">

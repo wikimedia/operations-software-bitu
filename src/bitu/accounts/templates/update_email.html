@@ -1,6 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'hero_codex.html' %}
 {% load i18n %}
-{% block title %}{% translate "My overview" %}{% endblock %}
 
 {% block content %}
 <div>
@@ -16,17 +15,43 @@
     <div>
     <form method="post">{% csrf_token %}
         {% for field in form %}
-        <div class="field">
-            <label class="label">{{ field.label_tag }} </label>
-            <div class="control">
-              {{ field }}
+            <div class="form-field">
+            <div class="cdx-field">
+              <div class="cdx-label">
+                <label class="cdx-label__label" for="cdx-{{ field.name }}">
+                  <span class="cdx-label__label__text">{{ field.label }}</span>
+                </label>
+              </div>
+              <div class="cdx-field__control cdx-field__control--has-help-text">
+                <div class="cdx-text-input">
+                  {{ field }}
+                </div>
+              </div>
+              {% if field.errors %}
+              <div class="cdx-field__validation-message">
+                <div class="cdx-message cdx-message--inline cdx-message--error" role="alert">
+                  <span class="cdx-message__icon"></span>
+                  {% for error in field.errors %}
+                  <div class="cdx-message__content">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
+              <div class="form-help">
+              <small id="cdx-{{ field.name }}" class="cdx-field__help-text field-help">
+                {{ field.help_text }}
+              </small>
+              </div>
             </div>
-            {% for error in field.errors %}
-            <p class="help is-danger">{{ error }}</p>
-            {% endfor %}
-        </div>
-        {% endfor %}
-            <input type="submit" class="button is-primary" value="{% translate "Send verification email" %}">
+          </div>
+          {% endfor %}
+          <div class="center-block">
+            <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
+                {% translate "Send verification email" %}
+            </button>
+            <a href="{% url "ldapbackend:properties" %}"
+            class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Cancel" %}</a>
+          </div>
     </form>
     </div>
 </div>

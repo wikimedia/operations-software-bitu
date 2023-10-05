@@ -1,6 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'hero_codex.html' %}
 {% load i18n %}
-{% block title %}{% translate "Verify new email address" %}{% endblock %}
 
 {% block content %}
 <div>
@@ -15,12 +14,22 @@
 
     <form method="post">{% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="button is-primary">{% translate "Update" %}</button>
+        <div class="center-block">
+        <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
+            {% translate "Update email" %}
+          </button>
+          <a href="{% url "ldapbackend:properties" %}"
+          class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Cancel" %}</a>
+        </div>
     </form>
     {% else %}
-    <p class="is-danger">
-        {% translate "The link you used has expired or is invalid" %}
-    </p>
+    <div class="cdx-message cdx-message--block cdx-message--error" role="alert">
+        <span class="cdx-message__icon"></span>
+        <div class="cdx-message__content">
+            {% translate "The link you used has expired or is invalid" %}
+        </div>
+    </div>
+    <div class="center-block"><a href="{% url "ldapbackend:properties" %}">{% translate "Go back" %}</a></div>
     {% endif %}
 </div>
 {% endblock %}

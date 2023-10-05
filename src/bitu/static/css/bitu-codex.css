@@ -55,10 +55,6 @@ div.hero {
     padding-left: 0.5vw;
 }
 
-.right {
-    margin-left: 2vw;
-}
-
 footer {
     display: flex;
     justify-content: right;
@@ -79,7 +75,11 @@ footer {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    margin: 2vh 0 2vh 0;
+    margin: 5vh 0 2vh 0;
+}
+
+.center-block .cdx-button {
+    margin-bottom: 2vh;
 }
 
 .right div.warning {
@@ -94,6 +94,17 @@ div.warning a {
     float: right;
 }
 
+.field-help {
+    width: 80%;
+}
+
+.field-action {
+    width: 20%;
+    margin-left: 1vw;
+    text-align: right;
+    float: right;
+}
+
 .captcha-refresh {
     float: right;
 }
@@ -104,6 +115,11 @@ p.center {
 
 .single-field {
     width: 75vw;
+}
+
+.message-box {
+    width: 100%;
+    margin: 0 0vw 4vh 0.5vw;
 }
 
 @media only screen and (min-width: 800px) {
@@ -122,4 +138,114 @@ p.center {
     .single-field {
         width: 50vw;
     }
+
+    .right {
+        margin-left: 2vw;
+    }
+
+    .center-block {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        margin: 5vh 0 2vh 0;
+    }
 }
+
+/* menu */
+nav {
+    width: 100%;
+}
+nav ul {
+    list-style-type: none;
+    justify-content: flex-start;
+    padding-left: 0px;
+}
+
+.menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu li {
+    font-size: 16px;
+    padding: 15px 5px;
+    white-space: nowrap;
+}
+
+.menu a {
+    color: black;
+    text-decoration: none;
+}
+
+.menu {
+    justify-content: center;
+}
+
+.logo {
+    font-weight: 700;
+    flex: 1;
+    float: left;
+    width: 100%;
+}
+
+.logo img {
+    height: 5vh;
+}
+
+.item.active {
+    display: block;
+}
+
+.toggle {
+    text-align: center;
+}
+
+.toggle span {
+    height: 100%;
+}
+
+.item {
+    width: 100%;
+    text-align: center;
+    order: 3;
+    display: none;
+}
+
+.item.active {
+    display: block;
+    background-color: #f8f9fa;
+}
+
+.item.active:hover {
+    background-color: #eaf3ff;
+}
+
+@media all and (min-width: 800px) {
+    .item {
+        display: block;
+        width: auto;
+    }
+
+    .item.active {
+        background-color: white;
+    }
+
+    .item:hover {
+        background-color: #eaf3ff;
+    }
+
+    .menu {
+        justify-content: center;
+    }
+
+    .toggle {
+        flex: 1;
+        text-align: right;
+        display: none;
+    }
+}
+
+/* end menu */

@@ -8,6 +8,15 @@ class UpdateEmailForm(forms.Form):
     email1 = forms.EmailField(label=_('New email'))
     email2 = forms.EmailField(label=_('Confirm email'))
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+            # Add codex stylesheet class.
+        for field_name in self.fields:
+            field = self.fields[field_name]
+            field.widget.attrs['class'] = 'cdx-text-input__input'
+            field.widget.attrs['aria-describedby'] = f'cdx-{field_name}'
+
     def clean_email2(self):
         email1 = self.cleaned_data.get("email1")
         email2 = self.cleaned_data.get("email2")

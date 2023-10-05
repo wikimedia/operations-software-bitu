@@ -54,11 +54,17 @@ class LDAPUserForm(forms.Form):
                                         initial=value,
                                         choices=attr['choices'],
                                         validators=validators)
+                field.widget.attrs['class'] = 'cdx-select'
+                field.widget.attrs['aria-describedby'] = f'cdx-{attr["name"]}'
             else:
                 field = forms.CharField(label=attr['display'],
                                         required=True,
                                         initial=value,
-                                        validators=validators)
+                                        validators=validators,
+                                        )
+                field.widget.attrs['class'] = 'cdx-text-input__input'
+                field.widget.attrs['aria-describedby'] = f'cdx-{attr["name"]}'
+
             self.fields[attr['name']] = field
 
     def save(self) -> bool:

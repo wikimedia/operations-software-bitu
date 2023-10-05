@@ -1,0 +1,15 @@
+{% load codex %}
+{% load i18n %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="message-box">
+  <div class="cdx-message cdx-message--block {{ message.tags|django_message_tags_to_codex_classes }}" aria-live="polite">
+    <span class="cdx-message__icon"></span>
+    <div class="cdx-message__content">
+      {{ message }}
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endif %}

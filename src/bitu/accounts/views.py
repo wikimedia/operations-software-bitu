@@ -26,7 +26,8 @@ class UpdateEmailView(FormView):
     def form_valid(self, form):
         valid = super().form_valid(form)
         if valid:
-            messages.info(self.request, _('Please confirm email'))
+            messages.info(self.request, _('An email with a verification link has been sent to %(email)s.') % {
+                'email': form.cleaned_data['email2']})
             jobs.send_update_email_request.delay(self.request.user, form.cleaned_data['email2'])
         return valid
 

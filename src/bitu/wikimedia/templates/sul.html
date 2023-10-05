@@ -1,21 +1,18 @@
 {% load i18n %}
 {% if linking_wanted %}
-<div>     
-    <article class="message is-wmf_link is-dismissable is-success">
-      <div class="message-header">
-        <p></p>
-        <button class="delete" aria-label="delete"></button>
-      </div>
-      <div class="message-body">
-        {% blocktrans %}
-        If you have a "Wikimedia global account" to edit the wikis please connect it to your account <a href="/login/mediawiki/">here</a>
-        (you will be prompted to confirm)<br> If you don't have a Wikimedia global account yet you can create one
-        <a href="https://meta.wikimedia.org/w/index.php?title=Special:CreateAccount&amp;returnto=Main+Page">here</a><br><br>
-        <strong>Note:</strong> if you have multiple Wiki accounts, e.g. a Wikimedia Foundation staff account in addition to your personal account, please ensure
-        that you are signed in with the correct account on <a href="https://meta.wikimedia.org">meta.wikimedia.org</a> before clicking approve.
-        {% endblocktrans %}
-      </div>
-    </article>
-</div>
-<br>
+<div class="message-box">
+  <div class="cdx-message cdx-message--block cdx-message--notice cdx-message--user-dismissable" aria-live="polite">
+    <span class="cdx-message__icon"></span>
+    <div class="cdx-message__content">
+      {% blocktrans %}
+      If you have a "Wikimedia global account" to edit the wikis please connect it to your account <a href="/login/mediawiki/">here</a>
+      (you will be prompted to confirm)<br> If you don't have a Wikimedia global account yet you can create one
+      <a href="https://meta.wikimedia.org/w/index.php?title=Special:CreateAccount&amp;returnto=Main+Page">here</a><br><br>
+      <strong>Note:</strong> if you have multiple Wiki accounts, e.g. a Wikimedia Foundation staff account in addition to your personal account, please ensure
+      that you are signed in with the correct account on <a href="https://meta.wikimedia.org">meta.wikimedia.org</a> before clicking approve.
+      {% endblocktrans %}
+    <button class="cdx-button cdx-button--action-default cdx-button--weight-quiet cdx-button--size-medium cdx-button--icon-only cdx-message__dismiss-button" type="button" aria-label="Close"><span class="cdx-icon cdx-icon--medium"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20"><title>Close</title><g><path d="m4.34 2.93 12.73 12.73-1.41 1.41L2.93 4.35z"></path><path d="M17.07 4.34 4.34 17.07l-1.41-1.41L15.66 2.93z"></path></g></svg></span></button>
+    </div>
+  </div>
+  </div>
 {% endif %}
