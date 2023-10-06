@@ -1,6 +1,7 @@
 from django import template
 from django.utils.html import format_html
 from django.utils.safestring import SafeString
+from django.utils.translation import gettext_lazy as _
 
 register = template.Library()
 
@@ -28,6 +29,15 @@ def tooltip(attribute: dict[str, str]) -> SafeString:
 
 
 @register.filter
+def ldap_value(attribute: dict[str, str]) -> str:
+    if attribute['name'] == 'wikimediaGlobalAccountName' and str(attribute['value']) == '[]':
+        return _('Account not linked')
+    elif attribute['value'] == '[]':
+        return ''
+    return attribute['value']
+
+
+@register.filter
 def action(attribute: dict[str, str]) -> SafeString:
     """Generate 'action' link for an LDAP attribute.
 
@@ -50,7 +60,7 @@ def action(attribute: dict[str, str]) -> SafeString:
         label = attribute.get('action_label2', label)
 
     return format_html(
-        '<a href="{}">{}</a>',
+        '<small class="field-action"><a href="{}">{}</a></small>',
         href,
         label
     )

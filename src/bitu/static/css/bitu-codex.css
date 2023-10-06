@@ -104,7 +104,7 @@ div.warning a {
 }
 
 .field-help {
-    width: 80%;
+    min-width: 80%;
 }
 
 .field-action {

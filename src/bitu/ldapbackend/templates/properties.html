@@ -20,14 +20,14 @@
       </div>
       <div class="cdx-field__control cdx-field__control--has-help-text">
         <div class="cdx-text-input">
-            <input class="cdx-text-input__input" type="text" placeholder="{{ field.value }}" disabled />
+            <input class="cdx-text-input__input" type="text" placeholder="{{ field|ldap_value }}" disabled />
         </div>
       </div>
       <div class="form-help">
       <small id="cdx-{{ field.name }}" class="cdx-field__help-text field-help">
         {{ field.tooltip }}
       </small>
-      <small class="field-action">{{ field|action }}</small>
+      {{ field|action }}
       </div>
     </div>
   </div>
