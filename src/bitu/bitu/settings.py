@@ -196,7 +196,9 @@ BITU_NOTIFICATION = {
 }
 
 SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator',
-                              'signups.validators.UsernameValidator']
+                              'signups.validators.UsernameValidator',
+                              'signups.validators.IsURLValidator'
+                              ]
 
 SIGNUP_UID_VALIDATORS = ['ldapbackend.validators.unix_username_regex_validator',
                          'ldapbackend.validators.unix_username_length_validator',
