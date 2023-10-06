@@ -160,32 +160,3 @@ Questions? Contact&nbsp;<a href="mailto:sre-foundations@wikimedia.org">sre-found
 
   </script>
 {% endblock %}
-
-{% block old %}
-<div class="columns is-mobile">
-    <div class="column"></div>
-    <div class="column">
-        <form method="post">{% csrf_token %}
-            {% for field in form %}
-            <div class="field">
-                <label class="label">{{ field.label_tag }} </label>
-                <div class="control">
-                  {{ field }}
-                  <p class="help">{{ field.help_text }}</p>
-                </div>
-                {% for error in field.errors %}
-                <p class="help is-danger">{{ error }}</p>
-                {% endfor %}
-            </div>
-            {% endfor %}
-                <input type="submit" class="button is-info" value="{% translate "Signup" %}">
-        </form>
-    </div>
-    <div class="column"></div>
-    <div class="column is-half">{% include signup_info_template %}</div>
-    <div class="column"></div>
-</div>
-
-
-
- {% endblock %}

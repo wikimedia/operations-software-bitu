@@ -1,9 +1,17 @@
-html body {
+html {
     margin: auto;
+    height: 100%;
+    min-height: 100%;
     width: 80%;
     background-color: white;
     font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Inter", "Helvetica", "Arial", sans-serif;
 }
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
 
 header.hero {
     display: flex;
@@ -30,6 +38,7 @@ div.hero {
     display: flex;
     align-items: center;
     flex-direction: column;
+    flex: 1;
 }
 
 .content header {
