@@ -19,9 +19,11 @@ header.hero {
     margin-top: 5vh;
 }
 
-header.hero img {
-    min-width: 30vw;
-    max-width: 40vw;
+@media only screen and (max-width: 833px) {
+    header.hero img {
+    min-width: 40vw;
+    max-width: 60vw;
+    }
 }
 
 div.hero {
@@ -67,11 +69,12 @@ div.hero {
 footer {
     display: flex;
     justify-content: right;
-    margin-bottom: 2vh;
+    margin-bottom: 5vh;
+    margin-right: 5vh;
 }
 
 .form-field {
-    margin-bottom: 1vh;
+    margin-bottom: 2vh;
 }
 
 .form-help {
@@ -108,7 +111,7 @@ div.warning a {
 }
 
 .field-action {
-    width: 20%;
+    min-width: 20%;
     margin-left: 1vw;
     text-align: right;
     float: right;
@@ -141,10 +144,9 @@ p.center {
     flex-direction: column;
 }
 
-@media only screen and (min-width: 800px) {
+@media only screen and (min-width: 833px) {
     header.hero img {
-        min-width: 15vw;
-        max-width: 15vw;
+        width: 184px;
     }
 
     .columns {
@@ -251,7 +253,7 @@ nav ul {
     background-color: #eaf3ff;
 }
 
-@media all and (min-width: 800px) {
+@media all and (min-width: 833px) {
     .item {
         display: block;
         width: auto;
@@ -328,7 +330,7 @@ td:nth-of-type(1):before { content: attr(data-label); }
 td:nth-of-type(2):before { content: attr(data-label); }
 td:nth-of-type(3):before { content: attr(data-label); }
 
-@media all and (min-width: 800px) {
+@media all and (min-width: 833px) {
     td {
         /* Behave  like a "row" */
         border: none;

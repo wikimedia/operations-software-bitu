@@ -42,7 +42,7 @@ class SignupForm(ModelForm):
         help_text="It is recommended to use a unique password that you are not using on any other website.",
     )
     password2 = forms.CharField(
-        label=_("Password (again)"),
+        label=_("Confirm password"),
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
         strip=False,
         help_text=_("Enter the same password as before, for verification."),
@@ -60,10 +60,10 @@ class SignupForm(ModelForm):
         self.fields['username'].widget.attrs['placeholder'] = _('Username')
         self.fields['username'].widget.attrs['autocomplete'] = 'off'
         self.fields['username'].widget.attrs['max_length'] = 150
-        self.fields['uid'].widget.attrs['placeholder'] = _('Shell username')
+        self.fields['uid'].widget.attrs['placeholder'] = _('Type your username')
         self.fields['uid'].widget.attrs['autocomplete'] = 'off'
         self.fields['uid'].widget.attrs['max_length'] = 32
-        self.fields['email'].widget.attrs['placeholder'] = _('Email address')
+        self.fields['email'].widget.attrs['placeholder'] = _('example@email.org')
         self.fields['captcha'].widget.attrs['placeholder'] = _('Enter captcha text')
         self.fields['password1'].widget.attrs['placeholder'] = _('Unique password')
         self.fields['password2'].widget.attrs['placeholder'] = _('Confirm password')
