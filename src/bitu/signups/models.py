@@ -31,7 +31,7 @@ class Signup(models.Model):
         max_length=150,
         unique=True,
                 help_text=_(
-            "Developer account usernames are commonly either the same as a user's Wikimedia account username or their real name. 150 characters or fewer."
+            "Developer account usernames are commonly either the same as a user's Wikimedia account username or their real name."
         ),
         validators=username_validators,
         error_messages={
@@ -47,13 +47,13 @@ class Signup(models.Model):
         validators=uid_validators,
         blank=False,
         null=True,
-        help_text=mark_safe_lazy(_('Your shell username will be used when logging into <a href="https://wikitech.wikimedia.org/wiki/Portal:Toolforge">Toolforge</a>, other <a href="https://wikitech.wikimedia.org/wiki/Portal:Cloud_VPS">Wikimedia VPS</a> or Wikimedia production hosts using <a href="https://en.wikipedia.org/wiki/Secure_Shell">SSH</a>. This name is typically shorter than a wiki username. It must be no more than 32 characters, start with a-z, and can only contain lowercase a-z, 0-9 and - characters.')),
+        help_text=mark_safe_lazy(_('Your shell username will be used when logging into <a href="https://wikitech.wikimedia.org/wiki/Portal:Toolforge">Toolforge</a>, other <a href="https://wikitech.wikimedia.org/wiki/Portal:Cloud_VPS">Wikimedia VPS</a> or Wikimedia production hosts using <a href="https://en.wikipedia.org/wiki/Secure_Shell">SSH</a>. This name is typically shorter than a wiki username. It must start with a-z, and can only contain lowercase a-z, 0-9 and - characters.')),
         error_messages={
             "unique": _("A user with that username already exists."),
         },
     )
 
-    email = models.EmailField(_("email address"),
+    email = models.EmailField(_("email"),
                               validators=email_validators,
                               unique=True)
 
