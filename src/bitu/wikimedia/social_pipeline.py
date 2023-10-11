@@ -2,6 +2,7 @@
 import logging
 
 from django.contrib import messages
+from django.utils.translation import gettext_lazy as _
 
 from .jobs import update_ldap_attributes
 
@@ -48,3 +49,4 @@ def global_account_link(strategy, details, backend, user=None, *args, **kwargs):
     # updated in the near future.
     request = kwargs['request']
     request.session['wikimedia_global'] = True
+    messages.success(_("Accounts successfully linked. Please allow for a few minutes for the change to propagate."))
