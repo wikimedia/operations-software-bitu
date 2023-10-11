@@ -32,7 +32,7 @@ def send_update_email_request(user: User, email):
         'new_email': email,
         'username': user.get_username()
     }
-    subject =  _('Updating your email address')
+    subject =  _('Updating the email address of your Wikimedia Developer Account')
     from_email = settings.BITU_NOTIFICATION['default_sender']
     to_email = email
     msg = EmailMultiAlternatives(subject,
