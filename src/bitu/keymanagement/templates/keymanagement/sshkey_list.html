@@ -18,7 +18,7 @@
                 {% if key.active %}{% translate "Yes" %}{% else %}{% translate "No" %}{% endif %}
             </td>
             <td data-label="{% translate "System" %}">{% if key.get_system_display %}{{ key.get_system_display }}{% else %}-{% endif %}</td>
-            <td data-label="{% translate "Comment" %}">{{ key.comment }}</td>
+            <td data-label="{% translate "Comment" %}">{% if key.comment %}{{ key.comment }}{% else %} - {% endif %}</td>
             <td class="sshkey">{{ key }}</td>
             <td>{% if not key.active %}
                 <a class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive cdx-button--weight-primary"

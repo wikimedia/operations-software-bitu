@@ -46,7 +46,6 @@ div.hero {
 
 .content header {
     width: 100%;
-    padding-left: 0.5vw;
     justify-content: left;
 }
 
@@ -79,6 +78,7 @@ footer {
 }
 
 .form-help {
+    width: 100%;
     display: flex;
     flex-direction: row;
 }
@@ -108,12 +108,12 @@ div.warning a {
 }
 
 .field-help {
-    min-width: 80%;
+    width: 100%;
 }
 
 .field-action {
-    min-width: 20%;
-    margin-left: 1vw;
+    width: 20%;
+    padding-left: 1vw;
     text-align: right;
     float: right;
 }
