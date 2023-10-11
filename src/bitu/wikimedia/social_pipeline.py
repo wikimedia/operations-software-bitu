@@ -49,4 +49,4 @@ def global_account_link(strategy, details, backend, user=None, *args, **kwargs):
     # updated in the near future.
     request = kwargs['request']
     request.session['wikimedia_global'] = True
-    messages.success(_("Accounts successfully linked. Please allow for a few minutes for the change to propagate."))
+    messages.success(request, _("Accounts successfully linked. Please allow for a few minutes for the change to propagate."))
