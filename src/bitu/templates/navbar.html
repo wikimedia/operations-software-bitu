@@ -17,9 +17,6 @@
           Documentation
         </a>
         {% if not user.is_anonymous %}
-        <a class="navbar-item" href="{% url "ldapbackend:properties" %}">
-          🌳 LDAP Properties
-        </a>
         <a class="navbar-item" href="{% url "keymanagement:list" %}">
           🔑 SSH Keys
         </a>
