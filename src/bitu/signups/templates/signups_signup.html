@@ -33,7 +33,7 @@
     </div>
     {% endif %}
     <div class="form-help">
-    <small id="cdx-{{ field.name }}" class="cdx-field__help-text">
+    <small id="cdx-{{ field.name }}" class="cdx-field__help-text field-help">
       {{ field.help_text }}
     </small>
     {% if field.field.widget.attrs.max_length %}
@@ -42,7 +42,14 @@
     </div>
   </div>
 </div>
-  {% endfor %}
+{% endfor %}
+
+<div id="signup_password_mismatch" class="cdx-field__validation-message hidden">
+  <div class="cdx-message cdx-message--inline cdx-message--error" role="alert">
+    <span class="cdx-message__icon"></span>
+    <div class="cdx-message__content">{% translate "Password confirmation does not match" %}</div>
+  </div>
+</div>
 
 <small>
   {% blocktrans %}
@@ -157,6 +164,24 @@ Questions? Contact&nbsp;<a href="mailto:sre-foundations@wikimedia.org">sre-found
 
   update_username_counter("id_username");
   update_username_counter("id_uid");
+
+  /* check that passwords match */
+
+  function password_mismatch_err(){
+    var err_msg = document.getElementById("signup_password_mismatch");
+    document.getElementById("id_password2").parentElement.parentElement.after(err_msg)
+    var password1 = document.getElementById("id_password1").value;
+    var password2 = document.getElementById("id_password2").value;
+    if (password1 != password2){
+      err_msg.style.display = "block";
+    } else {
+      err_msg.style.display = "none";
+    }
+  }
+
+  document.getElementById('id_password2').onchange = function() {
+    password_mismatch_err();
+  };
 
   </script>
 {% endblock %}

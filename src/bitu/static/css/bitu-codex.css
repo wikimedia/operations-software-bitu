@@ -145,6 +145,10 @@ p.center {
     flex-direction: column;
 }
 
+.hidden {
+    display: none;
+}
+
 @media only screen and (min-width: 833px) {
     header.hero img {
         width: 184px;
