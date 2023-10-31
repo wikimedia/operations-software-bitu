@@ -1,3 +1,10 @@
+bitu (0.0.2-1) unstable; urgency=low
+
+  * Support for SSH key management
+  * Switch from Bulma to Codex for CSS
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Tue, 31 Oct 2023 11:04:45 +0100
+
 bitu (0.0.1-4) unstable; urgency=low
 
   * Initial release.
