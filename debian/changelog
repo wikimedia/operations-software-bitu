@@ -1,4 +1,4 @@
-bitu (0.0.2-1) unstable; urgency=low
+bitu (0.0.2-2) unstable; urgency=low
 
   * Support for SSH key management
   * Switch from Bulma to Codex for CSS
