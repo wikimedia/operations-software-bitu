@@ -1,3 +1,9 @@
+bitu (0.0.3-1) unstable; urgency=medium
+
+  * Stricter access control when activating/deactivating SSH keys.
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Tue, 14 Nov 2023 08:33:42 +0000
+
 bitu (0.0.2-2) unstable; urgency=low
 
   * Support for SSH key management
