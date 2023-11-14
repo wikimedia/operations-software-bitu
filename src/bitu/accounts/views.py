@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 from django.contrib import messages
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.http import HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
@@ -54,6 +54,10 @@ class VerifyEmailView(FormView):
 
         self.validlink = False
         self.user, self.email = self.get_data(kwargs["uidb64"])
+
+        if self.user != self.request.user:
+            raise PermissionDenied()
+
         data = EmailUpdate(user=self.user, email=self.email)
 
         if self.user is not None:
@@ -90,7 +94,7 @@ class VerifyEmailView(FormView):
 
     def get_initial(self):
         initial = super().get_initial()
-        initial['user_id'] = self.user.pk
+        initial['user_id'] = self.request.user.pk
         initial['email'] = self.email
         return initial
 
@@ -110,9 +114,17 @@ class VerifyEmailView(FormView):
 
     def form_valid(self, form):
         valid = super().form_valid(form)
+
+        user_id = form.cleaned_data.get("user_id")
+
+        # Avoid users manipulating POST/Form data and changing the
+        # email address of other users.
+        if user_id != self.request.user.id:
+            raise PermissionDenied()
+
         if valid:
             email = form.cleaned_data.get("email")
-            user = User.objects.get(pk=form.cleaned_data.get("user_id"))
+            user = User.objects.get(pk=user_id)
             user.email = email
             user.save()
             messages.success(self.request, _('Email address successfully updated. Please allow for a few minutes for the change to propagate.'))
