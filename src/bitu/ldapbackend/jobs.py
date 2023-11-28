@@ -100,6 +100,7 @@ def update_ssh_key(key: 'SSHKey'):
         ldap_user.sshPublicKey.add(key.key_as_byte_string)
         ldap_user.entry_commit_changes()
 
+
 @job
 def remove_ssh_key(key: 'SSHKey'):
     if key.active:
@@ -111,14 +112,29 @@ def remove_ssh_key(key: 'SSHKey'):
 
 
 @job
+def syncronize_ssh_keys(user: 'User'):
+    ldap_user = bituldap.get_user(user.get_username())
+    for key in user.ssh_keys.all():
+        if key.active and key.key_as_byte_string not in ldap_user.sshPublicKey:
+            ldap_user.sshPublicKey.add(key.key_as_byte_string)
+        elif not key.active and key.key_as_byte_string in ldap_user.sshPublicKey:
+            ldap_user.sshPublicKey.delete(key.key_as_byte_string)
+    ldap_user.entry_commit_changes()
+    load_ssh_key(user)
+
+@job
 def load_ssh_key(user: 'User'):
     from keymanagement.models import SSHKey
     system = __name__.split('.')[0]
 
     ldap_user = bituldap.get_user(user.get_username())
 
-    if ldap_user.sshPublicKey.value is None:
-        return
+    # Check if we have any keys that are listed as active, but not in LDAP.
+    # LDAP is authoritive, so deactivate any keys not found.
+    for key in user.ssh_keys.all():
+        if key.active and key.key_as_byte_string not in ldap_user.sshPublicKey.values:
+            key.active = False
+            key.save()
 
     for key in ldap_user.sshPublicKey.values:
         ssh_key, created = SSHKey.objects.get_or_create(user=user, ssh_public_key=key.decode('utf-8'))
@@ -130,4 +146,14 @@ def load_ssh_key(user: 'User'):
             ssh_key.key_type = ssh_key.get_key_type()
             ssh_key.key_size = ssh_key.get_key_length()
             ssh_key.save()
+            continue
+
+        # If a key already existed, then that key is active in LDAP and this state should be
+        # reflected in Bitu.
+        # DO NOT be tempted to remove the if-clause, it guards against endlessly looping as the
+        # save signal on the key model is hooked up to this function.
+        if not ssh_key.active:
+            ssh_key.active = True
+            ssh_key.save()
+
 

@@ -27,9 +27,7 @@ def update_ssh_key(sender, instance: 'SSHKey', created: bool, **kwargs):
     if not instance.system:
         return
     try:
-        import_string(f'{instance.system}.helpers.update_ssh_key')(instance)
-        import_string(f'{instance.system}.helpers.remove_ssh_key')(instance)
-        import_string(f'{instance.system}.helpers.load_ssh_key')(instance.user)
+        import_string(f'{instance.system}.helpers.syncronize_ssh_keys')(instance.user)
     except:
         logger.warning(f'Error calling ssh key handler, instance: {instance.system}, user: {instance.user}, key_id: {instance.pk}')
 
