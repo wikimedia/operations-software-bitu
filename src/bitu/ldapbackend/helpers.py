@@ -15,8 +15,8 @@ if TYPE_CHECKING:
     from keymanagement.models import SSHKey
 
 def user_data_fill(signup: 'Signup', entry: 'Entry'):
-    entry.sn = signup.username.capitalize()
-    entry.cn = signup.username.capitalize()
+    entry.sn = signup.username
+    entry.cn = signup.username
     entry.uid = signup.uid.lower()
     entry.uidNumber = bituldap.next_uid_number()
     entry.homeDirectory = f'/home/{signup.uid.lower()}'
