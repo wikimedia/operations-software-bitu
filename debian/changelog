@@ -1,3 +1,10 @@
+bitu (0.0.4-1) bookworm-wikimedia; urgency=low
+
+  * Remove capitalization of usernames (CN and SN) in LDAP.
+  * Fix bug where SSH keys in some cases did not get synced to LDAP.
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Mon, 15 Jan 2024 15:21:00 +0000
+
 bitu (0.0.3-1) unstable; urgency=medium
 
   * Stricter access control when activating/deactivating SSH keys.
