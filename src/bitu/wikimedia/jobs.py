@@ -37,7 +37,10 @@ def update_ldap_attributes(user:'User', attributes:Dict):
 
 @job('notification')
 def send_email_password_reset(username):
-    ldap_user: Union[Entry, None] = bituldap.get_user(username)
+    config = bituldap.read_configuration()
+    ldap_user: Union[Entry, None] = bituldap.get_single_object(
+        config.users, 'cn', username)
+
     if not ldap_user:
         return
 
