@@ -1,22 +1,31 @@
 import bituldap
 
-from ldapbackend import helpers
+from ldapbackend import exceptions, helpers, jobs
 from signups.models import Signup
 
 from django.conf import settings
 from django.test import TestCase
-from unittest.mock import Mock
+from unittest.mock import MagicMock, patch
 
 from . import dummy_ldap
 
+LDAP_UID_SETTINGS = [{'min': 100, 'max': 49999}, {'min': 1000000, 'max': 1999999}]
+UID_START = 49997
 
-class LDAPSignalTest(TestCase):
+
+def bituldap_new_uid():
+    global UID_START
+    UID_START = UID_START + 1
+    return UID_START
+
+
+class LDAPHelpersTest(TestCase):
     def setUp(self) -> None:
         # Setup a mock LDAP server.
         dummy_ldap.setup()
 
     def test_data_fill(self):
-        signup:Signup = Signup(username='test', uid='test', email='TeSt@exaMple.com')
+        signup: Signup = Signup(username='test', uid='test', email='TeSt@exaMple.com')
         signup.save()
         signup.set_password('password')
 
@@ -39,3 +48,28 @@ class LDAPSignalTest(TestCase):
         self.assertEqual(helpers.capitalize_first('Peter jensen'), 'Peter jensen')
         self.assertEqual(helpers.capitalize_first('peter jensen'), 'Peter jensen')
         self.assertEqual(helpers.capitalize_first('peter Jensen'), 'Peter Jensen')
+
+    @patch('bituldap.next_uid_number')
+    def test_uid_validation(self, mock_next_uid_number: MagicMock):
+        signup1: Signup = Signup(username='TestHelper1', uid='testhelper1', email='testhelper1@example.com')
+        signup1.set_password('password')
+        signup1.is_active = True
+        signup1.save()
+
+        signup2: Signup = Signup(username='TestHelper2', uid='testhelper2', email='testhelper2@example.com')
+        signup2.set_password('password')
+        signup2.is_active = True
+        signup2.save()
+
+        with self.settings(BITU_SUB_SYSTEMS={'ldapbackend': {'uid_ranges': LDAP_UID_SETTINGS}}):
+            mock_next_uid_number.return_value = 49999
+            self.assertEqual(helpers.get_new_uid(), 49999)
+            self.assertTrue(jobs.create_user(signup1))
+
+            mock_next_uid_number.return_value = 50000
+            self.assertRaises(exceptions.UIDRangeException, helpers.get_new_uid)
+            self.assertFalse(jobs.create_user(signup2))
+
+            mock_next_uid_number.return_value = 1000000
+            self.assertEqual(helpers.get_new_uid(), 1000000)
+            self.assertTrue(jobs.create_user(signup2))

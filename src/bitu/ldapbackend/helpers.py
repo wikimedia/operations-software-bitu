@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 import bituldap
 
 from . import jobs
+from .exceptions import UIDRangeException
 from django.conf import settings
 from ldap3.utils.hashed import hashed
 from ldap3 import HASHED_SALTED_SHA
@@ -13,6 +14,21 @@ if TYPE_CHECKING:
     from ldap3 import Entry
     from signups.models import Signup
     from keymanagement.models import SSHKey
+
+
+def get_new_uid() -> int:
+    uid: int = bituldap.next_uid_number()
+
+    ranges = settings.BITU_SUB_SYSTEMS.get('ldapbackend', {}).get('uid_ranges', [])
+    if not ranges:
+        return uid
+
+    for uid_range in ranges:
+        if uid_range['min'] <= uid <= uid_range['max']:
+            return uid
+
+    raise UIDRangeException(f"uid: {uid}, ranges: {ranges}")
+
 
 def capitalize_first(username: str) -> str:
     # Do not be tempted to replace this function with capitalize or title.
@@ -42,7 +58,7 @@ def user_data_fill(signup: 'Signup', entry: 'Entry'):
     entry.cn = capitalize_first(signup.username)
 
     entry.uid = signup.uid.lower()
-    entry.uidNumber = bituldap.next_uid_number()
+    entry.uidNumber = get_new_uid()
     entry.homeDirectory = f'/home/{signup.uid.lower()}'
     entry.gidNumber = settings.LDAP_USER_CONF['default_gid']
     entry.userPassword = signup.signuppassword_set.get(module='ldapbackend').value
@@ -93,6 +109,7 @@ def remove_ssh_key(key: 'SSHKey'):
 
 def load_ssh_key(user):
     jobs.load_ssh_key.delay(user)
+
 
 def syncronize_ssh_keys(user):
     jobs.syncronize_ssh_keys.delay(user)

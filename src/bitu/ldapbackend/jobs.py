@@ -9,7 +9,8 @@ from django.utils.timezone import localtime
 from django_rq import job
 
 from bitu import utils
-from ldapbackend import helpers
+from . import helpers
+from .exceptions import UIDRangeException
 
 
 if TYPE_CHECKING:
@@ -20,13 +21,27 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger('bitu')
 
+
 @job
 def create_user(signup: 'Signup'):
     if bituldap.get_user(signup.uid):
         return True
 
     user = bituldap.new_user(signup.uid)
-    user = helpers.default_ldap_user_data_fill(signup, user)
+
+    try:
+        user = helpers.default_ldap_user_data_fill(signup, user)
+    except UIDRangeException as e:
+        utils.send_service_message(
+            'Error creating user',
+            f"""Failed to allocate UID Number in LDAP, range violation.
+            LDAP returned uid number in invalid range.
+            Exception: {e}
+            """)
+        return False
+    except Exception:
+        return False
+
     success = user.entry_commit_changes()
 
     if success:
@@ -68,13 +83,13 @@ def add_to_default_groups(user_dn):
 
 
 @job
-def update_ldap_attributes(user:'User', attributes:Dict):
+def update_ldap_attributes(user: 'User', attributes: Dict):
     ldap_user = bituldap.get_user(user.get_username())
     if not ldap_user:
         logger.warning(f'user: {user.get_username()} not found in ldap')
         return
 
-    for k,v in attributes.items():
+    for k, v in attributes.items():
         setattr(ldap_user, k, v)
         ldap_user.entry_commit_changes()
 
@@ -122,6 +137,7 @@ def syncronize_ssh_keys(user: 'User'):
     ldap_user.entry_commit_changes()
     load_ssh_key(user)
 
+
 @job
 def load_ssh_key(user: 'User'):
     from keymanagement.models import SSHKey
@@ -141,7 +157,7 @@ def load_ssh_key(user: 'User'):
 
         if created:
             ssh_key.system = system
-            ssh_key.comment=''
+            ssh_key.comment = ''
             ssh_key.active = True
             ssh_key.key_type = ssh_key.get_key_type()
             ssh_key.key_size = ssh_key.get_key_length()
@@ -155,5 +171,3 @@ def load_ssh_key(user: 'User'):
         if not ssh_key.active:
             ssh_key.active = True
             ssh_key.save()
-
-
