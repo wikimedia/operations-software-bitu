@@ -1,3 +1,9 @@
+bitu (0.0.5-1) bookworm-wikimedia; urgency=low
+
+  * Reintroduce an updated capitalization for CN (T355615).
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Tue, 23 Jan 2024 10:53:00 +0000
+
 bitu (0.0.4-1) bookworm-wikimedia; urgency=low
 
   * Remove capitalization of usernames (CN and SN) in LDAP.

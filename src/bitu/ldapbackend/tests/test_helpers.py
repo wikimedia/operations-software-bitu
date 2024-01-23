@@ -28,5 +28,14 @@ class LDAPSignalTest(TestCase):
         self.assertEqual(user.loginShell.changes[0][1][0], '/bin/bash')
         self.assertEqual(user.mail.changes[0][1][0], signup.email.lower())
         self.assertEqual(user.gidNumber.changes[0][1][0], settings.LDAP_USER_CONF['default_gid'])
-        self.assertEqual(user.sn.changes[0][1][0], user.cn.changes[0][1][0])
+        self.assertEqual(user.cn.changes[0][1][0], 'Test')
         self.assertEqual(user.sn.changes[0][1][0], 'Test')
+
+    def test_capitalize_username(self):
+        self.assertEqual(helpers.capitalize_first(''), '')
+        self.assertEqual(helpers.capitalize_first('a'), 'A')
+        self.assertEqual(helpers.capitalize_first('A'), 'A')
+        self.assertEqual(helpers.capitalize_first('Peter Jensen'), 'Peter Jensen')
+        self.assertEqual(helpers.capitalize_first('Peter jensen'), 'Peter jensen')
+        self.assertEqual(helpers.capitalize_first('peter jensen'), 'Peter jensen')
+        self.assertEqual(helpers.capitalize_first('peter Jensen'), 'Peter Jensen')

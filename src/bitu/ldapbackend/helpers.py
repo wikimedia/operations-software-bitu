@@ -14,9 +14,33 @@ if TYPE_CHECKING:
     from signups.models import Signup
     from keymanagement.models import SSHKey
 
+def capitalize_first(username: str) -> str:
+    # Do not be tempted to replace this function with capitalize or title.
+    # These methods do not do the same thing. Capitalize will ensure
+    # that the the first letter is upper-case, and the remaining is
+    # lower-case, mangling "John Doe" into "John doe". The reverse is the
+    # true for "title", "john doe" will be returned as "John Doe" and while
+    # that may be what the user intended, we cannot be sure, nor may it be
+    # applicable in all languages.
+    if not username:
+        return username
+
+    if len(username) == 1:
+        return username.upper()
+
+    return username[0].upper() + username[1:]
+
+
 def user_data_fill(signup: 'Signup', entry: 'Entry'):
-    entry.sn = signup.username
-    entry.cn = signup.username
+    # To ensure compatibility with MediaWiki, ensure that the first
+    # character in cn and sn are capitalized, while touching none of
+    # of the remaining characthers in the string.
+    #
+    # MediaWiki imposes the restriction that a username must always
+    # start with a capital letter.
+    entry.sn = capitalize_first(signup.username)
+    entry.cn = capitalize_first(signup.username)
+
     entry.uid = signup.uid.lower()
     entry.uidNumber = bituldap.next_uid_number()
     entry.homeDirectory = f'/home/{signup.uid.lower()}'
