@@ -29,7 +29,7 @@ def send_service_message(subject: str, message: str, limited:bool = False):
         admins = settings.ADMINS
 
     if not admins:
-        logger.warning('Error sending service message, admins not defined.')
+        logger.info('Not sending service message, admins not defined.')
         return
 
     msg = EmailMultiAlternatives(subject=f'[BITU] {subject}',
