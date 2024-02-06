@@ -29,3 +29,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     };
 }, false);
+
+function toggle_ssh_key_display(element){
+    // Swap display style for truncated and full SSH keys.
+    short = element.parentElement.parentElement.firstChild;
+    long = short.nextElementSibling;
+    long.style.display = [short.style.display, short.style.display = long.style.display][0]
+
+    // Swap text for the trigger element for hide/show of untruncated SSH key.
+    element.text = [element.dataset.textSwap, element.dataset.textSwap = element.text][0]
+}
