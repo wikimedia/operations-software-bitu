@@ -52,9 +52,11 @@
 </div>
 
 <small>
-  {% blocktrans %}
-  Creating an account means complying with the <a href="https://wikitech.wikimedia.org/wiki/Wikitech:Cloud_Services_Terms_of_use">Terms of Use</a> for <a href="https://wikitech.wikimedia.org/wiki/Help:Cloud_Services_introduction">Wikimedia Cloud Services</a> and the <a href="https://www.mediawiki.org/wiki/Code_of_Conduct">Code of Conduct for Wikimedia</a> technical spaces.
-  {% endblocktrans %}
+  {% blocktranslate with cloud_services_terms_of_use="https://wikitech.wikimedia.org/wiki/Special:MyLanguage/Wikitech:Cloud_Services_Terms_of_use" cloud_services_info_url="https://wikitech.wikimedia.org/wiki/Special:MyLanguage/Help:Cloud_Services_introduction" mediawiki_code_of_conduct_url="https://www.mediawiki.org/wiki/Special:MyLanguage/Code_of_Conduct" %}
+  Creating an account means complying with the <a href="{{ cloud_services_terms_of_use }}">Terms of Use</a> for
+  <a href="{{ cloud_services_info_url }}">Wikimedia Cloud Services</a> and the
+  <a href="{{ mediawiki_code_of_conduct_url }}">Code of Conduct for Wikimedia</a> technical spaces.
+  {% endblocktranslate %}
 </small>
 
 <div class="center-block">
@@ -63,9 +65,9 @@
   </button>
 </div>
 <p class="center">
-    {% blocktrans %}
+    {% blocktranslate %}
     Already have an account? Go to <a href="/">Log In</a>
-    {% endblocktrans %}
+    {% endblocktranslate %}
 </p>
 </form>
 {% endblock %}
@@ -75,7 +77,11 @@
   <div class="cdx-message cdx-message--block cdx-message--warning" aria-live="polite">
     <span class="cdx-message__icon"></span>
     <div class="cdx-message__content">
-      {% translate "Creating or using a Wikimedia developer account will publicly expose information to other users of Wikimedia Cloud Services: The email address you associate with your Wikimedia developer account will be publicly visible. When connecting to virtual machines in Wikimedia Cloud VPS using SSH, your IP address will be recorded and may be visible to other users of Cloud VPS or Toolforge." %}
+      {% blocktranslate with developer_account_info_url="https://www.mediawiki.org/wiki/Special:MyLanguage/Developer_account" cloud_services_info_url="https://wikitech.wikimedia.org/wiki/Special:MyLanguage/Help:Cloud_Services_introduction" %}
+      Creating or using a <a href="{{ developer_account_info_url }}">Wikimedia developer account</a>
+      will publicly expose information to other users of <a href="{{ cloud_services_info_url }}">Wikimedia Cloud Services</a>: The email address you associate with your Wikimedia developer account will be publicly visible.
+      When connecting to virtual machines in Wikimedia Cloud VPS using SSH, your IP address will be recorded and may be visible to other users of Cloud VPS or Toolforge.
+      {% endblocktranslate %}
     </div>
   </div>
 </div>
@@ -83,9 +89,11 @@
   <div class="cdx-message cdx-message--block cdx-message--warning" aria-live="polite">
     <span class="cdx-message__icon"></span>
     <div class="cdx-message__content">
-      {% blocktrans %}
-      By creating an account you are agreeing not to collect, store, or share private data or personally identifiable information, such as user names, passwords, or IP addresses from the individuals using my project, except when complying with the conditions listed in the <a href="https://wikitech.wikimedia.org/wiki/Wikitech:Cloud_Services_Terms_of_use">Terms of Use.</a>
-      {% endblocktrans %}
+      {% blocktranslate with cloud_services_terms_of_use="https://wikitech.wikimedia.org/wiki/Special:MyLanguage/Wikitech:Cloud_Services_Terms_of_use" %}
+      By creating an account you are agreeing not to collect, store, or share private data or personally identifiable information,
+      such as user names, passwords, or IP addresses from the individuals using my project, except when complying with the conditions
+      listed in the <a href="{{ cloud_services_terms_of_use }}">Terms of Use.</a>
+      {% endblocktranslate %}
     </div>
   </div>
 </div>
