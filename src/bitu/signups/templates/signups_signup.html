@@ -153,9 +153,11 @@ Questions? Contact&nbsp;<a href="mailto:sre-foundations@wikimedia.org">sre-found
   document.getElementById('id_username').onchange = function() {
     var username = document.getElementById("id_username").value.toLowerCase();
     // Remove non-ascii characters
-    document.getElementById("id_uid").value = username.replace(' ', '').replace(/[^A-Za-z 0-9 -]*/g, '').slice(0,32);
-    update_username_counter("id_username");
-    update_username_counter("id_uid");
+    if(document.getElementById("id_uid").value == ''){
+      document.getElementById("id_uid").value = username.replace(/\s/g, '').replace(/[^A-Za-z 0-9 -]*/g, '').slice(0,32);
+      update_username_counter("id_username");
+      update_username_counter("id_uid");
+    }
   };
 
   document.getElementById('id_uid').onchange = function() {
