@@ -3,6 +3,10 @@
 {% load ldapattr %}
 {% load sul %}
 
+{% block title %}
+{% translate "My LDAP properties" %}
+{% endblock %}
+
 {% block message %}
 {% include "messages_codex.html" %}
 {% wikimedia_global_account_linking %}
