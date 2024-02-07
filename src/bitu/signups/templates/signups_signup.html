@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block left %}
-<form method="post">{% csrf_token %}
+<form class="signup" method="post">{% csrf_token %}
   {% for field in form %}
   <div class="form-field">
   <div class="cdx-field">
@@ -67,7 +67,6 @@
     Already have an account? Go to <a href="/">Log In</a>
     {% endblocktrans %}
 </p>
-
 </form>
 {% endblock %}
 
@@ -90,10 +89,9 @@
     </div>
   </div>
 </div>
-{% endblock %}
-
-{% block footer %}
+<p class="center">
 Questions? Contact&nbsp;<a href="mailto:sre-foundations@wikimedia.org">sre-foundations@wikimedia.org</a>
+</p>
 {% endblock %}
 
 {% block script %}

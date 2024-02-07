@@ -68,9 +68,15 @@ div.hero {
 
 footer {
     display: flex;
-    justify-content: right;
+    flex-direction: column;
+    justify-content: center;
     margin-bottom: 5vh;
-    margin-right: 5vh;
+    border-top: #eaecf0;
+    border-style: solid hidden hidden;
+}
+
+footer ul {
+    display: inline;
 }
 
 .form-field {
@@ -184,6 +190,27 @@ p.center {
     .message-box-narrow {
         width: 50%;
         margin: 0 0vw 4vh 0.5vw;
+    }
+
+    form.signup {
+        /* Avoid squishing the footer on desktop*/
+        margin-bottom: 5vw;
+    }
+
+    footer {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-bottom: 5vh;
+        border-style: hidden;
+    }
+
+    footer li {
+        display: inline;
+
+        /* Add padding to both sides to keep center alignment */
+        padding-left: 0.25vw;
+        padding-right: 0.25vw;
     }
 }
 

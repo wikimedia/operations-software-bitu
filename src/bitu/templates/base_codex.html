@@ -1,4 +1,6 @@
-{% load static %}<!DOCTYPE html>
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Bitu - Wikimedia Identity Manager</title>
@@ -10,7 +12,18 @@
 <body>
 {% block main %}
 {% endblock %}
-<footer>{% block footer %}<a href="https://wikitech.wikimedia.org/wiki/IDM">What is Bitu?</a>{% endblock %}</footer>
+<footer>
+    {% block footer %}
+    <ul>
+        <li><a href="https://foundation.wikimedia.org/wiki/Special:MyLanguage/Policy:Non-wiki_privacy_policy">{% translate "Privacy Policy" %}</a></li>
+        <li><a href="https://foundation.wikimedia.org/wiki/Special:MyLanguage/Terms_of_Use">{% translate "Terms of Use" %}</a></li>
+        <li><a href="https://www.mediawiki.org/wiki/Special:MyLanguage/Code_of_Conduct">{% translate "Code of Conduct" %}</a></li>
+        <li><a href="https://gerrit.wikimedia.org/g/operations/software/bitu">{% translate "Source Code" %}</a></li>
+        <li><a href="https://phabricator.wikimedia.org/tag/bitu/">{% translate "Issues" %}</a></li>
+        <li><a href="https://wikitech.wikimedia.org/Special:MyLanguage/wiki/Bitu">{% translate "Documentation" %}</a></li>
+    </ul>
+    {% endblock %}
+</footer>
 {% block script %}{% endblock %}
 </body>
 </html>
