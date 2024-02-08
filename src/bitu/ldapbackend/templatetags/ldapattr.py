@@ -1,5 +1,3 @@
-from typing import Dict
-
 from django import template
 from django.utils.html import format_html
 from django.utils.safestring import SafeString
@@ -9,7 +7,7 @@ register = template.Library()
 
 
 @register.filter
-def tooltip(attribute: Dict) -> SafeString:
+def tooltip(attribute: dict[str, str]) -> SafeString:
     """Generate HTML for tooltips.
 
     Each LDAP attribute can be configured with a tooltip,
@@ -32,7 +30,7 @@ def tooltip(attribute: Dict) -> SafeString:
 
 
 @register.filter
-def ldap_value(attribute: Dict) -> str:
+def ldap_value(attribute: dict[str, str]) -> str:
     if attribute['name'] == 'wikimediaGlobalAccountName' and str(attribute['value']) == '[]':
         return _('Account not linked')
     elif attribute['value'] == '[]':
@@ -41,7 +39,7 @@ def ldap_value(attribute: Dict) -> str:
 
 
 @register.filter
-def action(attribute: Dict) -> SafeString:
+def action(attribute: dict[str, str]) -> SafeString:
     """Generate 'action' link for an LDAP attribute.
 
     If the attribute value is empty, action_label2 is displayed,
