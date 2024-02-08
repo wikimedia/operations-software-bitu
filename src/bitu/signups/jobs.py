@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import base64
 
-from typing import Any
+from typing import Any, Dict
 
 from django_rq import job
 from django.conf import settings
@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 
-def load_templates() -> dict[str:Any]:
+def load_templates() -> Dict:
     name = settings.BITU_NOTIFICATION.get('signup_template_prefix',
                                           'email_signup_activation')
     plaintext = f'email/{name}.txt'

@@ -1,25 +1,20 @@
 from signups.models import Signup
 
-import django_rq
 
 from django.core import mail
 from django.db.models.signals import post_save
-from django_rq import get_worker
 from django.test import TestCase
-from fakeredis import get_fake_connection
-from unittest.mock import patch, Mock
+from unittest.mock import Mock
 
 from ldapbackend import jobs
 
 from . import dummy_ldap
 
+
 class LDAPSignalTest(TestCase):
     def setUp(self) -> None:
         # Setup a mock LDAP server.
         dummy_ldap.setup()
-
-        # Hook up fakeredis
-        django_rq.queues.get_redis_connection = get_fake_connection
 
     def test_signal_create(self):
         # Test that signal have been hooked up correctly.
@@ -30,7 +25,7 @@ class LDAPSignalTest(TestCase):
         signal_handler = Mock(return_value=True)
         post_save.connect(signal_handler, Signup)
 
-        signup:Signup = Signup(username='Test', uid='test', email='test@example.com')
+        signup: Signup = Signup(username='Test', uid='test', email='test@example.com')
         signup.set_password('password')
         self.assertFalse(signal_handler.called)
 
@@ -47,7 +42,7 @@ class LDAPSignalTest(TestCase):
         self.assertEqual(signal_handler.call_count, 2)
 
     def test_worker_function(self):
-        signup:Signup = Signup(username='Test2', uid='test2', email='test2@example.com')
+        signup: Signup = Signup(username='Test2', uid='test2', email='test2@example.com')
         signup.set_password('password')
         signup.is_active = True
         signup.save()

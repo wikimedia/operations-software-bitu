@@ -1,3 +1,5 @@
+from typing import Dict
+
 from django import template
 from django.utils.html import format_html
 from django.utils.safestring import SafeString
@@ -5,8 +7,9 @@ from django.utils.translation import gettext_lazy as _
 
 register = template.Library()
 
+
 @register.filter
-def tooltip(attribute: dict[str, str]) -> SafeString:
+def tooltip(attribute: Dict) -> SafeString:
     """Generate HTML for tooltips.
 
     Each LDAP attribute can be configured with a tooltip,
@@ -19,7 +22,7 @@ def tooltip(attribute: dict[str, str]) -> SafeString:
         SafeString: html for tooltip
     """
 
-    if not 'tooltip' in attribute:
+    if 'tooltip' not in attribute:
         return ''
 
     return format_html(
@@ -29,7 +32,7 @@ def tooltip(attribute: dict[str, str]) -> SafeString:
 
 
 @register.filter
-def ldap_value(attribute: dict[str, str]) -> str:
+def ldap_value(attribute: Dict) -> str:
     if attribute['name'] == 'wikimediaGlobalAccountName' and str(attribute['value']) == '[]':
         return _('Account not linked')
     elif attribute['value'] == '[]':
@@ -38,7 +41,7 @@ def ldap_value(attribute: dict[str, str]) -> str:
 
 
 @register.filter
-def action(attribute: dict[str, str]) -> SafeString:
+def action(attribute: Dict) -> SafeString:
     """Generate 'action' link for an LDAP attribute.
 
     If the attribute value is empty, action_label2 is displayed,
@@ -51,11 +54,11 @@ def action(attribute: dict[str, str]) -> SafeString:
         SafeString: html for action link (<a> tag).
     """
 
-    if not 'action' in attribute:
+    if 'action' not in attribute:
         return ''
 
     label = attribute.get('action_label', '')
-    href= attribute.get('action', '')
+    href = attribute.get('action', '')
     if not attribute['value']:
         label = attribute.get('action_label2', label)
 

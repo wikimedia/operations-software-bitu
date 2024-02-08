@@ -2,7 +2,7 @@ Django==3.2.12
 django-simple-captcha>=0.5.12
 django-rq==2.5.1
 ldap3==2.9.1
-redis==4.4.0
+#redis
 social-auth-core>=4.4.2
 social-auth-app-django==5.0.0
 python-jose==3.3.0
@@ -12,5 +12,5 @@ beautifulsoup4
 django-auth-ldap==4.3.0
 fakeredis==2.18.0
 Bitu-LDAP @ git+https://gerrit.wikimedia.org/r/operations/software/bitu-ldap@f96acf90f051f7b69dbfda7c05c57a8fdf53253a
-tox==4.6.0
+tox
 setuptools

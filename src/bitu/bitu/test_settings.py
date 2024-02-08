@@ -3,8 +3,9 @@
 Minimum required settings for running tests.
 """
 
-from ldap3 import HASHED_SALTED_SHA
+import django_rq
 
+from ldap3 import HASHED_SALTED_SHA
 
 from .base_settings import *  # noqa
 
@@ -45,19 +46,39 @@ DATABASES = {
 
 RQ_QUEUES = {
     'default': {
-        'HOST': 'localhost',
-        'PORT': 6379,
-        'DB': 0,
-        'DEFAULT_TIMEOUT': 360,
+        'URL': 'redis://localhost:6380/0',
         'ASYNC': False
     },
+
     'notification': {
-        'HOST': 'localhost',
-        'PORT': 6379,
-        'DB': 0,
-        'DEFAULT_TIMEOUT': 360,
+        'URL': 'redis://localhost:6380/0',
+        'ASYNC': False
     },
 }
+
+
+# Before django_rq has the chance to do ANYTHING, hack in a fake connection function.
+# Doing this at any later point will result in django_rq already having loaded parts
+# of the regular Redis connection handling, completely bypassing FakeRedis
+def get_fake_connection(config, strict):
+    from fakeredis import FakeRedis, FakeStrictRedis
+    redis_cls = FakeStrictRedis if strict else FakeRedis
+    if "URL" in config:
+        return redis_cls.from_url(
+            config["URL"],
+            db=config.get("DB"),
+        )
+
+    return redis_cls(
+        host=config["HOST"],
+        port=config["PORT"],
+        db=config.get("DB", 0),
+        username=config.get("USERNAME", None),
+        password=config.get("PASSWORD"),
+    )
+
+
+django_rq.queues.get_redis_connection = get_fake_connection
 
 LDAP_USER_CONF = {
     'default_gid': 2000
