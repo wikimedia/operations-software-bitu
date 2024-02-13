@@ -110,6 +110,7 @@ LOCALE_PATHS = [
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/usr/share/bitu'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 STATICFILES_DIRS = [
   '/usr/lib/python3/dist-packages/bitu/static',
 ]
