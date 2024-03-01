@@ -22,8 +22,7 @@ header.hero {
 
 @media only screen and (max-width: 833px) {
     header.hero img {
-    min-width: 40vw;
-    max-width: 60vw;
+    max-width: 184px;
     }
 }
 
@@ -80,13 +79,21 @@ footer ul {
 }
 
 .form-field {
-    margin-bottom: 2vh;
+    margin-bottom: 4vh;
 }
 
 .form-help {
     width: 100%;
+    margin-left: 1ch;
     display: flex;
     flex-direction: row;
+}
+
+.field-max {
+    float: right;
+    text-align: left;
+    margin-left: 3ch;
+    width: 5ch;
 }
 
 .center-block {
@@ -109,9 +116,6 @@ div.warning a {
     color: black;
 }
 
-.field-max {
-    float: right;
-}
 
 .field-help {
     width: 100%;
@@ -157,7 +161,7 @@ p.center {
 
 @media only screen and (min-width: 833px) {
     header.hero img {
-        width: 184px;
+        max-width: 184px;
     }
 
     .columns {

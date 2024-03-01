@@ -51,7 +51,14 @@
 <div id="signup_password_mismatch" class="cdx-field__validation-message hidden">
   <div class="cdx-message cdx-message--inline cdx-message--error" role="alert">
     <span class="cdx-message__icon"></span>
-    <div class="cdx-message__content">{% translate "Password confirmation does not match" %}</div>
+    <div class="cdx-message__content">{% translate "The passwords you entered don't match. Please double-check and try again to ensure your account stays secure." %}</div>
+  </div>
+</div>
+
+<div id="email_invalid_msg" class="cdx-field__validation-message hidden">
+  <div class="cdx-message cdx-message--inline cdx-message--error" role="alert">
+    <span class="cdx-message__icon"></span>
+    <div class="cdx-message__content">{% translate "It looks like the email address you entered isn't quite right. Please make sure it follows the standard format (e.g., example@email.com)" %}</div>
   </div>
 </div>
 
@@ -82,9 +89,11 @@
     <span class="cdx-message__icon"></span>
     <div class="cdx-message__content">
       {% blocktranslate with developer_account_info_url="https://www.mediawiki.org/wiki/Special:MyLanguage/Developer_account" cloud_services_info_url="https://wikitech.wikimedia.org/wiki/Special:MyLanguage/Help:Cloud_Services_introduction" %}
-      Creating or using a <a href="{{ developer_account_info_url }}">Wikimedia developer account</a>
-      will publicly expose information to other users of <a href="{{ cloud_services_info_url }}">Wikimedia Cloud Services</a>: The email address you associate with your Wikimedia developer account will be publicly visible.
-      When connecting to virtual machines in Wikimedia Cloud VPS using SSH, your IP address will be recorded and may be visible to other users of Cloud VPS or Toolforge.
+      When you create or use a <a href="{{ developer_account_info_url }}">Wikimedia developer account</a>, some information
+      becomes visible to other users of <a href="{{ cloud_services_info_url }}">Wikimedia Cloud Services</a>. Specifically,
+      the email address linked to your account will be publicly visible. Additionally, when you connect to virtual machines
+      in Wikimedia Cloud VPS using SSH, your IP address will be recorded.
+      This information might be visible to other users of Cloud VPS or Toolforge.
       {% endblocktranslate %}
     </div>
   </div>
@@ -94,9 +103,9 @@
     <span class="cdx-message__icon"></span>
     <div class="cdx-message__content">
       {% blocktranslate with cloud_services_terms_of_use="https://wikitech.wikimedia.org/wiki/Special:MyLanguage/Wikitech:Cloud_Services_Terms_of_use" %}
-      By creating an account you are agreeing not to collect, store, or share private data or personally identifiable information,
-      such as user names, passwords, or IP addresses from the individuals using my project, except when complying with the conditions
-      listed in the <a href="{{ cloud_services_terms_of_use }}">Terms of Use.</a>
+      By signing up, you agree to respect the privacy of other users. This means you won't collect, store, or share their private
+      data or personally identifiable information like usernames, passwords, or IP addresses, unless it's necessary under the
+      conditions outlined in the <a href="{{ cloud_services_terms_of_use }}">Terms of Use.</a>.
       {% endblocktranslate %}
     </div>
   </div>
@@ -178,7 +187,6 @@ Questions? Contact&nbsp;<a href="mailto:sre-foundations@wikimedia.org">sre-found
   update_username_counter("id_uid");
 
   /* check that passwords match */
-
   function password_mismatch_err(){
     var err_msg = document.getElementById("signup_password_mismatch");
     document.getElementById("id_password2").parentElement.parentElement.after(err_msg)
@@ -191,9 +199,27 @@ Questions? Contact&nbsp;<a href="mailto:sre-foundations@wikimedia.org">sre-found
     }
   }
 
+  document.getElementById('id_password2').addEventListener("keyup", (event) => { password_mismatch_err(); });
   document.getElementById('id_password2').onchange = function() {
     password_mismatch_err();
   };
+
+  /* email sanity check */
+  function email_sanity_check(){
+    var err_msg = document.getElementById("email_invalid_msg");
+    document.getElementById("id_email").parentElement.parentElement.after(err_msg)
+    var email = document.getElementById("id_email").value;
+    if(email.indexOf('@') == -1 || email.indexOf('.') == -1){
+      err_msg.style.display = "block";
+    } else {
+      err_msg.style.display = "none";
+    }
+  }
+
+  document.getElementById('id_email').onchange = function() {
+      email_sanity_check();
+  };
+
 
   </script>
 {% endblock %}
