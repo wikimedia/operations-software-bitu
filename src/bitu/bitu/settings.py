@@ -9,7 +9,7 @@ and any other environments should go into base_settings.py.
 """
 import ldap
 
-from django_auth_ldap.config import LDAPSearch,GroupOfNamesType
+from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 from django.urls import reverse_lazy
 from ldap3 import HASHED_SALTED_SHA
 
@@ -44,6 +44,24 @@ DATABASES = {
         'USER': 'idm',
         'PASSWORD': 'idm',
     }
+}
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "bitu": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
 }
 
 # Static files (CSS, JavaScript, Images)
@@ -93,10 +111,14 @@ BITU_SUB_SYSTEMS = {
         'password_hash': 'ldapbackend.helpers.hash_password',
         'password_hash_method': HASHED_SALTED_SHA,
         'default_groups': ['staff',],
+        # Validate that the UID returned by the LDAP library is within one of the
+        # following allowed ranges. If not account creation will fail.
+        # set to [] or remove key to disable this check.
+        'uid_ranges': [{'min': 1000, 'max': 20000}, {'min': 1000000, 'max': 1999999}],
         'attributes': {
             'edit': [{'name': 'sn', 'display': 'Firstname'},
                      {'name': 'givenName', 'display': 'Lastname'},
-                     {'name': 'loginShell', 'display': 'Shell', 'choices':(
+                     {'name': 'loginShell', 'display': 'Shell', 'choices': (
                         ('/bin/sh', '/bin/sh'),
                         ('/bin/bash', '/bin/bash'),
                         ('/usr/bin/tmux', '/usr/bin/tmux')),
@@ -183,8 +205,8 @@ SOCIAL_AUTH_MEDIAWIKI_CALLBACK = 'http://localhost:8000/complete/mediawiki'
 
 # Uncomment the lines below to test wikimedia IDP integration, leave commented
 # in developer environment to use LDAP backend directly.
-#LOGOUT_REDIRECT_URL = 'wikimedia:login'
-#LOGIN_URL = LOGOUT_REDIRECT_URL
+# LOGOUT_REDIRECT_URL = 'wikimedia:login'
+# LOGIN_URL = LOGOUT_REDIRECT_URL
 CAPTCHA_CHALLENGE_FUNCT = 'signups.forms.captcha_input_generator'
 CAPTCHA_IMAGE_SIZE = (130,40)
 CAPTCHA_FONT_SIZE = 28

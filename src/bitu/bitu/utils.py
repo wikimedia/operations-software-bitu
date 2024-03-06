@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger('bitu')
 
 
-def send_service_message(subject: str, message: str, limited:bool = False):
+def send_service_message(subject: str, message: str, limited: bool = False):
     """Send error messages to the administrators.
 
     Args:
@@ -14,6 +14,9 @@ def send_service_message(subject: str, message: str, limited:bool = False):
         message (str): message content
         limited (bool): send email to a subset of admins as defined by ADMINS_LIMITED
     """
+
+    if settings.DEBUG:
+        logger.debug(f'sending service message, subject: {subject}, message: {message}')
 
     admins = []
     # Fallback to all admins if limited was requested but settings is not defined.

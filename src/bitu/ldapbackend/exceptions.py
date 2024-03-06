@@ -1,0 +1,2 @@
+class UIDRangeException(Exception):
+    pass
