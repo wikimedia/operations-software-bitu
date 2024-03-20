@@ -1,7 +1,6 @@
 from typing import Any
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
 from django.core.exceptions import PermissionDenied
-from django.db import models
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
@@ -25,7 +24,7 @@ class SSHKeyAccessRestrict(View):
             # Fetch object as normal, but add the user to the query.
             SSHKey.objects.get(pk=pk, user=request.user)
             return super().dispatch(request, *args, **kwargs)
-        except SSHKey.DoesNotExist as e:
+        except SSHKey.DoesNotExist:
             raise PermissionDenied()
 
 
@@ -41,11 +40,20 @@ class SSHKeyCreateView(CreateView):
     form_class = SSHKeyCreateForm
     success_url = reverse_lazy('keymanagement:list')
 
+    def get_initial(self) -> dict[str, Any]:
+        initial = super().get_initial()
+        initial['system'] = self.request.GET.get('system')
+        return initial
+
     def form_valid(self, form):
         key_object = ssh_key_string_to_object(form.instance.ssh_public_key)
         form.instance.user = self.request.user
         form.instance.key_type = key_object.get_name()
         form.instance.key_size = key_object.get_bits()
+
+        if form.instance.system:
+            form.instance.active = True
+
         return super().form_valid(form)
 
 

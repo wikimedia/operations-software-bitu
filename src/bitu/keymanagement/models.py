@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.forms import Textarea
 
 from .helpers import ssh_key_string_to_object
 from .validators import ssh_key_validator
@@ -10,12 +9,13 @@ User = get_user_model()
 
 
 class SSHKey(models.Model):
-    systems = [
+    systems = [('', '---')] + [
         (k, v.get('ssh_keys_display_name', k))
         for k, v in settings.BITU_SUB_SYSTEMS.items() if v.get('manage_ssh_keys', False)
     ]
+
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name='ssh_keys')
-    system = models.CharField(max_length=256, choices=systems, default='')
+    system = models.CharField(max_length=256, choices=systems, default='', blank=True)
     ssh_public_key = models.TextField(unique=True, validators=(ssh_key_validator.validate,))
     comment = models.CharField(max_length=256, default='')
     active = models.BooleanField(default=False)
