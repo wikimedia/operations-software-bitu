@@ -1,3 +1,18 @@
+bitu (0.0.6-1) bookworm-wikimedia; urgency=low
+
+  * Allow SSH key enable on upload (T359543).
+  * Improve wording on password reset (T356409)
+  * Allow viewing of full SSH key from UI (T351140)
+  * Provide more context on account creation (T353584)
+  * Footer with useful links (T351137)
+  * Unique titles on pages (T351136)
+  * Better error message when cookies are disabled (T348435)
+  * Avoid overwriting unix usernames in signup form (T347635)
+  * Fix regex that would generate invalid unix usernames (T347634)
+  * General design improvements (T355205)
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Thu, 21 Mar 2024 13:55:15 +0000
+
 bitu (0.0.5-1) bookworm-wikimedia; urgency=low
 
   * Reintroduce an updated capitalization for CN (T355615).
