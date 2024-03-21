@@ -1,4 +1,3 @@
-import re
 import uuid
 
 from django.conf import settings
@@ -7,18 +6,17 @@ from django.utils.module_loading import import_string
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from django.forms import ValidationError
 
 from .tokens import SignupActivationTokenGenerator, default_token_generator
 
 from . import jobs
-
 
 mark_safe_lazy = lazy(mark_safe, str)
 
 username_validators = [import_string(module) for module in getattr(settings, 'SIGNUP_USERNAME_VALIDATORS', [])]
 uid_validators = [import_string(module) for module in getattr(settings, 'SIGNUP_UID_VALIDATORS', [])]
 email_validators = [import_string(module) for module in getattr(settings, 'SIGNUP_EMAIL_VALIDATORS', [])]
+
 
 class Signup(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -30,7 +28,7 @@ class Signup(models.Model):
         _("username"),
         max_length=150,
         unique=True,
-                help_text=_(
+        help_text=_(
             "Developer account usernames are commonly either the same as a user's Wikimedia account username or their real name."
         ),
         validators=username_validators,
@@ -53,9 +51,20 @@ class Signup(models.Model):
         },
     )
 
-    email = models.EmailField(_("email"),
-                              validators=email_validators,
-                              unique=True)
+    email = models.EmailField(
+        _("email"),
+        validators=email_validators,
+        unique=True,
+        help_text=mark_safe_lazy(
+            _('Your email must be unique.\
+               If you are setting up an account for a bot,\
+               please use a dedicated email address or an\
+              address suffix, e.g. user+bot@example.com\
+              (if you mailserver supports this).')),
+        error_messages={
+            "unique": _("Email address already in use."),
+        },
+    )
 
     def set_password(self, password):
         for name, module in settings.BITU_SUB_SYSTEMS.items():
