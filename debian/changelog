@@ -9,6 +9,7 @@ bitu (0.0.6-1) bookworm-wikimedia; urgency=low
   * Better error message when cookies are disabled (T348435)
   * Avoid overwriting unix usernames in signup form (T347635)
   * Fix regex that would generate invalid unix usernames (T347634)
+  * Load SSH keys from backends on page view (T360634)
   * General design improvements (T355205)
 
  -- Simon Lyngshede <slyngshede@wikimedia.org>  Thu, 21 Mar 2024 13:55:15 +0000

@@ -9,6 +9,7 @@ from django.views.generic.base import View
 from .forms import SSHKeyCreateForm, SSHKeyActivateFormSingle
 from .helpers import ssh_key_string_to_object
 from .models import SSHKey
+from .helpers import load_ssh_key
 
 
 class SSHKeyAccessRestrict(View):
@@ -32,6 +33,7 @@ class SSHKeyListView(ListView):
     model = SSHKey
 
     def get_queryset(self):
+        load_ssh_key(self.request.user)
         return SSHKey.objects.filter(user=self.request.user).order_by('-active')
 
 
