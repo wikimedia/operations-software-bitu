@@ -112,4 +112,4 @@ def load_ssh_key(user):
 
 
 def syncronize_ssh_keys(user):
-    jobs.syncronize_ssh_keys.delay(user)
+    jobs.syncronize_ssh_keys(user)
