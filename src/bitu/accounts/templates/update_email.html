@@ -10,7 +10,13 @@
     We will send a confirmation email with a link to your new email address, click this
     link to verify that you have access to that email account.
     {% endblocktranslate %}
-    </p></div>
+    </p>
+    <p><em>
+    {% blocktranslate %}
+    Please remember that the email address linked to your account is publicly visible.
+    {% endblocktranslate %}
+    </em></p>
+  </div>
     <br />
     <div>
     <form method="post">{% csrf_token %}
