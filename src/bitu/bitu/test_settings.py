@@ -17,6 +17,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_rq',
+    'rest_framework',
+    'rest_framework.authtoken',
     'social_django',
     'accounts',
     'captcha',
@@ -93,3 +95,10 @@ BITU_SUB_SYSTEMS = {
         'password_hash_method': HASHED_SALTED_SHA,
     }
 }
+
+# Ideally we'd like to load these in the test cases, but due to test sequence in which
+# modules are loaded, that will cause the models to load without validators.
+SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator',
+                              'signups.validators.UsernameValidator',
+                              'signups.validators.IsURLValidator'
+                              ]

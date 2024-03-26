@@ -1,3 +1,4 @@
+import re
 import uuid
 
 from django.conf import settings
@@ -8,6 +9,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .tokens import SignupActivationTokenGenerator, default_token_generator
+from bitu.helpers import capitalize_first
 
 from . import jobs
 
@@ -29,7 +31,8 @@ class Signup(models.Model):
         max_length=150,
         unique=True,
         help_text=_(
-            "Developer account usernames are commonly either the same as a user's Wikimedia account username or their real name."
+            "Developer account usernames are commonly either the same as \
+            a user's Wikimedia account username or their real name."
         ),
         validators=username_validators,
         error_messages={
@@ -45,7 +48,12 @@ class Signup(models.Model):
         validators=uid_validators,
         blank=False,
         null=True,
-        help_text=mark_safe_lazy(_('Your shell username will be used when logging into <a href="https://wikitech.wikimedia.org/wiki/Portal:Toolforge">Toolforge</a>, other <a href="https://wikitech.wikimedia.org/wiki/Portal:Cloud_VPS">Wikimedia VPS</a> or Wikimedia production hosts using <a href="https://en.wikipedia.org/wiki/Secure_Shell">SSH</a>. This name is typically shorter than a wiki username. It must start with a-z, and can only contain lowercase a-z, 0-9 and - characters.')),
+        help_text=mark_safe_lazy(_('Your shell username will be used when logging \
+            into <a href="https://wikitech.wikimedia.org/wiki/Portal:Toolforge">Toolforge</a>, \
+            other <a href="https://wikitech.wikimedia.org/wiki/Portal:Cloud_VPS">Wikimedia VPS</a> \
+            or Wikimedia production hosts using <a href="https://en.wikipedia.org/wiki/Secure_Shell">SSH</a>. \
+            This name is typically shorter than a wiki username. It must start with a-z, and can \
+            only contain lowercase a-z, 0-9 and - characters.')),
         error_messages={
             "unique": _("A user with that username already exists."),
         },
@@ -105,3 +113,24 @@ class BlockListUsername(models.Model):
     origin = models.CharField(null=False, default='manual', max_length=255)
     regex = models.CharField(null=False, max_length=255)
     comment = models.CharField(null=False, max_length=255)
+
+
+# API dummy classes
+# The following classes are used as "dummy" classes for the django REST frameworks
+# serializers.
+class UserValidation(models.Model):
+    username = models.CharField(_("username"), max_length=150)
+    uid = models.CharField(_("SSH access (shell) username"), max_length=32)
+    sanitized = models.CharField(_("sanitized"), max_length=150)
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        if not self.uid:
+            self.uid = re.sub(r'[^A-Za-z 0-9 -]*', '', self.username.replace(' ', '')).lower()[:32]
+
+        # Clients cannot supply the sanitized username, making it always okay to overwrite.
+        self.sanitized = capitalize_first(self.username)
+
+    class Meta:
+        managed = False
