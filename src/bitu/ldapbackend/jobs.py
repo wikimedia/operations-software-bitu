@@ -152,6 +152,10 @@ def load_ssh_key(user: 'User'):
             key.active = False
             key.save()
 
+        if not key.active:
+            key.system = ''
+            key.save()
+
     for key in ldap_user.sshPublicKey.values:
         ssh_key, created = SSHKey.objects.get_or_create(user=user, ssh_public_key=key.decode('utf-8'))
 

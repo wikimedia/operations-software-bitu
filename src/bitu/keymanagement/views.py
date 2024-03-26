@@ -34,7 +34,7 @@ class SSHKeyListView(ListView):
 
     def get_queryset(self):
         load_ssh_key(self.request.user)
-        return SSHKey.objects.filter(user=self.request.user).order_by('-active')
+        return SSHKey.objects.filter(user=self.request.user).order_by('-active', 'ssh_public_key')
 
 
 class SSHKeyCreateView(CreateView):
