@@ -9,7 +9,7 @@
 <div class="content">
     <div class="message-box-narrow">
         <header>
-            <h3>Suspend key key</h3>
+            <h3>{% translate "Suspend key" %}</h3>
         </header>
         {% blocktranslate with key=object.ssh_public_key system=object.get_system_display %}
         <p>This will suspend the use of your key with: <em>{{ system }}</em>.</p>
