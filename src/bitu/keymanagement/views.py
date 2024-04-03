@@ -1,7 +1,9 @@
 from typing import Any
 
+from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 from django.views.generic.base import View
@@ -56,12 +58,17 @@ class SSHKeyCreateView(CreateView):
         if form.instance.system:
             form.instance.active = True
 
+        messages.add_message(self.request, messages.SUCCESS, _('SSH key successfully uploaded.'))
         return super().form_valid(form)
 
 
 class SSHKeyDeleteView(DeleteView, SSHKeyAccessRestrict):
     model = SSHKey
     success_url = reverse_lazy('keymanagement:list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.add_message(request, messages.INFO, _('SSH key successfully deleted.'))
+        return super().delete(request, *args, **kwargs)
 
 
 class SSHKeyActivateView(UpdateView, SSHKeyAccessRestrict):
@@ -80,6 +87,10 @@ class SSHKeyActivateView(UpdateView, SSHKeyAccessRestrict):
         kw['instance'].active = True
         return kw
 
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, _('SSH key has been activated.'))
+        return super().form_valid(form)
+
 
 class SSHKeyDeactiveView(UpdateView, SSHKeyAccessRestrict):
     model = SSHKey
@@ -91,3 +102,7 @@ class SSHKeyDeactiveView(UpdateView, SSHKeyAccessRestrict):
         kw = super().get_form_kwargs()
         kw['instance'].active = False
         return kw
+
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.INFO, _('SSH key deactivated.'))
+        return super().form_valid(form)

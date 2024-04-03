@@ -55,7 +55,7 @@
     document.getElementById('id_ssh_public_key').onchange = function() {
     var key = document.getElementById("id_ssh_public_key").value.split(' ')
     if (key[2]) {
-      document.getElementById("id_comment").value = key[2]
+      document.getElementById("id_comment").value = key.slice(2).join(' ')
     }
   };
 </script>
