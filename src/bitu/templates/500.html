@@ -1,35 +1,26 @@
-{% load i18n %}
+{% extends 'hero_codex.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bitu</title>
-    <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/bitu.css' %}">
-  </head>
-  <body>
-    <br>
-    <div class="columns is-centered">
-      <div class="column"></div>
-      <div class="column is-half has-text-centered">
-        <article class="message is-warning">
-            <div class="message-header">
-              <p>{% translate "Bitu Error" %}</p>
-            </div>
-            <div class="message-body">
+{% load i18n %}
+{% block content %}
+    <div class="content">
+        <div class="message-body">
+          <div class="message-box">
+            <div class="cdx-message cdx-message--block cdx-message--error" aria-live="polite">
+              <span class="cdx-message__icon"></span>
+              <div class="cdx-message__content">
                 {% blocktrans %}
-                There was an error processing your request. Should the problem persist, you can
-                <a href="https://phabricator.wikimedia.org/maniphest/task/edit/form/43/?tags=bitu%2Cinfrastructure-foundations&title=IDM%20Bug-Report" target="_blank">
-                  submit a bug report</a>
-                <br />
-                Click <a href=/>here to return to the frontpage.</a>
+                500 Internal Server Error - Your request caused an error on the server.
                 {% endblocktrans %}
+              </div>
             </div>
-          </article>
-      </div>
-      <div class="column"></div>
+          </div>
+            {% blocktrans %}
+            There was an error processing your request. Should the problem persist, you can
+            <a href="https://phabricator.wikimedia.org/maniphest/task/edit/form/43/?tags=bitu%2Cinfrastructure-foundations&title=IDM%20Bug-Report" target="_blank">
+              submit a bug report</a>
+            <br />
+            Click <a href=/>here to return to the frontpage.</a>
+            {% endblocktrans %}
+        </div>
     </div>
-  </body>
-</html>
+{% endblock %}
