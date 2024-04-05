@@ -30,6 +30,8 @@ urlpatterns = [
     path('keymanagement/', include('keymanagement.urls')),
     path('about/', TemplateView.as_view(template_name="about.html"), name="about"),
     path('', login_required(RedirectView.as_view(pattern_name=settings.LOGIN_REDIRECT_URL),), name='overview'),
+    path('403/', TemplateView.as_view(template_name='403.html')),
+    path('500/', TemplateView.as_view(template_name='500.html')),
 ]
 
 # When developing, allow the built in Django webserver to serve static
