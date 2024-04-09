@@ -1,6 +1,14 @@
 from rest_framework import serializers
 
-from .models import UserValidation, username_validators, uid_validators
+from .models import BlockListIP, UserValidation, username_validators, uid_validators
+
+
+class BlockListIPSerializer(serializers.ModelSerializer):
+    network = serializers.ReadOnlyField()
+
+    class Meta:
+        model = BlockListIP
+        fields = ['comment', 'expiry', 'network']
 
 
 class UserValidationSerializer(serializers.Serializer):

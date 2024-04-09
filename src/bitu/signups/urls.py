@@ -2,11 +2,12 @@
 from django.urls import path
 from django.views.generic import TemplateView
 
-from .api import UsernameValidatorApiView
+from .api import BlocklistIPApiView, UsernameValidatorApiView
 from .views import SignupActivationFormView, SignupFormView
 
 app_name = 'signups'
 urlpatterns = [
+    path('api/ip/<ip>/', BlocklistIPApiView.as_view()),
     path('api/username/', UsernameValidatorApiView.as_view()),
     path("activate/<uidb64>/<token>/", SignupActivationFormView.as_view(), name="activate"),
     path('', SignupFormView.as_view(), name='signup'),
