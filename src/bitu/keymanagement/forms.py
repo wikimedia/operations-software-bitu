@@ -37,6 +37,9 @@ class SSHKeyCreateForm(forms.ModelForm):
             'comment': forms.TextInput(attrs={'size': 96}),
             'ssh_public_key': forms.Textarea(attrs={'cols': 80, 'rows': 10}),
         }
+        labels = {
+            'ssh_public_key': _('SSH public key')
+        }
 
 
 class SSHKeyActivateFormSingle(forms.ModelForm):
