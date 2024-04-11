@@ -20,7 +20,7 @@ def ssh_key_validator(ssh_key):
         return
     if pkey.key_type not in allowed_key_types.keys():
         key_names = ','.join(allowed_key_types.keys())
-        raise ValidationError(f'Key type {pkey.key_type} is insecure. Supported keys are: {key_names}')
+        raise ValidationError(f'Key type {pkey.key_type} is unsupported. Supported keys are: {key_names}')
     key_type = allowed_key_types[pkey.key_type]
     if pkey.key_type == 'ssh-rsa' and 'min_key_size' in key_type:
         required_key_size = key_type['min_key_size']
