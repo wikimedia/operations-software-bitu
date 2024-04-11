@@ -29,7 +29,7 @@ class SSHKey(models.Model):
     system = models.CharField(max_length=256, choices=systems, default='', blank=True)
     ssh_public_key = models.TextField(
         unique=True,
-        validators=(ssh_key_validator.validate,))
+        validators=(ssh_key_validator,))
     comment = models.CharField(max_length=256, default='')
     active = models.BooleanField(default=False)
     key_type = models.CharField(max_length=32, default='', null=True)

@@ -53,9 +53,17 @@
 {% block script %}
 <script>
     document.getElementById('id_ssh_public_key').onchange = function() {
+    /* Do not overwrite a user provided comment */
+    if(document.getElementById("id_comment").value.length > 0){
+      return
+    }
+
     var key = document.getElementById("id_ssh_public_key").value.split(' ')
     if (key[2]) {
-      document.getElementById("id_comment").value = key.slice(2).join(' ')
+      var comment = key.slice(2).join(' ')
+      if (comment.length < 256) {
+        document.getElementById("id_comment").value = comment
+      }
     }
   };
 </script>
