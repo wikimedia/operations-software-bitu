@@ -1,10 +1,14 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from paramiko.pkey import PublicBlob
 from paramiko.ssh_exception import SSHException
 
-from .helpers import ssh_key_string_to_object
+from .helpers import ssh_key_string_to_object, ssh_key_without_comment
+
+
+User = get_user_model()
 
 
 def ssh_key_validator(ssh_key):
@@ -32,6 +36,13 @@ def ssh_key_validator(ssh_key):
         if key_size < required_key_size:
             raise ValidationError(_(f'Minimum key size for SSH keys of the type: rsa is {required_key_size}, \
                                   upload key was: {key_size}'))
+
+
+def ssh_key_usage_validator(ssh_key):
+    # Check that another key, but with a different comment, doesn't already exists.
+    # Access the SSH keys via the User class, to avoid creating a circular import
+    if User.objects.filter(ssh_keys__ssh_public_key__istartswith=ssh_key_without_comment(ssh_key)).count():
+        raise ValidationError(_('SSH key already exists'))
 
 
 # Migrations includes validators, therefor removing or renaming validators

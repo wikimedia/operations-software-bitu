@@ -20,6 +20,11 @@ if TYPE_CHECKING:
 logger = logging.getLogger('bitu')
 
 
+def ssh_key_without_comment(ssh_key: str) -> str:
+    elements = ssh_key.split(' ')
+    return ' '.join(elements[0:1])
+
+
 def ssh_key_string_to_object(ssh_key: str) -> PKey:
     blob = PublicBlob.from_string(ssh_key)
 
