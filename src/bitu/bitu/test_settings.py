@@ -102,3 +102,8 @@ SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator',
                               'signups.validators.UsernameValidator',
                               'signups.validators.IsURLValidator'
                               ]
+
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATICFILES_DIRS = [
+    BASE_DIR / "static", # noqa
+]
