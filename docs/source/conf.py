@@ -1,8 +1,19 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import sys
+import os
+
+import django
+
 from pathlib import Path
 
 from pkg_resources import get_distribution
+
+# Ensure that Django has been configured to avoid import errors on
+# automodule / autoclass documentation
+sys.path.insert(0, os.path.abspath('../../src/bitu'))
+print(sys.path)
+os.environ['DJANGO_SETTINGS_MODULE'] = 'bitu.test_settings'
+django.setup()
 
 # Adjust path
 sys.path.insert(0, Path('.').__str__())
@@ -19,9 +30,9 @@ print(__file__)
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'Bitu'
-copyright = '2023, Simon Lyngshede'
+copyright = '2024, Wikimedia Foundation'
 author = 'Simon Lyngshede'
-release = '0.0.1'
+release = '0.6.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
