@@ -28,11 +28,7 @@
         {% endblocktranslate %}
         </span>
         {% endif %}
-        <span class="cdx-card__text__supporting-text">
-            {% blocktranslate with key_type=object.get_key_type key_size=object.get_key_length  %}
-            Key type: {{ key_type }} / {{ key_size }} bits
-            {% endblocktranslate %}
-        </span>
+        {% include "keymanagement/sshkey_info_box.html" %}
         </div>
     </div>
     <form method="post">{% csrf_token %}

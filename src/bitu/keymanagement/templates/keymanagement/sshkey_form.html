@@ -58,7 +58,8 @@
       return
     }
 
-    var key = document.getElementById("id_ssh_public_key").value.split(' ')
+    var key = document.getElementById("id_ssh_public_key").value.trim().split(' ')
+
     if (key[2]) {
       var comment = key.slice(2).join(' ')
       if (comment.length < 256) {

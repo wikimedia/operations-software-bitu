@@ -3,8 +3,9 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from .helpers import ssh_key_string_to_object
+from .helpers import key_type_from_str, ssh_key_string_to_object
 from .validators import ssh_key_validator, ssh_key_usage_validator
+
 
 User = get_user_model()
 
@@ -38,7 +39,7 @@ class SSHKey(models.Model):
         return bytes(self.ssh_public_key, 'utf-8')
 
     def get_key_type(self):
-        return ssh_key_string_to_object(self.ssh_public_key).get_name()
+        return key_type_from_str(self.ssh_public_key)
 
     def get_key_length(self):
         return ssh_key_string_to_object(self.ssh_public_key).get_bits()

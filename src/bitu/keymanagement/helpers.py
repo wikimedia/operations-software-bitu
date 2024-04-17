@@ -21,15 +21,20 @@ logger = logging.getLogger('bitu')
 
 
 def ssh_key_without_comment(ssh_key: str) -> str:
-    elements = ssh_key.split(' ')
-    return ' '.join(elements[0:1])
+    # Example: '      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAkTVYhMVOooNQwfxURKnFYav/huLuSh3B+vFiLm4UrL Bitu ED25519 Test Key 3'  # noqa
+    #          |strip| element 0 |                          element 1                                 |       discard         |  # noqa
+    # When joining element 0 and 1 use array slicing to getting two elements, starting from index 0.
+    # Expected result: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAkTVYhMVOooNQwfxURKnFYav/huLuSh3B+vFiLm4UrL
+    elements = ssh_key.strip().split(' ')
+    return ' '.join(elements[0:2])
 
 
 def ssh_key_string_to_object(ssh_key: str) -> PKey:
-    blob = PublicBlob.from_string(ssh_key)
+    sanitized_key_data = ssh_key.strip()
+    blob = PublicBlob.from_string(sanitized_key_data)
 
     key = PKey()
-    data = base64.b64decode(ssh_key.split(' ', 3)[1])
+    data = base64.b64decode(sanitized_key_data.split(' ', 3)[1])
     if blob.key_type == 'ssh-dss':
         key = DSSKey(data=data)
     elif blob.key_type == 'ssh-rsa':
@@ -38,7 +43,13 @@ def ssh_key_string_to_object(ssh_key: str) -> PKey:
         key = ECDSAKey(data=data)
     elif blob.key_type == 'ssh-ed25519':
         key = Ed25519Key(data=data)
+
     return key
+
+
+def key_type_from_str(ssh_key) -> str:
+    blob = PublicBlob.from_string(ssh_key)
+    return blob.key_type
 
 
 def load_ssh_key(user: 'User'):

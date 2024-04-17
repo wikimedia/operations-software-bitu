@@ -1,0 +1,12 @@
+{% load i18n %}
+<span class="cdx-card__text__supporting-text">
+{% if object.get_key_length %}
+{% blocktranslate with key_type=object.get_key_type key_size=object.get_key_length  %}
+Key type: {{ key_type }} / {{ key_size }} bits
+{% endblocktranslate %}
+{% else %}
+{% blocktranslate with key_type=object.get_key_type  %}
+Key type: {{ key_type }}
+{% endblocktranslate %}
+{% endif %}
+</span>
