@@ -1,32 +1,53 @@
-{% extends 'codex.html' %}
+{% extends 'hero_codex.html' %}
 {% load i18n %}
-{% block title %}{% translate "Please signin" %}{% endblock %}
+{% load static %}
+
+{% block title %}
+{% translate "Wikimedia Identity Manager - Signin" %}
+{% endblock %}
 
 {% block content %}
-<div class="columns">
-    <div class="column"></div>
-    <div class="column is-half">
-        <form method="POST">{% csrf_token %}
+<div class="content">
+    <div class="hero">
+    <div id="cookie_error" class="warning" style="display: none;">
+        <div class="cdx-message cdx-message--block cdx-message--warning" aria-live="polite">
+            <span class="cdx-message__icon"></span>
+              <div class="cdx-message__content">
+                {% blocktranslate %}
+                Your browser does not have cookies enabled, this will prevent you from signing in.
+                {% endblocktranslate %}
+              </div>
+        </div>
+    </div>
 
+    <h2>Log in to your account</h2>
+    <form method="POST">{% csrf_token %}
+    <div>
         <!-- form variable -->
          {{ form.as_p }}
-        <div>
-        <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-quiet">
+    </div>
+    <div class="center-block">
+        <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
             {% translate "Log In" %}
         </button>
-        </div>
-        </form>
-
-        <div>
+    </div>
+    </form>
+    <div>
         {% url 'signups:signup' as signup_url %}
         {% blocktrans %}
         Don't have an account? Go to our <a href="{{ signup_url }}">signup page</a>.
         {% endblocktrans %}
         </div>
     </div>
-<div class="column"></div>
-<button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-quiet">
-    {% translate "Log In" %}
-</button>
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+
+if(!navigator.cookieEnabled){
+    var cookie_error = document.getElementById('cookie_error')
+    cookie_error.style.display = 'block';
+}
+</script>
 {% endblock %}
