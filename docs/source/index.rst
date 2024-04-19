@@ -4,11 +4,13 @@ Welcome to Bitu's documentation!
 ================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Usage
 
    configuration
    development
+   api/index
+
 
 .. toctree::
    :maxdepth: 3
