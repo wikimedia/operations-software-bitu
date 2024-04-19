@@ -237,6 +237,7 @@ SIGNUP_INFO_TEMPLATE = 'signup_info_wmf.html'
 LOGIN_REDIRECT_URL = 'ldapbackend:properties'
 
 ADMINS_LIMITED = []
+ENABLE_API = True
 
 if DEBUG:
     for queueConfig in RQ_QUEUES.values():
