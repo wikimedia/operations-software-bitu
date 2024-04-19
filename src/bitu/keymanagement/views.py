@@ -9,7 +9,7 @@ from django.views.generic.list import ListView
 from django.views.generic.base import View
 
 from .forms import SSHKeyCreateForm, SSHKeyActivateFormSingle
-from .helpers import ssh_key_string_to_object
+from .helpers import ssh_key_string_to_object, key_type_from_str
 from .models import SSHKey
 from .helpers import load_ssh_key
 
@@ -52,7 +52,8 @@ class SSHKeyCreateView(CreateView):
     def form_valid(self, form):
         key_object = ssh_key_string_to_object(form.instance.ssh_public_key)
         form.instance.user = self.request.user
-        form.instance.key_type = key_object.get_name()
+        form.instance.ssh_public_key = form.instance.ssh_public_key.strip()
+        form.instance.key_type = key_type_from_str(form.instance.ssh_public_key)
         form.instance.key_size = key_object.get_bits()
 
         if form.instance.system:

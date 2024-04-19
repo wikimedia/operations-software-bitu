@@ -3,9 +3,13 @@ from django.test import Client
 from django.urls import reverse
 
 from accounts.models import User
+from keymanagement import helpers
 from keymanagement.models import SSHKey
 
 from ldapbackend.tests import dummy_ldap
+
+from paramiko.ed25519key import Ed25519Key
+from paramiko.rsakey import RSAKey
 
 
 class ValidatorTest(TestCase):
@@ -61,3 +65,28 @@ class ValidatorTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, key1)
         self.assertEqual(keys[0], self.user.ssh_keys.all()[0])
+
+    def test_create_view_sanitized(self):
+        key1 = '   ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAkTVYhMVOooNQwfxURKnFYav/huLuSh3B+vFiLm4UrL Bitu ED25519 Test Key 3'  # noqa
+        create_url = reverse('keymanagement:create')
+        response = self.client.post(create_url, {'comment': 'Whitespace Test', 'ssh_public_key': key1})
+        self.assertEqual(response.status_code, 302)
+        key = SSHKey.objects.filter(user=self.user).get(comment='Whitespace Test')
+        self.assertEqual(key.comment, 'Whitespace Test')
+
+
+class SSHKeyHelperTest(TestCase):
+    def test_no_comment(self):
+        key1 = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINTXBZrJkodCzdfHkuKy2+/yPHLrMkkMYWfIuDGaJy8t Bitu ED25519 Test Key 1'  # noqa
+        self.assertEqual(key1[0:80], helpers.ssh_key_without_comment(key1))
+        self.assertEqual(key1[0:80], helpers.ssh_key_without_comment(" " + key1))
+
+    def test_str_to_obj(self):
+        key1 = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINTXBZrJkodCzdfHkuKy2+/yPHLrMkkMYWfIuDGaJy8t Bitu ED25519 Test Key 1'  # noqa
+        key2 = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC5slfyq3JcGv71K52pitHk+v5M7xSVgKT2zG7sgVcWvq+6aYzKxRE6HyPMSjW3NbVWre9673lz/hiTbqdGCf/l4IngQSjh3HHeZgILgpe1Jsgh2vGXEmEj/FBQSDmET4+m+xL5o+PZhXvhe55MQk1xq2tJM+UrfRrU5dhrhGLlh8Arl/8Ik3YWD7Q9PdmJB9vwWVvCBs10Vw55BYTDR4lSz3nkQa8UFjLhtruMpVBwmQ1e+sY8zR7Hd+C0H3Y6tL10RsSMuGiRJcMriQ8dOMa/tLMhMHbZ/+GAxaVlF0hJtsbWRN+xJ3clophZz7uD57MGa79lEQkiPzjl9Kfsjm4W1gFMaC/OovWIHZvGfIW4lx+o9KGG+SJAOVlCBPyk01xOmBHPDyNIebjepUsHk7MMDFFTSdqbkGcBgCRcjdyzLYW+s82E2ybs7c2wHH+uhcnxOn4GWHeWwPH+ZkHY1q4N3/1W+1hMLMooUPQLAZ4vzqzgtyGn9mN356bTzQ1yTyc=  Bitu RSA Test Key 1'  # noqa
+
+        obj1 = helpers.ssh_key_string_to_object(key1)
+        obj2 = helpers.ssh_key_string_to_object(key2)
+
+        self.assertIsInstance(obj1, Ed25519Key)
+        self.assertIsInstance(obj2, RSAKey)
