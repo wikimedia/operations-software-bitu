@@ -2,10 +2,15 @@
 {% load static %}
 
 {% block main %}
+<div class="content">
         {% include "navbar_codex.html" %}
+        <header>
+            <h2>{% block heading %}{% endblock %}</h2>
+        </header>
         {% block message %}
         {% include "messages_codex.html" %}
         {% endblock %}
         {% block content %}
         {% endblock %}
+</div>
 {% endblock %}
