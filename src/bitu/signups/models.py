@@ -1,3 +1,4 @@
+import ipaddress
 import re
 import uuid
 
@@ -113,6 +114,21 @@ class BlockListUsername(models.Model):
     origin = models.CharField(null=False, default='manual', max_length=255)
     regex = models.CharField(null=False, max_length=255)
     comment = models.CharField(null=False, max_length=255)
+
+
+class BlockListIP(models.Model):
+    created_date = models.DateTimeField()
+    expiry = models.DateTimeField()
+    origin = models.CharField(null=False, default='manual', max_length=255)
+    start = models.GenericIPAddressField(null=False)
+    end = models.GenericIPAddressField(null=False)
+    comment = models.CharField(null=False, max_length=255)
+
+    @property
+    def network(self):
+        start = ipaddress.ip_address(self.start)
+        end = ipaddress.ip_address(self.end)
+        return next(ipaddress.summarize_address_range(start, end)).__str__()
 
 
 # API dummy classes

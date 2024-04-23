@@ -1,0 +1,46 @@
+[
+    {
+      "model": "signups.blocklistip",
+      "fields": {
+        "created_date": "2024-04-09T08:29:54Z",
+        "expiry": "2100-04-16T08:29:54Z",
+        "origin": "metawiki",
+        "start": "176.200.16.174",
+        "end": "176.200.16.174",
+        "comment": "Long-term abuse"
+      }
+    },
+    {
+      "model": "signups.blocklistip",
+      "fields": {
+        "created_date": "2024-04-09T08:27:52Z",
+        "expiry": "2100-04-09T08:27:52Z",
+        "origin": "metawiki",
+        "start": "194.135.119.0",
+        "end": "194.135.119.255",
+        "comment": "Open proxies"
+      }
+    },
+    {
+      "model": "signups.blocklistip",
+      "fields": {
+        "created_date": "2024-04-09T08:27:52Z",
+        "expiry": "2100-04-09T08:27:52Z",
+        "origin": "metawiki",
+        "start": "2407:c800:2f22:6f8::",
+        "end": "2407:c800:2f22:6f8:ffff:ffff:ffff:ffff",
+        "comment": "Cross-wiki abuse"
+      }
+    },
+    {
+      "model": "signups.blocklistip",
+      "fields": {
+        "created_date": "2023-04-09T08:27:52Z",
+        "expiry": "2023-04-10T08:27:52Z",
+        "origin": "metawiki",
+        "start": "195.100.100.5",
+        "end": "195.100.100.5",
+        "comment": "Expired"
+      }
+    }
+]

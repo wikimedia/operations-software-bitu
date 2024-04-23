@@ -1,9 +1,23 @@
+from django.utils import timezone
+
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework import generics
 
-from .serializers import UserValidationSerializer
-from .models import UserValidation
+from .serializers import BlockListIPSerializer, UserValidationSerializer
+from .models import BlockListIP, UserValidation
+
+
+class BlocklistIPApiView(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [DjangoModelPermissions]
+    queryset = BlockListIP.objects.all()
+    serializer_class = BlockListIPSerializer
+
+    def get_queryset(self):
+        ip = self.kwargs['ip']
+        queryset = super().get_queryset().filter(expiry__gt=timezone.now())
+        return queryset.filter(start__lte=ip, end__gte=ip)
 
 
 class UsernameValidatorApiView(generics.CreateAPIView):
@@ -19,4 +33,4 @@ class UsernameValidatorApiView(generics.CreateAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [DjangoModelPermissions]
     serializer_class = UserValidationSerializer
-    queryset = UserValidation.objects
+    queryset = UserValidation.objects.all()
