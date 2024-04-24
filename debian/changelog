@@ -1,3 +1,13 @@
+bitu (0.0.7) bookworm-wikimedia; urgency=low
+
+  * Workflow improvements for SSH key management (T360966).
+  * Fix inconsistent navbar height (T360520).
+  * Add API for validating usernames (T361066).
+  * Add API for checking IP blocklist (T361066).
+  * Improved key duplicate detection (T359532).
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Wed, 24 Apr 2024 14:13:57 +0000
+
 bitu (0.0.6-2) bookworm-wikimedia; urgency=low
 
   * Add svg files to packages.
