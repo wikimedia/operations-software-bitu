@@ -99,4 +99,4 @@ class Command(BaseCommand):
             print(f'Total of {blocks.count()} block list items expired'.rjust(72))
             print('-'.ljust(72, '-'))
         else:
-            BlockListIP.objects.filter(expiry__gt=expiry).delete()
+            BlockListIP.objects.filter(expiry__lt=expiry).delete()
