@@ -318,6 +318,10 @@ nav ul {
 
 
 /* fake tables */
+table {
+    width: 100%;
+}
+
 table, thead, tbody, th, td, tr {
     display: block;
 }
@@ -342,6 +346,10 @@ td {
     position: relative;
     padding-left: 25vw;
     margin-bottom: 1vh;
+}
+
+td a.cdx-button {
+    margin-top: 5px;
 }
 
 .sshkey {

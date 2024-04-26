@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="content">
 <table>
     <thead>
         <tr>
@@ -50,5 +51,6 @@
 </table>
 <div class="center-block">
     <a href="{% url "keymanagement:create" %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled  cdx-button--weight-primary cdx-button--action-progressive">Upload new key</a>
+</div>
 </div>
 {% endblock %}
