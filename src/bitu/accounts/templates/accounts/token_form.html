@@ -1,0 +1,15 @@
+{% extends 'forms/codex_form_view.html' %}
+{% load i18n %}
+
+{% block title %}
+{% translate "API token management - Create token" %}
+{% endblock %}
+
+{% block actions %}
+<div class="center-block">
+  <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
+  {% translate "New API Key" %}
+  </button>
+  <a href="{% url "accounts:api_tokens" %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Cancel" %}</a>
+</div>
+{% endblock %}

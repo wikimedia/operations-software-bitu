@@ -2,20 +2,12 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from .models import User
+from bitu.forms import GenericCodexForm
 
-class UpdateEmailForm(forms.Form):
+
+class UpdateEmailForm(GenericCodexForm):
     email1 = forms.EmailField(label=_('New email'))
     email2 = forms.EmailField(label=_('Confirm email'))
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-            # Add codex stylesheet class.
-        for field_name in self.fields:
-            field = self.fields[field_name]
-            field.widget.attrs['class'] = 'cdx-text-input__input'
-            field.widget.attrs['aria-describedby'] = f'cdx-{field_name}'
 
     def clean_email2(self):
         email1 = self.cleaned_data.get("email1")
@@ -28,6 +20,10 @@ class UpdateEmailForm(forms.Form):
         return email2
 
 
-class VerifyEmailForm(forms.Form):
+class VerifyEmailForm(GenericCodexForm):
     user_id = forms.IntegerField(widget=forms.HiddenInput())
     email = forms.EmailField(widget=forms.HiddenInput())
+
+
+class TokenForm(GenericCodexForm):
+    comment = forms.CharField(max_length=256)

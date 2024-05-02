@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_rq',
     'rest_framework',
-    'rest_framework.authtoken',
     'social_django',
     'accounts',
     'captcha',
@@ -48,10 +47,10 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ]
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'accounts.authentication.BituTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
+    )
 }
 
 ROOT_URLCONF = 'bitu.urls'

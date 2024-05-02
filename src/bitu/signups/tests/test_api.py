@@ -2,10 +2,9 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import status
-from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from accounts.models import User
+from accounts.models import Token, User
 from signups.models import BlockListUsername, UserValidation
 
 

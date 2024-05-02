@@ -2,6 +2,9 @@
 <nav>
     <ul class="menu">
       <li class="logo"><a href="#">Bitu Identity Manager</a></li>
+      {% if user.allow_api_usage %}
+      <li class="item"><a href="{% url "accounts:api_tokens" %}">{% translate "API" %}</a></li>
+      {% endif %}
       <li class="item"><a href="{% url "ldapbackend:properties" %}">{% translate "Properties" %}</a></li>
       <li class="item"><a href="{% url "keymanagement:list" %}">{% translate "SSH keys" %}</a></li>
       <li class="item"><a class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-destructive" href="{% url 'accounts:logout' %}">Log Out</a></li>

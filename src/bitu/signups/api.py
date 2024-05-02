@@ -1,6 +1,5 @@
 from django.utils import timezone
 
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework import generics
 
@@ -9,7 +8,6 @@ from .models import BlockListIP, UserValidation
 
 
 class BlocklistIPApiView(generics.ListAPIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [DjangoModelPermissions]
     queryset = BlockListIP.objects.all()
     serializer_class = BlockListIPSerializer
@@ -30,7 +28,6 @@ class UsernameValidatorApiView(generics.CreateAPIView):
 
     Return a HTTP 201 if the input is valid, HTTP 400 Bad request otherwise.
     """
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [DjangoModelPermissions]
     serializer_class = UserValidationSerializer
     queryset = UserValidation.objects.all()

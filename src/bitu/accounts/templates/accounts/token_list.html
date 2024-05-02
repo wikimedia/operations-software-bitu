@@ -1,0 +1,40 @@
+{% extends 'single_column_codex_with_nav.html' %}
+{% load i18n %}
+
+{% block title %}
+{% translate "API token management - List token" %}
+{% endblock %}
+
+{% block content %}
+<div class="content">
+{% if not object_list %}
+{% translate "You do not current have any tokens." %}
+{% endif %}
+<table>
+    <thead>
+        <tr>
+            <th>token</th>
+            <th>user</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for token in object_list %}
+        <tr>
+            <td data-label="{% translate "User" %}">{{ token.user.get_username }}</td>
+            <td data-label="{% translate "Created" %}">{{ token.created }}</td>
+            <td data-label="{% translate "Comment" %}">{{ token.comment }}</td>
+            <td data-label="">
+                <a class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-destructive"
+                href="{% url "accounts:api_token_delete" pk=token.id %}">
+                    {% translate "Delete" %}
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="center-block">
+    <a href="{% url "accounts:api_token_create" %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled  cdx-button--weight-primary cdx-button--action-progressive">{% translate "New Token" %}</a>
+</div>
+</div>
+{% endblock %}

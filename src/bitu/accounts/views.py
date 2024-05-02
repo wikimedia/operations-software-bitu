@@ -1,9 +1,13 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
-from django.http import HttpResponseRedirect
+from django.forms import BaseModelForm
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, DeleteView
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.cache import never_cache
@@ -12,11 +16,14 @@ from django.views.decorators.csrf import csrf_protect
 
 
 from .forms import UpdateEmailForm, VerifyEmailForm
-from .models import User, EmailUpdate
+from .models import User, EmailUpdate, Token
 from . import jobs, tokens
+
+from bitu.views import ObjectAccessRestrictMixin
 
 
 INTERNAL_EMAIL_UPDATE_SESSION_TOKEN = "_email_update_token"
+
 
 class UpdateEmailView(FormView):
     form_class = UpdateEmailForm
@@ -88,7 +95,7 @@ class VerifyEmailView(FormView):
             # urlsafe_base64_decode() decodes to bytestring
             pk, email = urlsafe_base64_decode(uidb64).decode().split(';')
             user = User.objects.get(pk=pk)
-        except:
+        except User.DoesNotExist:
             user = None
         return user, email
 
@@ -127,5 +134,39 @@ class VerifyEmailView(FormView):
             user = User.objects.get(pk=user_id)
             user.email = email
             user.save()
-            messages.success(self.request, _('Email address successfully updated. Please allow for a few minutes for the change to propagate.'))
+            messages.success(self.request, _(
+                'Email address successfully updated. \
+                Please allow for a few minutes for the change to propagate.'))
         return valid
+
+
+class TokensListView(ObjectAccessRestrictMixin, ListView):
+    model = Token
+
+
+class TokenCreateView(CreateView):
+    model = Token
+    fields = ['comment',]
+    success_url = reverse_lazy('accounts:api_tokens')
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        form.instance.user = self.request.user
+        form.save()
+        valid = super().form_valid(form)
+        if valid:
+            messages.success(self.request, _(
+                "New API created, please note down your key, it will not be shown again. \
+                Token: <strong>%(key)s</strong>, comment: %(comment)s" %
+                {'key': form.instance.key, 'comment': form.instance.comment}), extra_tags='safe')
+        else:
+            messages.error(self.request, _('Failed to create new API token'))
+        return valid
+
+
+class TokenDeleteView(ObjectAccessRestrictMixin, DeleteView):
+    model = Token
+    success_url = reverse_lazy('accounts:api_tokens')
+
+    def delete(self, request, *args, **kwargs):
+        messages.add_message(request, messages.INFO, _('SSH key successfully deleted.'))
+        return super().delete(request, *args, **kwargs)

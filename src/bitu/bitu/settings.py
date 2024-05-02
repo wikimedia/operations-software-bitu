@@ -38,7 +38,7 @@ ALLOWED_HOSTS = []
 DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
-        'NAME': 'idm_dev',
+        'NAME': 'idm',
         'HOST': '127.0.0.1',
         'PORT': 3306,
         'USER': 'idm',
@@ -173,7 +173,7 @@ AUTH_LDAP_USER_SEARCH = LDAPSearch(
 
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
     "dc=example,dc=org",
-     ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)",
+    ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)",
 )
 
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
@@ -211,7 +211,7 @@ SOCIAL_AUTH_MEDIAWIKI_CALLBACK = 'http://localhost:8000/complete/mediawiki'
 CAPTCHA_CHALLENGE_FUNCT = 'signups.forms.captcha_input_generator'
 CAPTCHA_IMAGE_SIZE = (130,40)
 CAPTCHA_FONT_SIZE = 28
-PASSWORD_RESET_TIMEOUT = 60 * 3 # Three minutes, rather low, but for testing.
+PASSWORD_RESET_TIMEOUT = 60 * 3  # Three minutes, rather low, but for testing.
 BITU_DOMAIN = 'http://localhost:8000'
 
 # For testing purposes only. In production use a real SMTP server.
@@ -238,6 +238,11 @@ LOGIN_REDIRECT_URL = 'ldapbackend:properties'
 
 ADMINS_LIMITED = []
 ENABLE_API = True
+
+API_PERMISSIONS = (
+    'signups.add_uservalidation',
+    'signups.view_blocklistip'
+)
 
 if DEBUG:
     for queueConfig in RQ_QUEUES.values():

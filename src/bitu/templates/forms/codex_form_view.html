@@ -1,0 +1,45 @@
+{% extends 'single_column_codex_with_nav.html' %}
+{% load i18n %}
+
+{% block title %}
+{% translate "Generic Form" %}
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <form method="post">{% csrf_token %}
+        {% for field in form %}
+            <div class="form-field">
+            <div class="cdx-field">
+              <div class="cdx-label">
+                <label class="cdx-label__label" for="cdx-{{ field.name }}">
+                  <span class="cdx-label__label__text">{{ field.label }}</span>
+                </label>
+              </div>
+              <div class="cdx-field__control cdx-field__control--has-help-text">
+                <div class="cdx-text-input">
+                  {{ field }}
+                </div>
+              </div>
+              {% if field.errors %}
+              <div class="cdx-field__validation-message">
+                <div class="cdx-message cdx-message--inline cdx-message--error" role="alert">
+                  <span class="cdx-message__icon"></span>
+                  {% for error in field.errors %}
+                  <div class="cdx-message__content">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
+              <div class="form-help">
+              <small id="cdx-{{ field.name }}" class="cdx-field__help-text field-help">
+                {{ field.help_text }}
+              </small>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% block actions %}{% endblock %}
+    </form>
+</div>
+{% endblock %}

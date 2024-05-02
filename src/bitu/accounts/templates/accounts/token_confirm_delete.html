@@ -1,0 +1,71 @@
+{% extends 'single_column_codex_with_nav.html' %}
+{% load i18n %}
+
+{% block title %}
+{% translate "Token management - Delete token" %}
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="message-box-narrow">
+        <header>
+            <h3>{% translate "Revoke token" %}</h3>
+        </header>
+        <div class="cdx-message cdx-message--block cdx-message--error" role="alert">
+            <span class="cdx-message__icon"></span>
+            <div class="cdx-message__content">
+              <p>{% translate "This is a destructive action. Deleted tokens cannot be recovered!" %}</p>
+            </div>
+        </div>
+        <br>
+        <div>
+        <span class="cdx-card__text__supporting-text">
+            {% blocktranslate with comment=object.comment created=object.created|date:"c"  %}
+            Token created on {{ created }}<br>
+            Comment: {{ comment }}
+            {% endblocktranslate %}
+        </span>
+        </div>
+    </div>
+    <form method="post">{% csrf_token %}
+        {% for field in form %}
+            <div class="form-field">
+            <div class="cdx-field">
+              <div class="cdx-label">
+                <label class="cdx-label__label" for="cdx-{{ field.name }}">
+                  <span class="cdx-label__label__text">{{ field.label }}</span>
+                </label>
+              </div>
+              <div class="cdx-field__control cdx-field__control--has-help-text">
+                <div class="cdx-text-input">
+                  {{ field }}
+                </div>
+              </div>
+              {% if field.errors %}
+              <div class="cdx-field__validation-message">
+                <div class="cdx-message cdx-message--inline cdx-message--error" role="alert">
+                  <span class="cdx-message__icon"></span>
+                  {% for error in field.errors %}
+                  <div class="cdx-message__content">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
+              <div class="form-help">
+              <small id="cdx-{{ field.name }}" class="cdx-field__help-text field-help">
+                {{ field.help_text }}
+              </small>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          <div class="center-block">
+            <button type="submit" class="cdx-button cdx-button--action-destructive cdx-button--weight-primary">
+                {% translate "Delete" %}
+            </button>
+            <a href="{% url "accounts:api_tokens" %}"
+            class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Cancel" %}</a>
+          </div>
+    </form>
+</div>
+{% endblock %}
