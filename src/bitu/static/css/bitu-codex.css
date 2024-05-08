@@ -322,25 +322,25 @@ table {
     width: 100%;
 }
 
-table, thead, tbody, th, td, tr {
+table.vertical thead, tbody, th, td, tr {
     display: block;
 }
 
 /* Hide table headers (but not display: none;, for accessibility) */
-thead tr {
+table.vertical thead tr {
     position: absolute;
     top: -9999px;
     left: -9999px;
 }
 
-tr {
+table.vertical tr {
     border-bottom: solid;
     border-width: 2px;
     border-color: #eaecf0;
     margin-bottom: 2vh;
 }
 
-td {
+table.vertical td {
     /* Behave  like a "row" */
     border: none;
     position: relative;
@@ -348,7 +348,7 @@ td {
     margin-bottom: 1vh;
 }
 
-td a.cdx-button {
+table.vertical td a.cdx-button {
     margin-top: 5px;
 }
 
@@ -357,7 +357,7 @@ td a.cdx-button {
     font-family: 'Courier New', Courier, monospace;
 }
 
-td:before {
+table.vertical td:before {
     /* Now like a table header */
     min-width: 30vw;
     position: absolute;
@@ -370,12 +370,12 @@ td:before {
     background-color: white;
 }
 
-td:nth-of-type(1):before { content: attr(data-label); }
-td:nth-of-type(2):before { content: attr(data-label); }
-td:nth-of-type(3):before { content: attr(data-label); }
+table.vertical td:nth-of-type(1):before { content: attr(data-label); }
+table.vertical td:nth-of-type(2):before { content: attr(data-label); }
+table.vertical td:nth-of-type(3):before { content: attr(data-label); }
 
 @media all and (min-width: 833px) {
-    td {
+    table.vertical td {
         /* Behave  like a "row" */
         border: none;
         position: relative;
