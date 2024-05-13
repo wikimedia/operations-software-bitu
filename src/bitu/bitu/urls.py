@@ -23,7 +23,6 @@ urlpatterns = [
     path('captcha/', include('captcha.urls')),
     path('rq/', include('django_rq.urls')),
     path('', include('social_django.urls', namespace='social')),
-    path('signup/', include('signups.urls')),
     path('accounts/', include('accounts.urls')),
     path('wikimedia/', include('wikimedia.urls')),
     path('ldapbackend/', include('ldapbackend.urls')),
@@ -33,6 +32,14 @@ urlpatterns = [
     path('403/', TemplateView.as_view(template_name='403.html')),
     path('500/', TemplateView.as_view(template_name='500.html')),
 ]
+
+# Allow users to disable the signup form, if Bitu is only to be used for
+# account management and not account creation.
+if getattr(settings, 'ENABLE_SIGNUP', True):
+    urlpatterns.append(
+        path('signup/', include('signups.urls')),
+    )
+
 
 # When developing, allow the built in Django webserver to serve static
 # content. In production this is the job of the actual webserver.

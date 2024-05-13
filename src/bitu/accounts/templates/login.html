@@ -34,9 +34,11 @@
     </form>
     <div>
         {% url 'signups:signup' as signup_url %}
+        {% if signup_url %}
         {% blocktrans %}
         Don't have an account? Go to our <a href="{{ signup_url }}">signup page</a>.
         {% endblocktrans %}
+        {% endif %}
         </div>
     </div>
 </div>
