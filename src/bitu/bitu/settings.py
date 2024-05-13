@@ -39,7 +39,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
         'NAME': 'idm',
-        'HOST': '127.0.0.1',
+        'HOST': 'db.local.wmftest.net',
         'PORT': 3306,
         'USER': 'idm',
         'PASSWORD': 'idm',
