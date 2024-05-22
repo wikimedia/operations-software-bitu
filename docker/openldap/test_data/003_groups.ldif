@@ -1,6 +1,7 @@
 dn: cn=admin,ou=groups,dc=example,dc=org
 cn: admin
 gidNumber: 1000
+member: uid=admin,ou=people,dc=example,dc=org
 member: uid=ruizjohn,ou=people,dc=example,dc=org
 member: uid=ferrellstacy,ou=people,dc=example,dc=org
 member: uid=christopherstrickland,ou=people,dc=example,dc=org
@@ -711,6 +712,7 @@ objectClass: top
 dn: cn=staff,ou=groups,dc=example,dc=org
 cn: staff
 gidNumber: 2000
+member: uid=admin,ou=people,dc=example,dc=org
 member: uid=ruizjohn,ou=people,dc=example,dc=org
 member: uid=ferrellstacy,ou=people,dc=example,dc=org
 member: uid=sean21,ou=people,dc=example,dc=org

@@ -1,0 +1,1 @@
+Bitu-LDAP @ git+https://gerrit.wikimedia.org/r/operations/software/bitu-ldap@f96acf90f051f7b69dbfda7c05c57a8fdf53253a

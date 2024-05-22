@@ -1,0 +1,17 @@
+pipelines:
+  test:
+    blubberfile: blubber.yaml
+    stages:
+      - name: test
+        build: test
+  publish:
+    blubberfile: blubber.yaml
+    stages:
+      - name: publish
+        build: production
+        publish: &publish_with_tags
+          image:
+            id: '${.imageID}'
+            tags:
+              - latest
+              - '${setup.tag}'

@@ -1,0 +1,49 @@
+# syntax=docker-registry.wikimedia.org/repos/releng/blubber/buildkit:v0.22.0
+version: v4
+
+base: docker-registry.wikimedia.org/python3-bookworm:latest
+
+variants:
+  build:
+    apt:
+      sources:
+        - url: http://apt.wikimedia.org/wikimedia
+          distribution: bookworm-wikimedia
+          components: [main]
+      packages:
+        - git
+        - python3-django
+        - python3-django-auth-ldap
+        - python3-django-captcha
+        - python3-djangorestframework
+        - python3-django-rq
+        - python3-ldap3
+        - python3-mysqldb
+        - python3-paramiko
+        - python3-social-django
+    python:
+      version: python3
+      requirements:
+        - requirements-docker.txt
+    copies:
+      - from: local
+        source: src/
+        destination: /usr/lib/python3/dist-packages/
+      - from: local
+        source: scripts/bitu
+        destination: /usr/bin/bitu
+      - from: local
+        source: scripts/entry_point.sh
+        destination: /usr/bin/entry_point.sh
+      - from: local
+        source: src/bitu/bitu/docker_settings.py
+        destination: /etc/bitu/settings.py
+  test:
+    includes: [build]
+    entrypoint:
+      - bitu
+      - check
+  production:
+    includes: [build]
+    entrypoint:
+      - /usr/bin/entry_point.sh

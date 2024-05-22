@@ -30,7 +30,51 @@ services:
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: password
+      MARIADB_USER: idm
+      MARIADB_DATABASE: idm
+      MARIADB_PASSWORD: secret
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "healthcheck.sh",
+          "--su-mysql",
+          "--connect",
+          "--innodb_initialized"
+        ]
+      timeout: 5s
+      retries: 20
     networks:
       default:
         aliases:
           - db.local.wmftest.net
+
+  bitu:
+    build:
+      context: .
+      dockerfile: .pipeline/blubber.yaml
+      target: testing
+    image: bitu/testing
+    ports:
+      - "8080:8080"
+    environment:
+      DJANGO_SECRET_KEY: TESTING
+      RQ_REDIS_HOST: redis.local.wmftest.net
+      LDAP_HOST: openldap.local.wmftest.net
+      LDAP_USER_DN: cn=admin,dc=example,dc=org
+      LDAP_PASSWORD: adminpassword
+      DATABASE_HOST: db.local.wmftest.net
+      DATABASE_USER: idm
+      DATABASE_NAME: idm
+      DATABASE_PASSWORD: secret
+    depends_on:
+      ldap:
+        condition: service_started
+      redis:
+        condition: service_started
+      db:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - bitu.local.wmftest.net

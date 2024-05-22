@@ -1,3 +1,17 @@
+dn: uid=admin,ou=people,dc=example,dc=org
+cn: admin
+gidNumber: 1000
+givenName: admin
+homeDirectory: /home/admin
+loginShell: /bin/ksh
+mail: admin@example.org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+sn: admin
+uid: admin
+uidNumber: 1000
+userPassword: {SSHA}pTXDACpyR0S9FvzYM7NdPgT1IQhhm4I+xKpA2A==
+
 dn: uid=eduncan,ou=people,dc=example,dc=org
 cn: eduncan
 gidNumber: 1000
