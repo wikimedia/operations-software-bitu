@@ -19,7 +19,9 @@ ldap_uri = os.environ['LDAP_SERVER_URI']
 ldap_user_dn = os.environ['LDAP_USER_DN']
 ldap_password = os.environ['LDAP_PASSWORD']
 ldap_user_search_base = os.environ['LDAP_USER_SEARCH_BASE'] if 'LDAP_USER_SEARCH_BASE' in os.environ else 'ou=people,dc=example,dc=org'
+ldap_user_search = os.environ['LDAP_USER_SEARCH_QUERY'] if 'LDAP_USER_SEARCH_QUERY' in os.environ else '(uid=%(user)s)'
 ldap_group_search_base = os.environ['LDAP_BASE_DN'] if 'LDAP_BASE_DN' in os.environ else 'ou=groups,dc=example,dc=org'
+ldap_aux_groups = os.environ['LDAP_AUX_GROUPS'].split(',') if 'LDAP_AUX_GROUPS' in os.environ else ['posixAccount', 'wikimediaPerson', 'ldapPublicKey']
 ldap_user_active = os.environ['ACTIVE_GROUP_DN'] if 'ACTIVE_GROUP_DN' in os.environ else 'cn=staff,ou=groups,dc=example,dc=org'
 ldap_user_staff = os.environ['STAFF_GROUP_DN'] if 'STAFF_GROUP_DN' in os.environ else 'cn=staff,ou=groups,dc=example,dc=org'
 ldap_user_superuser = os.environ['SUPERUSER_GROUP_DN'] if 'SUPERUSER_GROUP_DN' in os.environ else 'cn=admin,ou=groups,dc=example,dc=org'
@@ -99,7 +101,7 @@ BITU_LDAP = {
     'users': {
         'dn': ldap_user_search_base,
         'object_classes': ['inetOrgPerson'],
-        'auxiliary_classes': ['posixAccount', 'wikimediaPerson', 'ldapPublicKey'],
+        'auxiliary_classes': ldap_aux_groups,
     }
 }
 
@@ -174,7 +176,7 @@ AUTH_LDAP_USER_ATTR_MAP = {
 }
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    ldap_user_search_base, ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
+    ldap_user_search_base, ldap.SCOPE_SUBTREE, ldap_user_search
 )
 
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
@@ -198,6 +200,7 @@ SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator',
 ENABLE_API = True
 
 LOGIN_REDIRECT_URL = 'ldapbackend:properties'
+LOGOUT_REDIRECT_URL = '/'
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATICFILES_DIRS = [
