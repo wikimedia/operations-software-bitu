@@ -53,14 +53,14 @@ services:
     build:
       context: .
       dockerfile: .pipeline/blubber.yaml
-      target: testing
-    image: bitu/testing
+      target: production
+    image: bitu/production
     ports:
       - "8080:8080"
     environment:
       DJANGO_SECRET_KEY: TESTING
       RQ_REDIS_HOST: redis.local.wmftest.net
-      LDAP_HOST: openldap.local.wmftest.net
+      LDAP_SERVER_URI: ldap://openldap.local.wmftest.net:389
       LDAP_USER_DN: cn=admin,dc=example,dc=org
       LDAP_PASSWORD: adminpassword
       DATABASE_HOST: db.local.wmftest.net

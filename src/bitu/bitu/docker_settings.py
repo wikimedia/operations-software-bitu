@@ -15,11 +15,14 @@ from bitu.base_settings import *  # noqa
 
 redis_rq_host = os.environ['RQ_REDIS_HOST']
 redis_rq_port = os.environ['RQ_REDIS_PORT'] if 'RQ_REDIS_PORT' in os.environ else '6379'
-print(os.environ)
-ldap_host = os.environ['LDAP_HOST']
-ldap_port = os.environ['LDAP_PORT'] if 'LDAP_PORT' in os.environ else '389'
+ldap_uri = os.environ['LDAP_SERVER_URI']
 ldap_user_dn = os.environ['LDAP_USER_DN']
 ldap_password = os.environ['LDAP_PASSWORD']
+ldap_user_search_base = os.environ['LDAP_USER_SEARCH_BASE'] if 'LDAP_USER_SEARCH_BASE' in os.environ else 'ou=people,dc=example,dc=org'
+ldap_group_search_base = os.environ['LDAP_BASE_DN'] if 'LDAP_BASE_DN' in os.environ else 'ou=groups,dc=example,dc=org'
+ldap_user_active = os.environ['ACTIVE_GROUP_DN'] if 'ACTIVE_GROUP_DN' in os.environ else 'cn=staff,ou=groups,dc=example,dc=org'
+ldap_user_staff = os.environ['STAFF_GROUP_DN'] if 'STAFF_GROUP_DN' in os.environ else 'cn=staff,ou=groups,dc=example,dc=org'
+ldap_user_superuser = os.environ['SUPERUSER_GROUP_DN'] if 'SUPERUSER_GROUP_DN' in os.environ else 'cn=admin,ou=groups,dc=example,dc=org'
 database_username = os.environ['DATABASE_USER']
 database_password = os.environ['DATABASE_PASSWORD']
 database_name = os.environ['DATABASE_NAME']
@@ -88,13 +91,13 @@ LDAP_USER_CONF = {
 }
 
 BITU_LDAP = {
-    'uri': f'ldap://{ldap_host}:{ldap_port}',
+    'uri': ldap_uri,
     'username': ldap_user_dn,
     'password': ldap_password,
     'readonly': False,
     'connection_timeout': 5,
     'users': {
-        'dn': 'ou=people,dc=example,dc=org',
+        'dn': ldap_user_search_base,
         'object_classes': ['inetOrgPerson'],
         'auxiliary_classes': ['posixAccount', 'wikimediaPerson', 'ldapPublicKey'],
     }
@@ -161,7 +164,7 @@ AUTHENTICATION_BACKENDS = [
 AUTH_LDAP_BIND_DN = ldap_user_dn
 AUTH_LDAP_BIND_PASSWORD = ldap_password
 AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
-AUTH_LDAP_SERVER_URI = BITU_LDAP['uri']
+AUTH_LDAP_SERVER_URI = ldap_uri
 AUTH_LDAP_FIND_GROUP_PERMS = True
 
 AUTH_LDAP_USER_ATTR_MAP = {
@@ -171,18 +174,18 @@ AUTH_LDAP_USER_ATTR_MAP = {
 }
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    "ou=people,dc=example,dc=org", ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
+    ldap_user_search_base, ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
 )
 
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-    "ou=groups,dc=example,dc=org",
+    ldap_group_search_base,
     ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)",
 )
 
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    "is_active": "cn=staff,ou=groups,dc=example,dc=org",
-    "is_staff": "cn=staff,ou=groups,dc=example,dc=org",
-    "is_superuser": "cn=admin,ou=groups,dc=example,dc=org",
+    "is_active": ldap_user_active,
+    "is_staff": ldap_user_staff,
+    "is_superuser": ldap_user_superuser,
 }
 
 # Ideally we'd like to load these in the test cases, but due to test sequence in which
