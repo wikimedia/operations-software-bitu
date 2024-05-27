@@ -1,3 +1,11 @@
+bitu (0.0.8) bookworm-wikimedia; urgency=low
+
+  * Fix Mobile display of SSH keys.
+  * Include interface for managing API tokens.
+  * Associate SSH keys with systems on upload.
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Wed, 27 May 2024 09:44:23 +0000
+
 bitu (0.0.7) bookworm-wikimedia; urgency=low
 
   * Workflow improvements for SSH key management (T360966).
