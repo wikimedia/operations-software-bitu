@@ -49,13 +49,13 @@ class ValidatorTest(TestCase):
 
         create_url = reverse('keymanagement:create')
         list_url = reverse('keymanagement:list')
-        response = self.client.post(create_url, {'comment': 'Test ed25519 key', 'ssh_public_key': key1})
+        response = self.client.post(create_url, {'comment': 'Test ed25519 key', 'ssh_public_key': key1, 'system': 'ldapbackend'})
         self.assertEqual(response.status_code, 302)
 
         keys = SSHKey.objects.filter(user=self.user).all()
         self.assertEqual(1, keys.count())
 
-        response = self.client.post(create_url, {'comment': 'Test ed25519 key 2', 'ssh_public_key': key2})
+        response = self.client.post(create_url, {'comment': 'Test ed25519 key 2', 'ssh_public_key': key2, 'system': 'ldapbackend'})
         keys = SSHKey.objects.filter(user=self.user).all()
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'SSH key already exists')
@@ -69,7 +69,7 @@ class ValidatorTest(TestCase):
     def test_create_view_sanitized(self):
         key1 = '   ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAkTVYhMVOooNQwfxURKnFYav/huLuSh3B+vFiLm4UrL Bitu ED25519 Test Key 3'  # noqa
         create_url = reverse('keymanagement:create')
-        response = self.client.post(create_url, {'comment': 'Whitespace Test', 'ssh_public_key': key1})
+        response = self.client.post(create_url, {'comment': 'Whitespace Test', 'ssh_public_key': key1, 'system': 'ldapbackend'})
         self.assertEqual(response.status_code, 302)
         key = SSHKey.objects.filter(user=self.user).get(comment='Whitespace Test')
         self.assertEqual(key.comment, 'Whitespace Test')

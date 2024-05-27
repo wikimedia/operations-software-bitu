@@ -161,7 +161,7 @@ def load_ssh_key(user: 'User'):
 
         if created:
             ssh_key.system = system
-            ssh_key.comment = ''
+            ssh_key.comment = helpers.get_comment_from_imported_ssh_key(key)
             ssh_key.active = True
             ssh_key.key_type = ssh_key.get_key_type()
             ssh_key.key_size = ssh_key.get_key_length()

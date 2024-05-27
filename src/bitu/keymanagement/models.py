@@ -11,7 +11,7 @@ User = get_user_model()
 
 
 class SSHKey(models.Model):
-    systems = [('', '---')] + [
+    systems = [
         (k, v.get('ssh_keys_display_name', k))
         for k, v in settings.BITU_SUB_SYSTEMS.items() if v.get('manage_ssh_keys', False)
     ]
@@ -25,7 +25,7 @@ class SSHKey(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name='ssh_keys')
-    system = models.CharField(max_length=256, choices=systems, default='', blank=True)
+    system = models.CharField(max_length=256, choices=systems, blank=False, default=systems[0][0])
     ssh_public_key = models.TextField(
         unique=True,
         validators=(ssh_key_validator, ssh_key_usage_validator))

@@ -42,7 +42,7 @@ DATABASES = {
         'HOST': 'db.local.wmftest.net',
         'PORT': 3306,
         'USER': 'idm',
-        'PASSWORD': 'idm',
+        'PASSWORD': 'secret',
     }
 }
 
