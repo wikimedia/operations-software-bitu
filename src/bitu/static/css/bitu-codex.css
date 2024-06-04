@@ -235,97 +235,103 @@ pre.two_fa{
 /* menu */
 nav {
     width: 100%;
-}
-nav ul {
-    list-style-type: none;
-    justify-content: flex-start;
-    padding-left: 0px;
-}
-
-.menu {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
-    align-items: center;
 }
 
-.menu li {
-    font-size: 16px;
-    padding: 15px 5px;
-    white-space: nowrap;
+nav span.menu {
+    vertical-align: middle;
+    float: left;
 }
 
-.menu a {
+span.logo {
+    font-weight: 700;
+    font-size: 14pt;
+}
+
+.menu ul {
+    background-color: white;
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+    font-size: 12pt;
+}
+
+.menu ul li {
+    color: black;
+    display: block;
+    text-align: left;
+    float: left;
+    padding-right: 5px;
+    position: relative;
+    text-decoration: none;
+    transition-duration: 0.5s;
+}
+
+.menu ul li a {
     color: black;
     text-decoration: none;
 }
 
-.menu {
-    justify-content: center;
+
+.menu ul li:focus-within a {
+    outline: none;
 }
 
-.logo {
-    font-weight: 700;
-    flex: 1;
-    float: left;
-    width: 100%;
-}
-
-.logo img {
-    height: 5vh;
-}
-
-.item.active {
-    display: block;
-}
-
-.toggle {
-    text-align: center;
-}
-
-.toggle span {
-    height: 100%;
-}
-
-.item {
-    width: 100%;
-    text-align: center;
-    order: 3;
+.menu ul li ul {
+    visibility: hidden;
+    opacity: 0;
+    min-width: 15rem;
+    position: absolute;
+    transition: all 0.5s ease;
+    padding: 20px;
+    align-items: left;
+    left: 0;
+    z-index: 1;
     display: none;
+    border: 1px 1px 1px 1px;
+    box-shadow: 1px 1px;
 }
 
-.item.active {
-    display: block;
-    background-color: #f8f9fa;
+.menu ul li:hover > ul,
+.menu ul li:focus-within > ul,
+.menu ul li ul:hover,
+.menu ul li ul:focus {
+    background-color: white;
+    visibility: visible;
+    opacity: 1;
+    border: 1px;
+    border-color: black;
+    border-style: solid;
+    display: block
 }
 
-.item.active:hover {
-    background-color: #eaf3ff;
+.menu ul li ul li {
+    clear: both;
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.menu ul li ul li:hover{
+    clear: both;
+    width: 100%;
+    text-decoration: underline;
+    padding-bottom: 10px;
+}
+
+.menu ul li:hover{
+    clear: both;
+    width: 100%;
+    text-decoration: underline;
+    padding-bottom: 10px;
+}
+
+.menu li.bottom{
+    margin-top: 20px;
 }
 
 @media all and (min-width: 833px) {
-    .item {
-        display: block;
-        width: auto;
-    }
 
-    .item.active {
-        background-color: white;
-    }
-
-    .item:hover {
-        background-color: #eaf3ff;
-    }
-
-    .menu {
-        justify-content: center;
-    }
-
-    .toggle {
-        flex: 1;
-        text-align: right;
-        display: none;
-    }
 }
 
 /* end menu */
