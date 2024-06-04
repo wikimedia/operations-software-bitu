@@ -59,8 +59,12 @@ class SSHKeyCreateView(CreateView):
         if form.instance.system:
             form.instance.active = True
 
-        messages.add_message(self.request, messages.SUCCESS, _('SSH key successfully uploaded.'))
-        return super().form_valid(form)
+        # Check that we're doing a redirect, to the success URI, before adding
+        # the success message.
+        valid = super().form_valid(form)
+        if valid.status_code == 302:
+            messages.add_message(self.request, messages.SUCCESS, _('SSH key successfully uploaded.'))
+        return valid
 
 
 class SSHKeyDeleteView(DeleteView, SSHKeyAccessRestrict):
@@ -89,8 +93,13 @@ class SSHKeyActivateView(UpdateView, SSHKeyAccessRestrict):
         return kw
 
     def form_valid(self, form):
-        messages.add_message(self.request, messages.SUCCESS, _('SSH key has been activated.'))
-        return super().form_valid(form)
+        valid = super().form_valid(form)
+
+        # Check that we're doing a redirect, to the success URI, before adding
+        # the success message.
+        if valid.status_code == 302:
+            messages.add_message(self.request, messages.SUCCESS, _('SSH key has been activated.'))
+        return valid
 
 
 class SSHKeyDeactiveView(UpdateView, SSHKeyAccessRestrict):

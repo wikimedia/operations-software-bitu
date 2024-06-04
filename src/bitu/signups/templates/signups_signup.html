@@ -40,7 +40,7 @@
     <small id="cdx-{{ field.name }}" class="cdx-field__help-text field-help">
       {{ field.help_text }}
     </small>
-    {% if field.field.widget.attrs.max_length %}
+    {% if 'max_length' in field.field.widget.attrs %}
     <small id="id_{{ field.name }}_max" data-default-max="{{ field.field.widget.attrs.max_length }}" class="field-max">{{ field.field.widget.attrs.max_length }} </small>
     {% endif %}
     </div>

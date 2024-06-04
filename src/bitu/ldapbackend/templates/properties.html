@@ -29,7 +29,9 @@
       </div>
       <div class="form-help">
       <small id="cdx-{{ field.name }}" class="cdx-field__help-text field-help">
+        {% if 'tooltip' in field %}
         {{ field.tooltip }}
+        {% endif %}
       </small>
       {{ field|action }}
       </div>

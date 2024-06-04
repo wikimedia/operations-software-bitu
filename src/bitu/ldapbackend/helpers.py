@@ -84,13 +84,13 @@ def get_comment_from_imported_ssh_key(key: bytes) -> str:
     elems = key.decode('utf8').split(' ')
 
     if len(elems) > 2:
-      comment = ' '.join(elems[2:])
-      return comment[:256]
+        comment = ' '.join(elems[2:])
+        return comment.strip('\n').strip()[:256]
     return ''
 
 
 def check_ssh_key(key: 'SSHKey'):
-    jobs.check_ssh_key.delay(key)
+    jobs.check_ssh_key(key)
 
 
 def update_ssh_key(key: 'SSHKey'):

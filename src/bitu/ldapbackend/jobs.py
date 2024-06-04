@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     User = NewType('User', get_user_model())
 
 logger = logging.getLogger('bitu')
+system = __name__.split('.')[0]
 
 
 @job
@@ -101,7 +102,10 @@ def check_ssh_key(key: 'SSHKey'):
     ldap_user = bituldap.get_user(key.user.get_username())
     if key.key_as_byte_string in ldap_user.sshPublicKey:
         key.active = True
-        key.system = __name__.split('.')[0]
+        key.system = system
+        if not key.comment:
+            comment = helpers.get_comment_from_imported_ssh_key(key.key_as_byte_string)
+            key.comment = comment if comment else f'Imported from {key.get_system_display()}'
         key.save()
 
 
@@ -129,11 +133,27 @@ def remove_ssh_key(key: 'SSHKey'):
 @job
 def syncronize_ssh_keys(user: 'User'):
     ldap_user = bituldap.get_user(user.get_username())
-    for key in user.ssh_keys.all():
-        if key.active and key.key_as_byte_string not in ldap_user.sshPublicKey:
+
+    # Remove all key which have been marked as inactive from LDAP.
+    # Because LDAP is less restrictive than Bitu in regards to whitespace and newlines,
+    # loop through all the keys stored in LDAP and check if it matches an inactive key
+    # in the Bitu database. Note that if the user SHOULD somehow have duplicate keys in
+    # Bitu, either can trigger a removal in LDAP. The key removed from LDAP MUST be the
+    # key as returned from LDAP as the cleaned up version stored in Bitu will not match
+    # and the key will therefor not be removed.
+    for key in ldap_user.sshPublicKey:
+        key_obj = user.ssh_keys.filter(active=False, system=system, ssh_public_key=key.decode('utf8').strip())
+        if key_obj:
+            ldap_user.sshPublicKey.delete(key)
+
+    # Check if we have any keys stored in Bitu which should exist in LDAP. We compare the
+    # keys stored in Bitu with the list from LDAP where the keys have been trimmed, to avoid
+    # adding a key which already exist in LDAP, but with whitespace and a newline at the end.
+    ldap_keys = [ldap_key.strip() for ldap_key in ldap_user.sshPublicKey]
+    for key in user.ssh_keys.filter(system=system, active=True):
+        if key.key_as_byte_string not in ldap_keys:
             ldap_user.sshPublicKey.add(key.key_as_byte_string)
-        elif not key.active and key.key_as_byte_string in ldap_user.sshPublicKey:
-            ldap_user.sshPublicKey.delete(key.key_as_byte_string)
+
     ldap_user.entry_commit_changes()
     load_ssh_key(user)
 
@@ -141,13 +161,12 @@ def syncronize_ssh_keys(user: 'User'):
 @job
 def load_ssh_key(user: 'User'):
     from keymanagement.models import SSHKey
-    system = __name__.split('.')[0]
 
     ldap_user = bituldap.get_user(user.get_username())
 
     # Check if we have any keys that are listed as active, but not in LDAP.
     # LDAP is authoritive, so deactivate any keys not found.
-    for key in user.ssh_keys.all():
+    for key in user.ssh_keys.filter(system=system):
         if key.active and key.key_as_byte_string not in ldap_user.sshPublicKey.values:
             key.active = False
             key.save()
@@ -157,21 +176,16 @@ def load_ssh_key(user: 'User'):
             key.save()
 
     for key in ldap_user.sshPublicKey.values:
-        ssh_key, created = SSHKey.objects.get_or_create(user=user, ssh_public_key=key.decode('utf-8'))
+        ssh_key, created = SSHKey.objects.get_or_create(user=user, ssh_public_key=key.decode('utf8').strip())
+        comment = helpers.get_comment_from_imported_ssh_key(key)
 
-        if created:
+        if created or not ssh_key.active:
             ssh_key.system = system
-            ssh_key.comment = helpers.get_comment_from_imported_ssh_key(key)
+            if not comment:
+                comment = f'Imported from {ssh_key.get_system_display()}'
+            ssh_key.comment = comment
             ssh_key.active = True
             ssh_key.key_type = ssh_key.get_key_type()
             ssh_key.key_size = ssh_key.get_key_length()
             ssh_key.save()
             continue
-
-        # If a key already existed, then that key is active in LDAP and this state should be
-        # reflected in Bitu.
-        # DO NOT be tempted to remove the if-clause, it guards against endlessly looping as the
-        # save signal on the key model is hooked up to this function.
-        if not ssh_key.active:
-            ssh_key.active = True
-            ssh_key.save()

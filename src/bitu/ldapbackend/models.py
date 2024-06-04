@@ -1,4 +1,4 @@
-from typing import Dict, List, Set
+from typing import Dict, List
 
 
 import bituldap
@@ -53,11 +53,11 @@ def get_ldap_attributes_view() -> List[Dict]:
                     in the LDAP editor.
     """
     options = settings.BITU_SUB_SYSTEMS.get(__name__.split('.')[0])
-    return options.get('attributes', {}).get('view', [])# - editable
+    return options.get('attributes', {}).get('view', [])  # - editable
 
 
 def load_attribute_values(user: 'User', attributes: List[Dict]):
     user = bituldap.get_user(user.username)
     for attribute in attributes:
-       attribute['value'] = getattr(user, attribute['name'], '')
+        attribute['value'] = getattr(user, attribute['name'], '')
     return attributes

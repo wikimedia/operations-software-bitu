@@ -13584,13 +13584,17 @@
                 ],
                 "objectClass": [
                     "inetOrgPerson",
-                    "posixAccount"
+                    "posixAccount",
+                    "ldapPublicKey"
                 ],
                 "sn": [
                     "Amber"
                 ],
                 "uid": [
                     "ahall"
+                ],
+                "sshPublicKey": [
+                    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID4iz39KixPqiHBYBEjU3ZkEI7DpaLnXBqFNSjGqLWmI Bitu Test Key"
                 ],
                 "uidNumber": 8474
             },
@@ -13623,6 +13627,9 @@
                 ],
                 "uid": [
                     "ahall"
+                ],
+                "sshPublicKey": [
+                    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID4iz39KixPqiHBYBEjU3ZkEI7DpaLnXBqFNSjGqLWmI Bitu Test Key"
                 ],
                 "uidNumber": [
                     "8474"
