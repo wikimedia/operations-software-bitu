@@ -67,6 +67,7 @@ services:
       DATABASE_USER: idm
       DATABASE_NAME: idm
       DATABASE_PASSWORD: secret
+      DATABASE_ENGINE: django.db.backends.mysql
       UWSGI_HTTP_MODE: true
     depends_on:
       ldap:

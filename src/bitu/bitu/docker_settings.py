@@ -13,6 +13,7 @@ from ldap3 import HASHED_SALTED_SHA
 
 from bitu.base_settings import *  # noqa
 
+allowed_hosts = os.environ['ALLOWED_HOSTS'].split(',') if 'ALLOWED_HOSTS' in os.environ else ['*']
 redis_rq_host = os.environ['RQ_REDIS_HOST']
 redis_rq_port = os.environ['RQ_REDIS_PORT'] if 'RQ_REDIS_PORT' in os.environ else '6379'
 ldap_uri = os.environ['LDAP_SERVER_URI']
@@ -30,7 +31,7 @@ database_password = os.environ['DATABASE_PASSWORD']
 database_name = os.environ['DATABASE_NAME']
 database_host = os.environ['DATABASE_HOST']
 database_port = os.environ['DATABASE_PORT'] if 'DATABASE_PORT' in os.environ else '3306'
-database_driver = 'django.db.backends.mysql'
+database_driver = os.environ['DATABASE_ENGINE'] if 'DATABASE_ENGINE' in os.environ else 'django.db.backends.sqlite3'
 
 
 INSTALLED_APPS = [
@@ -57,7 +58,7 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = getattr(os.environ, 'DJANGO_DEBUGGING', True)
 TESTING = True
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = allowed_hosts
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -206,3 +207,7 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATICFILES_DIRS = [
     BASE_DIR / "static", # noqa
 ]
+
+# Disable async, to avoid having to spin up workers.
+for queueConfig in RQ_QUEUES.values():
+        queueConfig['ASYNC'] = False
