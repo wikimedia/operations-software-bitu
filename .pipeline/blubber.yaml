@@ -21,6 +21,7 @@ variants:
         - python3-mysqldb
         - python3-paramiko
         - python3-social-django
+        - uwsgi-plugin-python3
     python:
       version: python3
       requirements:
