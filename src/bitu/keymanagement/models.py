@@ -34,6 +34,15 @@ class SSHKey(models.Model):
     key_type = models.CharField(max_length=32, default='', null=True)
     key_size = models.IntegerField(default=0)
 
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        self.key_size = self.get_key_length()
+        self.key_type = self.get_key_type()
+        self.ssh_public_key = self.ssh_public_key.strip()
+
     @property
     def key_as_byte_string(self):
         return bytes(self.ssh_public_key, 'utf-8')

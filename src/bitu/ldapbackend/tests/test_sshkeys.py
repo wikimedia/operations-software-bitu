@@ -5,7 +5,6 @@ import bituldap
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-
 from ldapbackend import helpers, jobs
 
 from . import dummy_ldap
@@ -177,3 +176,16 @@ class LDAPSSHPublicKeyTest(TestCase):
 
         ldap = bituldap.get_user(user.get_username())
         self.assertEqual(len(ldap.sshPublicKey), 0)
+
+    def test_key_cleanup(self):
+        key1 = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC5slfyq3JcGv71K52pitHk+v5M7xSVgKT2zG7sgVcWvq+6aYzKxRE6HyPMSjW3NbVWre9673lz/hiTbqdGCf/l4IngQSjh3HHeZgILgpe1Jsgh2vGXEmEj/FBQSDmET4+m+xL5o+PZhXvhe55MQk1xq2tJM+UrfRrU5dhrhGLlh8Arl/8Ik3YWD7Q9PdmJB9vwWVvCBs10Vw55BYTDR4lSz3nkQa8UFjLhtruMpVBwmQ1e+sY8zR7Hd+C0H3Y6tL10RsSMuGiRJcMriQ8dOMa/tLMhMHbZ/+GAxaVlF0hJtsbWRN+xJ3clophZz7uD57MGa79lEQkiPzjl9Kfsjm4W1gFMaC/OovWIHZvGfIW4lx+o9KGG+SJAOVlCBPyk01xOmBHPDyNIebjepUsHk7MMDFFTSdqbkGcBgCRcjdyzLYW+s82E2ybs7c2wHH+uhcnxOn4GWHeWwPH+ZkHY1q4N3/1W+1hMLMooUPQLAZ4vzqzgtyGn9mN356bTzQ1yTyc=    \n"  # noqa: E501 line too long
+        key2 = "           ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC5slfyq3JcGv71K52pitHk+v5M7xSVgKT2zG7sgVcWvq+6aYzKxRE6HyPMSjW3NbVWre9673lz/hiTbqdGCf/l4IngQSjh3HHeZgILgpe1Jsgh2vGXEmEj/FBQSDmET4+m+xL5o+PZhXvhe55MQk1xq2tJM+UrfRrU5dhrhGLlh8Arl/8Ik3YWD7Q9PdmJB9vwWVvCBs10Vw55BYTDR4lSz3nkQa8UFjLhtruMpVBwmQ1e+sY8zR7Hd+C0H3Y6tL10RsSMuGiRJcMriQ8dOMa/tLMhMHbZ/+GAxaVlF0hJtsbWRN+xJ3clophZz7uD57MGa79lEQkiPzjl9Kfsjm4W1gFMaC/OovWIHZvGfIW4lx+o9KGG+SJAOVlCBPyk01xOmBHPDyNIebjepUsHk7MMDFFTSdqbkGcBgCRcjdyzLYW+s82E2ybs7c2wHH+uhcnxOn4GWHeWwPH+ZkHY1q4N3/1W+1hMLMooUPQLAZ4vzqzgtyGn9mN356bTzQ1yTyc=    \n"  # noqa: E501 line too long
+
+        user, _ = User.objects.get_or_create(username='amy30')
+        self.assertEqual(user.ssh_keys.count(), 0)
+        SSHKey.objects.create(user=user, ssh_public_key=key1, system='ldapbackend', active=True)
+        self.assertEqual(user.ssh_keys.count(), 1)
+        user.ssh_keys.first().delete()
+        SSHKey.objects.create(user=user, ssh_public_key=key2, system='ldapbackend', active=True)
+        self.assertEqual(user.ssh_keys.count(), 1)
+        self.assertTrue(user.ssh_keys.first().ssh_public_key.startswith('ssh-rsa'))
