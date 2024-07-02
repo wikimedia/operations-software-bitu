@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+from sshpubkeys import SSHKey as SSHPublicKey
+from sshpubkeys.exceptions import InvalidKeyError
 
 from .helpers import key_type_from_str, ssh_key_string_to_object
 from .validators import ssh_key_validator, ssh_key_usage_validator
@@ -34,24 +36,28 @@ class SSHKey(models.Model):
     key_type = models.CharField(max_length=32, default='', null=True)
     key_size = models.IntegerField(default=0)
 
+    # Allow users to indicte that signals should not be processed.
+    # Syncronisation with backend can result in further calls to the
+    # SSHKey save method, which in term triggers the signals again.
+    _skip_signal = False
+
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
 
     def clean(self):
-        self.key_size = self.get_key_length()
-        self.key_type = self.get_key_type()
         self.ssh_public_key = self.ssh_public_key.strip()
+        obj: SSHPublicKey = SSHPublicKey(keydata=self.ssh_public_key)
+        try:
+            obj.parse()
+            self.key_size = obj.bits
+            self.key_type = obj.key_type.decode('utf8')
+        except (InvalidKeyError, NotImplementedError):
+            pass
 
     @property
     def key_as_byte_string(self):
         return bytes(self.ssh_public_key, 'utf-8')
-
-    def get_key_type(self):
-        return key_type_from_str(self.ssh_public_key)
-
-    def get_key_length(self):
-        return ssh_key_string_to_object(self.ssh_public_key).get_bits()
 
     def get_display(self):
         if len(self.ssh_public_key) <= 100:
@@ -61,6 +67,15 @@ class SSHKey(models.Model):
         # make layouting harder. Truncate the key to 125 characters, consisting
         # of the first 80, a separator and the last 80.
         return self.ssh_public_key[0:20] + ' ... ' + self.ssh_public_key[-80:]
+
+    def get_finger_print(self) -> str:
+        obj = SSHPublicKey(keydata=self.ssh_public_key)
+
+        try:
+            obj.parse()
+            return obj.hash_sha512()
+        except Exception:
+            return ''
 
     def __str__(self) -> str:
         return self.get_display()

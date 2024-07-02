@@ -7,6 +7,7 @@ import bituldap
 from django.conf import settings
 from django.utils.timezone import localtime
 from django_rq import job
+from sshpubkeys import SSHKey as SSHPublicKey
 
 from bitu import utils
 from . import helpers
@@ -126,7 +127,25 @@ def remove_ssh_key(key: 'SSHKey'):
         return
 
     ldap_user = bituldap.get_user(key.user.get_username())
-    ldap_user.sshPublicKey.delete(key.key_as_byte_string)
+    for k in ldap_user.sshPublicKey:
+        ssh_public_key = SSHPublicKey(keydata=k.decode('utf8'))
+        if ssh_public_key.hash_sha512() == key.get_finger_print():
+            ldap_user.sshPublicKey.delete(k)
+            ldap_user.entry_commit_changes()
+
+
+def push_ssh_key(key: 'SSHKey'):
+    # Key is not relevant for this backend or not active.
+    if key.system != system or not key.active:
+        return
+
+    # Check if the key already exists in LDAP and only add if finger print is not found.
+    ldap_user = bituldap.get_user(key.user.get_username())
+    finger_prints = [SSHPublicKey(keydata=k.decode('utf8')).hash_sha512() for k in ldap_user.sshPublicKey]
+    if key.get_finger_print() in finger_prints:
+        return
+
+    ldap_user.sshPublicKey.add(key.key_as_byte_string)
     ldap_user.entry_commit_changes()
 
 
@@ -160,14 +179,23 @@ def syncronize_ssh_keys(user: 'User'):
 
 @job
 def load_ssh_key(user: 'User'):
+    """Import SSH keys from LDAP to Bitu database for a given user.
+
+    Args:
+        user (User): User
+    """
     from keymanagement.models import SSHKey
 
     ldap_user = bituldap.get_user(user.get_username())
 
+    # Load finger prints for keys in LDAP
+    finger_prints = [SSHPublicKey(keydata=k.decode('utf8')).hash_sha512() for k in ldap_user.sshPublicKey]
+
     # Check if we have any keys that are listed as active, but not in LDAP.
     # LDAP is authoritive, so deactivate any keys not found.
+    key: SSHKey
     for key in user.ssh_keys.filter(system=system):
-        if key.active and key.key_as_byte_string not in ldap_user.sshPublicKey.values:
+        if key.active and key.get_finger_print() not in finger_prints:
             key.active = False
             key.save()
 
@@ -175,15 +203,57 @@ def load_ssh_key(user: 'User'):
             key.system = ''
             key.save()
 
-    for key in ldap_user.sshPublicKey.values:
-        ssh_key, created = SSHKey.objects.get_or_create(user=user, ssh_public_key=key.decode('utf8').strip())
-        comment = helpers.get_comment_from_imported_ssh_key(key)
+    # Map all our (Bitus) SSH keys to an dict, using finger prints
+    # as keys.
+    existing = {}
+    for key in user.ssh_keys.all():
+        existing[key.get_finger_print()] = key
 
-        if created or not ssh_key.active:
-            ssh_key.system = system
-            if not comment:
-                comment = f'Imported from {ssh_key.get_system_display()}'
-            ssh_key.comment = comment
-            ssh_key.active = True
-            ssh_key.save()
+    # Get all keys from LDAP and compare them to those in the database.
+    for k in ldap_user.sshPublicKey.values:
+        key_obj = SSHPublicKey(keydata=k.decode('utf8'))
+
+        # Key already exists in the database and is correctly listed as active.
+        # Skip futher processing.
+        if key_obj.hash_sha512() in existing and existing[key_obj.hash_sha512()].active:
             continue
+
+        # New key found in LDAP. Import and mark as active.
+        if key_obj.hash_sha512() not in existing:
+            ssh_key = SSHKey(
+                user=user,
+                ssh_public_key=k.decode('utf8'),
+                system=system,
+                comment=key_obj.comment,
+                active=True)
+
+            # Key does not have a comment, note in the database where we got the key
+            # instead, to provide context for the user.
+            if not ssh_key.comment:
+                ssh_key.comment = f'Imported from {ssh_key.get_system_display()}'
+
+            try:
+                # Set _skip_signal to indicate that we do not want to trigger the
+                # signals for syncronization with LDAP. Failure to do so will result
+                # in multiple iteration, potentially endless.
+                ssh_key._skip_signal = True
+                ssh_key.save()
+            except Exception as e:
+                logger.warning(
+                    f'failed to import ssh key from ldap for user: {user.get_username()}, exception was: {e}')
+
+            # Add the new key and finger print to the list of existing keys, to avoid
+            # processing identical keys from LDAP. LDAP doesn't validate the SSH keys
+            # and it is possible to have a key listed multiple times.
+            existing[ssh_key.get_finger_print()] = ssh_key
+
+        # The key from LDAP does exist in Bitu, but is not active.
+        # Update the key to indicate that it is currently used in LDAP
+        elif not existing[key_obj.hash_sha512()].active:
+            ssh_key = existing[key_obj.hash_sha512()]
+            ssh_key.system = system
+            ssh_key.active = True
+
+            # Indicate that we do not want to process signals.
+            ssh_key._skip_signal = True
+            ssh_key.save()

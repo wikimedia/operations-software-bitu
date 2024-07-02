@@ -14,10 +14,16 @@ logger = logging.getLogger('bitu')
 
 
 def update_ssh_key(sender, instance: 'SSHKey', created: bool, **kwargs):
+    # The provided instance does not want signals processed, skip.
+    if instance._skip_signal:
+        return
+
     # If a system is defined, syncronize with the appropriate backend.
     if instance.system:
         try:
-            import_string(f'{instance.system}.helpers.syncronize_ssh_keys')(instance.user)
+            import_string(f'{instance.system}.jobs.push_ssh_key')(instance)
+            import_string(f'{instance.system}.jobs.remove_ssh_key')(instance)
+            import_string(f'{instance.system}.jobs.load_ssh_key')(instance.user)
         except Exception as e:
             logger.warning(f'Error calling ssh key handler, \
                            instance: {instance.system}, user: {instance.user}, \
