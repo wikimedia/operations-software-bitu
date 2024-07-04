@@ -40,7 +40,7 @@ DATABASES = {
         'ENGINE': 'mysql.connector.django',
         'NAME': 'idm',
         'HOST': 'db.local.wmftest.net',
-        'PORT': 3306,
+        'PORT': 3307,
         'USER': 'idm',
         'PASSWORD': 'secret',
     }
@@ -87,7 +87,7 @@ RQ_QUEUES = {
 }
 
 BITU_LDAP = {
-    'uri': 'ldap://openldap.local.wmftest.net:1389',
+    'uri': 'ldap://openldap.local.wmftest.net:2389',
     'username': 'cn=admin,dc=example,dc=org',
     'password': 'adminpassword',
     'readonly': False,
@@ -98,6 +98,8 @@ BITU_LDAP = {
         'auxiliary_classes': ['posixAccount', 'wikimediaPerson', 'ldapPublicKey'],
     }
 }
+
+USER_AGENT = 'Bitu Identity Manager/0.1 (contact@example.org)'
 
 LDAP_USER_CONF = {
     'default_gid': 2000,
@@ -158,7 +160,7 @@ AUTHENTICATION_BACKENDS = [
 AUTH_LDAP_BIND_DN = "cn=admin,dc=example,dc=org"
 AUTH_LDAP_BIND_PASSWORD = "adminpassword"
 AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
-AUTH_LDAP_SERVER_URI = "ldap://openldap.local.wmftest.net:1389"
+AUTH_LDAP_SERVER_URI = "ldap://openldap.local.wmftest.net:2389"
 AUTH_LDAP_FIND_GROUP_PERMS = True
 
 AUTH_LDAP_USER_ATTR_MAP = {
@@ -243,6 +245,8 @@ API_PERMISSIONS = (
     'signups.add_uservalidation',
     'signups.view_blocklistip'
 )
+
+
 
 if DEBUG:
     for queueConfig in RQ_QUEUES.values():
