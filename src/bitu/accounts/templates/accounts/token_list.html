@@ -1,29 +1,27 @@
-{% extends 'single_column_codex_with_nav.html' %}
+% extends 'single_column_codex_with_nav.html' %}
 {% load i18n %}
-
 {% block title %}
 {% translate "API token management - List token" %}
 {% endblock %}
-
 {% block content %}
 <div class="content">
 {% if not object_list %}
 {% translate "You do not current have any tokens." %}
 {% endif %}
 <table class="vertical">
-    <thead>
-        <tr>
-            <th>token</th>
-            <th>user</th>
+    <thead class="vertical">
+        <tr class="vertical">
+            <th class="vertical">token</th>
+            <th class="vertical">user</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="vertical">
         {% for token in object_list %}
-        <tr>
-            <td data-label="{% translate "User" %}">{{ token.user.get_username }}</td>
-            <td data-label="{% translate "Created" %}">{{ token.created }}</td>
-            <td data-label="{% translate "Comment" %}">{{ token.comment }}</td>
-            <td data-label="">
+        <tr class="vertical">
+            <td class="vertical" data-label="{% translate "User" %}">{{ token.user.get_username }}</td>
+            <td class="vertical" data-label="{% translate "Created" %}">{{ token.created }}</td>
+            <td class="vertical" data-label="{% translate "Comment" %}">{{ token.comment }}</td>
+            <td class="vertical" data-label="">
                 <a class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-destructive"
                 href="{% url "accounts:api_token_delete" pk=token.id %}">
                     {% translate "Delete" %}

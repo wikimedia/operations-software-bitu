@@ -318,11 +318,11 @@ nav ul {
 
 
 /* fake tables */
-table {
+table.vertical {
     width: 100%;
 }
 
-table.vertical thead, tbody, th, td, tr {
+table.vertical thead.vertical, tbody.vertical, th.vertical, td.vertical, tr.vertical {
     display: block;
 }
 
