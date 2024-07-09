@@ -108,6 +108,7 @@ LDAP_USER_CONF = {
 BITU_SUB_SYSTEMS = {
     'ldapbackend': {
         'manage_ssh_keys': True,
+        'permissions': 'ldapbackend.permission.LDAPPermissions',
         'ssh_keys_display_name': 'Wikimedia Cloud Services',
         'default_gid': 2000,
         'password_hash': 'ldapbackend.helpers.hash_password',
@@ -237,6 +238,12 @@ SIGNUP_EMAIL_VALIDATORS = ['ldapbackend.validators.LDAPEmailValidator',]
 
 SIGNUP_INFO_TEMPLATE = 'signup_info_wmf.html'
 LOGIN_REDIRECT_URL = 'ldapbackend:properties'
+
+TICKET_SYSTEM = {
+    'url_pattern': 'https://phabricator.wikimedia.org/{ticket}',
+    'name': 'Phabricator',
+    'ticket_regex': r'^T\d{4,10}'
+}
 
 ADMINS_LIMITED = []
 ENABLE_API = True

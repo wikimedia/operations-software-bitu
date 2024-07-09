@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'signups',
     'ldapbackend.apps.LdapConfig',
     'mediawiki.apps.MediawikiConfig',
+    'permissions.apps.PermissionsConfig',
     'wikimedia.apps.WikimediaConfig',
     'keymanagement.apps.KeymanagementConfig'
 ]

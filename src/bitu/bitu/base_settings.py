@@ -33,7 +33,8 @@ INSTALLED_APPS = [
     'ldapbackend.apps.LdapConfig',
     'wikimedia.apps.WikimediaConfig',
     'keymanagement.apps.KeymanagementConfig',
-    'mediawiki.apps.MediawikiConfig'
+    'mediawiki.apps.MediawikiConfig',
+    'permissions.apps.PermissionsConfig',
 ]
 
 MIDDLEWARE = [

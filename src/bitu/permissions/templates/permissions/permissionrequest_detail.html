@@ -1,0 +1,50 @@
+{% extends 'single_column_codex_with_nav.html' %}
+{% load i18n %}
+{% load ticket %}
+
+{% block title %}
+{% translate "Permissions - My Permissions" %}
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <h2>
+        {% blocktranslate with object.key as name %}Eventlog for: '{{ name }}' access request.{% endblocktranslate %}
+    </h2>
+    <p>
+    <strong>{% translate 'Permission' %}</strong>: {{ object.key }}<br />
+    <strong>{% translate 'Status' %}</strong>: {{ object.get_status_display}}<br />
+    <strong>{% translate 'System' %}</strong>: {{ object.system }}<br />
+    <strong>{% translate 'Ticket' %}</strong>: {{ object.ticket|ticket_link }}<br />
+    <strong>{% translate 'Comment' %}</strong>: {{ object.comment }}<br />
+    </p>
+    <div class="cdx-table">
+          <div class="cdx-table">
+            <!-- Header has been omitted since there is no header content. -->
+            <div class="cdx-table__table-wrapper">
+              <table class="cdx-table__table">
+                <caption>
+                  {% translate "Permission management" %}
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">{% translate "Created" %}</th>
+                    <th scope="col">{% translate "Author" %}</th>
+                    <th scope="col">{% translate "Comment" %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for log in object.log_set.all %}
+                  <tr>
+                    <td>{{ log.created }}</td>
+                    <td>{{ log.created_by }}</td>
+                    <td>{{ log.comment|linebreaksbr }}</td>
+                  </tr>
+                  {% endfor %}
+                </tfoot>
+              </table>
+            </div>
+          </div>
+    </div>
+</div>
+{% endblock%}

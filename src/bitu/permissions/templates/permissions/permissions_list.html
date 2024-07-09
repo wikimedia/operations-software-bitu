@@ -1,0 +1,59 @@
+{% extends 'single_column_codex_with_nav.html' %}
+{% load i18n %}
+
+{% block title %}
+{% translate "Permissions - My Permissions" %}
+{% endblock %}
+
+{% block content %}
+<div class="cdx-table">
+    <!-- Header has been omitted since there is no header content. -->
+    <div class="cdx-table__table-wrapper">
+      <table class="cdx-table__table">
+        <caption>
+          {% translate "Permission management" %}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">{% translate "Permission" %}</th>
+            <th scope="col">{% translate "Description" %}</th>
+            <th scope="col" class="cdx-table__table__cell--align-number">{% translate "Provider" %}</th>
+            <th scope="col">{% translate "Status" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for permission in my_permissions %}
+          <tr>
+            <td>{{ permission.name }}</td>
+            <td>{{ permission.description }}</td>
+            <td class="cdx-table__table__cell--align-number">{{ permission.source_display }}</td>
+            <td>
+            {% if permission.request %}
+            <a href="{% url 'permissions:log' pk=permission.request.pk %}">{{ permission.state_display }}</a>
+            {% else %}
+            {{ permission.state_display }}
+            {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+          {% for permission in permissions %}
+          <tr>
+            <td>{{ permission.name }}</td>
+            <td>{{ permission.description }}</td>
+            <td class="cdx-table__table__cell--align-number">{{ permission.source_display }}</td>
+            <td>
+            {% if permission.state == 'SY' %}
+              <a href="{% url 'permissions:request' system=permission.source key=permission.key %}">Request</a>
+            {% elif permission.state == 'PN' and permission.request %}
+              <a href="{% url 'permissions:log' pk=permission.request.pk %}">{{ permission.state_display }}</a>
+            {% else %}
+              {{ permission.state_display }}
+            {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tfoot>
+      </table>
+    </div>
+  </div>
+{% endblock %}
