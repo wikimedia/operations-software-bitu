@@ -45,6 +45,13 @@ mediawiki_consumer_secret = os.environ['MEDIAWIKI_CONSUMER_SECRET'] if 'MEDIAWIK
 mediawiki_access_token = os.environ['MEDIAWIKI_ACCESS_TOKEN'] if 'MEDIAWIKI_ACCESS_TOKEN' in os.environ else None
 mediawiki_access_secret = os.environ['MEDIAWIKI_ACCESS_SECRET'] if 'MEDIAWIKI_ACCESS_SECRET' in os.environ else None
 
+# MediaWiki SUL account linking
+mediawiki_sul_url = os.environ['MEDIAWIKI_SUL_URL'] if 'MEDIAWIKI_SUL_URL' in os.environ else 'https://meta.wikimedia.org/w/index.php'
+mediawiki_sul_key = os.environ['MEDIAWIKI_SUL_KEY'] if 'MEDIAWIKI_SUL_KEY' in os.environ else None
+mediawiki_sul_secret = os.environ['MEDIAWIKI_SUL_SECRET'] if 'MEDIAWIKI_SUL_SECRET' in os.environ else None
+mediawiki_sul_callback = os.environ['MEDIAWIKI_SUL_CALLBACK'] if 'MEDIAWIKI_SUL_CALLBACK' in os.environ else None
+
+
 if mediawiki_url:
     MEDIAWIKI = {
         'host': mediawiki_url,
@@ -147,6 +154,8 @@ BITU_SUB_SYSTEMS = {
             'view': [{'name': 'mail', 'display': 'e-mail'},
                      {'name': 'uidNumber', 'display': 'POSIX User ID', 'tooltip': 'If you have SSH access to Cloud VPS, Toolforge or other Wikimedia servers, this will be the ID they use to identify you.'},
                      {'name': 'gidNumber', 'display': 'POSIX Group ID', 'tooltip': 'If you have SSH access to Cloud VPS, Toolforge or other Wikimedia servers, this will be the ID of your primary user group.'},
+                     {'name': 'wikimediaGlobalAccountName', 'display': 'Wikimedia Global Account (SUL)', 'tooltip': 'This is the account you use when signing into one of Wikimedias wikis, e.g. Wikipedia.',
+                      'action': reverse_lazy('social:begin', args=['mediawiki']), 'action_label': 'refresh ↺'},
                     ]
         },
     }
@@ -226,6 +235,20 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATICFILES_DIRS = [
     BASE_DIR / "static", # noqa
 ]
+
+# SUL Account Linking
+if mediawiki_sul_key:
+    SOCIAL_AUTH_MEDIAWIKI_KEY = mediawiki_sul_key
+    SOCIAL_AUTH_MEDIAWIKI_SECRET = mediawiki_sul_secret
+    SOCIAL_AUTH_MEDIAWIKI_URL = mediawiki_sul_url
+    SOCIAL_AUTH_MEDIAWIKI_CALLBACK = mediawiki_sul_callback
+
+    # Byparse most pipelines to avoid issues with groups and
+    # prevent logging in with MediaWiki account.
+    SOCIAL_AUTH_MEDIAWIKI_PIPELINE = (
+        'social_core.pipeline.social_auth.social_details',
+        'wikimedia.social_pipeline.global_account_link'
+    )
 
 # Disable async, to avoid having to spin up workers.
 for queueConfig in RQ_QUEUES.values():
