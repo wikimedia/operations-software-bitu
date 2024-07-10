@@ -33,6 +33,27 @@ database_host = os.environ['DATABASE_HOST']
 database_port = os.environ['DATABASE_PORT'] if 'DATABASE_PORT' in os.environ else '3306'
 database_driver = os.environ['DATABASE_ENGINE'] if 'DATABASE_ENGINE' in os.environ else 'django.db.backends.sqlite3'
 
+# Allow API usage.
+ENABLE_API = os.environ['ENABLE_API'] if 'ENABLE_API' in os.environ else False
+
+# 2FA Proxy / MediaWiki.
+# Currently only used for the 2FA proxy, but may be reused for other MediaWiki integrations in the future.
+# Access to MediaWiki functionality is limited to the permissions granted by the provided keys.
+mediawiki_url = os.environ['MEDIAWIKI_URL'] if 'MEDIAWIKI_URL' in os.environ else None
+mediawiki_consumer_token = os.environ['MEDIAWIKI_CONSUMER_TOKEN'] if 'MEDIAWIKI_CONSUMER_TOKEN' in os.environ else None
+mediawiki_consumer_secret = os.environ['MEDIAWIKI_CONSUMER_SECRET'] if 'MEDIAWIKI_CONSUMER_SECRET' in os.environ else None
+mediawiki_access_token = os.environ['MEDIAWIKI_ACCESS_TOKEN'] if 'MEDIAWIKI_ACCESS_TOKEN' in os.environ else None
+mediawiki_access_secret = os.environ['MEDIAWIKI_ACCESS_SECRET'] if 'MEDIAWIKI_ACCESS_SECRET' in os.environ else None
+
+if mediawiki_url:
+    MEDIAWIKI = {
+        'host': mediawiki_url,
+        'consumer_token': mediawiki_consumer_token,
+        'consumer_secret': mediawiki_consumer_secret,
+        'access_token': mediawiki_access_token,
+        'access_secret': mediawiki_access_secret
+    }
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -197,8 +218,6 @@ SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator',
                               'signups.validators.UsernameValidator',
                               'signups.validators.IsURLValidator'
                               ]
-
-ENABLE_API = True
 
 LOGIN_REDIRECT_URL = 'ldapbackend:properties'
 LOGOUT_REDIRECT_URL = '/'
