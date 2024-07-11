@@ -36,6 +36,9 @@ database_driver = os.environ['DATABASE_ENGINE'] if 'DATABASE_ENGINE' in os.envir
 # Allow API usage.
 ENABLE_API = os.environ['ENABLE_API'] if 'ENABLE_API' in os.environ else False
 
+# Allow signups.
+ENABLE_SIGNUP = os.environ['ENABLE_SIGNUP'] if 'ENABLE_SIGNUP' in os.environ else True
+
 # 2FA Proxy / MediaWiki.
 # Currently only used for the 2FA proxy, but may be reused for other MediaWiki integrations in the future.
 # Access to MediaWiki functionality is limited to the permissions granted by the provided keys.
@@ -61,25 +64,6 @@ if mediawiki_url:
         'access_secret': mediawiki_access_secret
     }
 
-
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django_rq',
-    'rest_framework',
-    'social_django',
-    'accounts',
-    'captcha',
-    'signups',
-    'ldapbackend.apps.LdapConfig',
-    'wikimedia.apps.WikimediaConfig',
-    'keymanagement.apps.KeymanagementConfig',
-    'mediawiki.apps.MediawikiConfig'
-]
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
@@ -192,6 +176,7 @@ LOGGING = {
 
 AUTHENTICATION_BACKENDS = [
     "django_auth_ldap.backend.LDAPBackend",
+    "social_core.backends.mediawiki.MediaWiki",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
@@ -237,12 +222,15 @@ STATICFILES_DIRS = [
     BASE_DIR / "static", # noqa
 ]
 
+STATIC_ROOT = '/tmp/bitu/static'
+
 # SUL Account Linking
 if mediawiki_sul_key:
     SOCIAL_AUTH_MEDIAWIKI_KEY = mediawiki_sul_key
     SOCIAL_AUTH_MEDIAWIKI_SECRET = mediawiki_sul_secret
     SOCIAL_AUTH_MEDIAWIKI_URL = mediawiki_sul_url
-    SOCIAL_AUTH_MEDIAWIKI_CALLBACK = mediawiki_sul_callback
+    #SOCIAL_AUTH_MEDIAWIKI_CALLBACK = mediawiki_sul_callback
+    SOCIAL_AUTH_MEDIAWIKI_CALLBACK = 'oob'
 
     # Byparse most pipelines to avoid issues with groups and
     # prevent logging in with MediaWiki account.
