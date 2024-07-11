@@ -77,7 +77,8 @@ INSTALLED_APPS = [
     'signups',
     'ldapbackend.apps.LdapConfig',
     'wikimedia.apps.WikimediaConfig',
-    'keymanagement.apps.KeymanagementConfig'
+    'keymanagement.apps.KeymanagementConfig',
+    'mediawiki.apps.MediawikiConfig'
 ]
 
 # SECURITY WARNING: keep the secret key used in production secret!
