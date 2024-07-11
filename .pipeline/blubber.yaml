@@ -19,7 +19,9 @@ variants:
         - python3-django-rq
         - python3-ldap3
         - python3-mysqldb
+        - python3-mwclient
         - python3-paramiko
+        - python3-sshpubkeys
         - python3-social-django
         - uwsgi-plugin-python3
     python:
