@@ -17,7 +17,7 @@ class UserTokenValidation(models.Model):
         super().__init__(*args, **kwargs)
 
         ldap_user = bituldap.get_user(self.username)
-        if ldap_user:
+        if ldap_user and 'wikimediaGlobalAccountName' in ldap_user:
             self.sul = ldap_user['wikimediaGlobalAccountName'].value
             self.enabled, self.valid = TOTPValidator(self.sul, self.token)
 
