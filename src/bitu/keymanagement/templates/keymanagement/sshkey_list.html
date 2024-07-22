@@ -24,7 +24,7 @@
             </td>
             <td data-label="{% translate "System" %}">{% if key.get_system_display %}{{ key.get_system_display }}{% else %}-{% endif %}</td>
             <td data-label="{% translate "Comment" %}">{% if key.comment %}{{ key.comment }}{% else %} - {% endif %}</td>
-            <td>{% if key.get_display != key.ssh_public_key %}<span class="sshkey">{{ key }}</span><span class="sshkey" style="display:none;"">{{ key.ssh_public_key }}</span><span class="field-max">[<a href="#" class="ssh_toggle" onclick="toggle_ssh_key_display(this)" data-text-swap="{% translate "Hide" %}">{% translate "Expand" %}</a>]
+            <td>{% if key.get_display != key.ssh_public_key %}<span class="sshkey">{{ key }}</span><span class="sshkey" style="display:none;">{{ key.ssh_public_key }}</span><span class="field-max">[<a href="#" class="ssh_toggle" onclick="toggle_ssh_key_display(this)" data-text-swap="{% translate "Hide" %}">{% translate "Expand" %}</a>]
                 {% else %}
                 <span class="sshkey">{{ key }}</span>
                 {% endif %}
