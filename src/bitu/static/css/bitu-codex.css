@@ -336,7 +336,7 @@ table.vertical {
     width: 100%;
 }
 
-table.vertical thead.vertical, tbody.vertical, th.vertical, td.vertical, tr.vertical {
+table.vertical, thead.vertical, tbody.vertical, th.vertical, td.vertical, tr.vertical {
     display: block;
 }
 
