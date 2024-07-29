@@ -83,6 +83,13 @@
                 </p>
             </div>
         </form>
+        {% if two_factor_auth %}
+        <div>
+          <div class="center-block">
+            <a class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive"" href="{% url 'accounts:2fa' %}">Manage two factor authentication</a>
+          </div>
+        </div>
+        {% endif %}
 {% endif %}
 {% endblock %}
 

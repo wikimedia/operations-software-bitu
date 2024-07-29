@@ -247,13 +247,12 @@ TICKET_SYSTEM = {
 
 ADMINS_LIMITED = []
 ENABLE_API = True
+ENABLE_2FA = True
 
 API_PERMISSIONS = (
     'signups.add_uservalidation',
     'signups.view_blocklistip'
 )
-
-
 
 if DEBUG:
     for queueConfig in RQ_QUEUES.values():

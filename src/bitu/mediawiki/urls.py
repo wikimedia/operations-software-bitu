@@ -6,7 +6,7 @@ from .api import UserTokenValidatorApiView
 
 
 app_name = 'mediawiki'
-urlpatterns = []
+urlpatterns = [path('api/totp/', UserTokenValidatorApiView.as_view()),]
 
 if getattr(settings, 'ENABLE_API', False) and getattr(settings, 'MEDIAWIKI', False):
     urlpatterns.extend([

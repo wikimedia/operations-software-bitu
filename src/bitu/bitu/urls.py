@@ -27,7 +27,6 @@ urlpatterns = [
     path('wikimedia/', include('wikimedia.urls')),
     path('ldapbackend/', include('ldapbackend.urls')),
     path('keymanagement/', include('keymanagement.urls')),
-    path('mediawiki/', include('mediawiki.urls')),
     path('perm/', include('permissions.urls')),
     path('about/', TemplateView.as_view(template_name="about.html"), name="about"),
     path('', login_required(RedirectView.as_view(pattern_name=settings.LOGIN_REDIRECT_URL),), name='overview'),

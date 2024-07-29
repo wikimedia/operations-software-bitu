@@ -4,6 +4,8 @@ from django.utils.translation import gettext_lazy as _
 
 from bitu.forms import GenericCodexForm
 
+from .models import SecurityToken
+
 
 class UpdateEmailForm(GenericCodexForm):
     email1 = forms.EmailField(label=_('New email'))
@@ -27,3 +29,41 @@ class VerifyEmailForm(GenericCodexForm):
 
 class TokenForm(GenericCodexForm):
     comment = forms.CharField(max_length=256)
+
+
+class SecurityTokenForm(GenericCodexForm):
+    security_token = forms.CharField(widget=forms.HiddenInput)
+    username = forms.CharField(widget=forms.HiddenInput)
+    validation_code = forms.CharField()
+
+    def clean_validation_code(self):
+        token = self.cleaned_data.get('security_token')
+        username = self.cleaned_data.get('username')
+        code = self.cleaned_data.get('validation_code')
+        try:
+            st = SecurityToken.objects.get(pk=token, user__username=username)
+        except SecurityToken.DoesNotExist:
+            raise ValidationError(
+                'Invalid code',
+                code='validation_code_invalid'
+            )
+
+        if not st.validate(code):
+            raise ValidationError(
+                'Invalid code',
+                code='validation_code_invalid'
+            )
+
+        st.enabled = True
+        st.save()
+        return code
+
+
+class SecurityTokenDeleteForm(SecurityTokenForm):
+    def clean_validation_code(self):
+        token = self.cleaned_data.get('security_token')
+        username = self.cleaned_data.get('username')
+        code = super().clean_validation_code()
+        if code:
+            SecurityToken.objects.get(pk=token, user__username=username).delete()
+        return code

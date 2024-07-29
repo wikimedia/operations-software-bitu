@@ -15,8 +15,12 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.csrf import csrf_protect
 
 
-from .forms import UpdateEmailForm, VerifyEmailForm
-from .models import User, EmailUpdate, Token
+from .forms import (UpdateEmailForm,
+                    VerifyEmailForm,
+                    SecurityTokenForm,
+                    SecurityTokenDeleteForm)
+
+from .models import User, EmailUpdate, Token, SecurityToken
 from . import jobs, tokens
 
 from bitu.views import ObjectAccessRestrictMixin
@@ -170,3 +174,77 @@ class TokenDeleteView(ObjectAccessRestrictMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.add_message(request, messages.INFO, _('SSH key successfully deleted.'))
         return super().delete(request, *args, **kwargs)
+
+
+class TOTPCreateView(FormView):
+    form_class = SecurityTokenForm
+    template_name = 'accounts/securitytoken_form.html'
+    success_url = reverse_lazy('ldapbackend:properties')
+    success_msg = _('Two factor authentication enabled')
+
+    @property
+    def security_token(self):
+        """Allow us to safely fetch, or create a security token
+
+        Returns:
+            SecurityToken: Security token (2FA TOTP objects)
+        """
+        try:
+            token = self.request.user.securitytoken
+            if token.enabled:
+                return None
+        except User.securitytoken.RelatedObjectDoesNotExist:
+            st = SecurityToken(user=self.request.user, enabled=False)
+            st.save()
+            self.request.user.refresh_from_db()
+        return self.request.user.securitytoken
+
+    def get_initial(self):
+        """Overwrites the built in get_initial and returns security token
+        data to fill in hidden fields in the validation form.
+
+        Returns:
+            dict: Initial form data
+        """
+        if not self.security_token:
+            return self.initial
+
+        return {'security_token': self.security_token.pk,
+                'username': self.security_token.user.username}
+
+    def get_context_data(self, **kwargs):
+        """Overwrite the built in get_context_data and add the users
+        security token object to our context.
+
+        Returns:
+            dict: Context dictionary
+        """
+        context = super().get_context_data(**kwargs)
+        context['security_token'] = self.security_token
+        return context
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        """Intercepts form_valid and added message to inform the user that
+        2FA is now enabled.
+
+        Args:
+            form (BaseModelForm): Django Input Form
+
+        Returns:
+            HttpResponse: HttpResponse, redirect if successful.
+        """
+        valid = super().form_valid(form)
+        if valid:
+            messages.add_message(self.request, messages.SUCCESS, self.success_msg)
+        return valid
+
+
+class TOTPDeleteView(TOTPCreateView):
+    form_class = SecurityTokenDeleteForm
+    template_name = 'accounts/securitytoken_delete_form.html'
+    success_url = reverse_lazy('ldapbackend:properties')
+    success_msg = _('Two factor authentication disabled')
+
+    @property
+    def security_token(self):
+        return self.request.user.securitytoken

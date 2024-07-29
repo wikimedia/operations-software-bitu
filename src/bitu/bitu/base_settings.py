@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     'ldapbackend.apps.LdapConfig',
     'wikimedia.apps.WikimediaConfig',
     'keymanagement.apps.KeymanagementConfig',
-    'mediawiki.apps.MediawikiConfig',
     'permissions.apps.PermissionsConfig',
 ]
 
@@ -68,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'bitu.context_processors.bitu'
             ],
         },
     },
@@ -133,3 +133,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = 'accounts:overview'
 LOGOUT_REDIRECT_URL = 'wikimedia:login'
+
+TWOFA_DISPLAY_NAME = 'Bitu Identity Manager'
+ENABLE_2FA = False

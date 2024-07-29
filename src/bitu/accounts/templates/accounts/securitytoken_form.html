@@ -1,0 +1,40 @@
+{% extends 'single_column_codex_with_nav.html' %}
+{% load i18n %}
+
+{% block title %}
+{% translate "Enable 2FA" %}
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    {% if security_token %}
+    <img src="data:image/png;base64,{{security_token.qrcode }}" alt="qrcode" width="200px">
+
+    <pre>
+        {{ security_token.secret }}
+    </pre>
+
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <div class="center-block">
+        <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
+            {% translate "Validate and save" %}
+          </button>
+          <a href="{% url "ldapbackend:properties" %}"
+          class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Cancel" %}</a>
+        </div>
+    </form>
+    {% else %}
+        <h2>2-Factor Authentication is enabled</h2>
+        <p>
+            {% blocktrans %}
+            If you no longer require 2-factor authentication, or wish to reset your code, you can use the disable button to remove your current 2FA token.
+            {% endblocktrans %}
+        </p>
+        <a href="{% url "accounts:2fa_disable" %}"
+          class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-destructive cdx-button--weight-primary">{% translate "Disable" %}
+        </a>
+
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'single_column_codex_with_nav.html' %}
+{% load i18n %}
+
+{% block title %}
+{% translate "Enable 2FA" %}
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    {% if security_token %}
+    <h2>{% translate "Disable 2-Factor authentication" %}</h2>
+    <p>
+        {% blocktrans %}
+        You are about to disable 2-factor authentication for your account. To verify please provide a valid 2-factor token, or one of your scratch codes.
+        {% endblocktrans%}
+    </p>
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <div class="center-block">
+        <button type="submit" class="cdx-button cdx-button--action-destructive cdx-button--weight-primary">
+            {% translate "Disable 2FA" %}
+          </button>
+          <a href="{% url "ldapbackend:properties" %}"
+          class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Cancel" %}</a>
+        </div>
+    </form>
+    {% else %}
+        <h2>2-Factor Authentication does not appear to be enabled.</h2>
+    {% endif %}
+</div>
+{% endblock %}

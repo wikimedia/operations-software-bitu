@@ -6,9 +6,11 @@ ldap3==2.9.1
 redis==4.4.0
 social-auth-core>=4.4.2
 social-auth-app-django==5.0.0
+pyotp==2.6.0
 python-jose==3.3.0
 python3-openid==3.2.0
 paramiko==3.1.0
+qrcode==7.4.2
 mysqldb
 beautifulsoup4
 sshpubkeys==3.1.0

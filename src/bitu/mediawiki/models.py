@@ -2,11 +2,14 @@ import logging
 
 import bituldap
 
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from .validators import TOTPValidator
+from accounts.models import SecurityToken
 
+User = get_user_model()
 
 logger = logging.getLogger('bitu')
 
@@ -21,14 +24,19 @@ class UserTokenValidation(models.Model):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
+        tokens = SecurityToken.objects.filter(user__username=self.username)
+        for token in tokens:
+            self.valid = token.validate(self.token)
+            if self.valid:
+                self.enabled = True
+                break
+        else:
+            self.valid = False
+            self.enabled = False
+
         ldap_user = bituldap.get_user(self.username)
         if ldap_user and 'wikimediaGlobalAccountName' in ldap_user:
             self.sul = ldap_user['wikimediaGlobalAccountName'].value
-            try:
-                self.enabled, self.valid = TOTPValidator(self.sul, self.token)
-            except Exception as e:
-                logger.warning(f'failed to get call MediaWiki OATH, exception: {e}')
-                self.enabled = self.valid = False
 
     class Meta:
         managed = False
