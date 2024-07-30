@@ -1,0 +1,94 @@
+{% extends 'single_column_codex_with_nav.html' %}
+{% load i18n %}
+{% load ticket %}
+
+{% block title %}
+{% translate "Permissions Requests - Pending approvals" %}
+{% endblock %}
+
+{% block content %}
+<div class="codex_content">
+  <div class="content_box">
+    <h4>{% translate "Requests pending your approval" %}</h4>
+    {% if object_list %}
+    <div class="cdx-table">
+      <!-- Header has been omitted since there is no header content. -->
+      <div class="cdx-table__table-wrapper">
+        <table class="cdx-table__table">
+          <caption>
+            {% translate "Permission requests" %}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">{% translate "Permission" %}</th>
+              <th scope="col">{% translate "User" %}</th>
+              <th scope="col">{% translate "Ticket" %}</th>
+              <th scope="col">{% translate "Status" %}</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for request in object_list %}
+            <tr>
+              <td>
+                {{ request.permission.name|capfirst }} ({{ request.permission.source_display }})<br />
+                <small>{{ request.permission.description_display }}</small>
+              </td>
+              <td>{{ request.user }}</td>
+              <td>{{ request.ticket|ticket_link }}</td>
+              <td>{{ request.get_status_display }}</td>
+              <td>
+                <a href="{% url 'permissions:approve' request.pk %}">{% translate "Approve" %}</a>
+                <a href="{% url 'permissions:reject' request.pk %}">{% translate "Reject" %}</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+      {% translate "No requests pending" %}
+    {% endif %}
+  </div>
+</div>
+<div class="codex_content">
+  <div class="content_box">
+    <h4>{% translate "Your approvals and rejects for the last 60 days" %}</h4>
+  {% if logs %}
+  <div class="cdx-table">
+    <!-- Header has been omitted since there is no header content. -->
+    <div class="cdx-table__table-wrapper">
+      <table class="cdx-table__table">
+        <caption>
+          {% translate "Logs" %}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">{% translate "Permission" %}</th>
+            <th scope="col">{% translate "User" %}</th>
+            <th scope="col">{% translate "Ticket" %}</th>
+            <th scope="col">{% translate "Status" %}</th>
+            <th scope="col">{% translate "Comment" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+          <tr>
+            <td>{{ log.request.permission.name|capfirst }} ({{ log.request.permission.source_display }})</td>
+            <td>{{ log.request.user }}</td>
+            <td>{{ log.request.ticket|ticket_link }}</td>
+            <td>{% if log.approved %}{% translate "Approved" %}{% else %}{% translate "Rejected" %}{% endif %}</td>
+            <td>{{ log.comment }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  {% translate "None" %}
+  {% endif %}
+  </div>
+</div>
+{% endblock %}

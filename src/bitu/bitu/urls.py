@@ -27,7 +27,6 @@ urlpatterns = [
     path('wikimedia/', include('wikimedia.urls')),
     path('ldapbackend/', include('ldapbackend.urls')),
     path('keymanagement/', include('keymanagement.urls')),
-    path('perm/', include('permissions.urls')),
     path('about/', TemplateView.as_view(template_name="about.html"), name="about"),
     path('', login_required(RedirectView.as_view(pattern_name=settings.LOGIN_REDIRECT_URL),), name='overview'),
     path('403/', TemplateView.as_view(template_name='403.html')),
@@ -41,6 +40,10 @@ if getattr(settings, 'ENABLE_SIGNUP', True):
         path('signup/', include('signups.urls')),
     )
 
+if hasattr(settings, 'ACCESS_REQUEST_RULES') and settings.ACCESS_REQUEST_RULES:
+    urlpatterns.append(
+        path('permissions/', include('permissions.urls')),
+    )
 
 # When developing, allow the built in Django webserver to serve static
 # content. In production this is the job of the actual webserver.

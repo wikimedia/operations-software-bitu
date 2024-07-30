@@ -14,18 +14,20 @@ class LDAPPermissions(BaseBackend):
         self._permissions: list[Permission] = []
 
     def get_state(self, user, entry: Entry):
-        try:
-            pr = PermissionRequest.objects.get(user=user, system='ldapbackend', key=entry.entry_dn)
-            return pr.status
-        except PermissionRequest.DoesNotExist:
+        pr = PermissionRequest.objects.filter(
+            user=user,
+            system='ldapbackend',
+            key=entry.entry_dn).order_by('-created').first()
+        if pr is None:
             return PermissionRequest.SYNCRONIZED
+        return pr.status
 
     def _entries_to_permission_list(self, user: User, entries: list[Entry]) -> list[Permission]:
         perms: list[Permission] = []
         for entry in entries:
             perms.append(Permission(
-                key=entry.entry_dn,
-                name=entry.cn,
+                key=entry.entry_dn.__str__(),
+                name=entry.cn.__str__(),
                 description=entry.description if entry.description else '',
                 source='ldapbackend',
                 source_display='LDAP',
@@ -50,17 +52,15 @@ class LDAPPermissions(BaseBackend):
                 )
         return None
 
-
     def available_permissions(self, user: User) -> list[Permission]:
         existing = [p.key for p in self.existing_permissions(user)]
         available = []
 
-        for group in bituldap.list_groups(query='owner: *'):
+        for group in bituldap.list_groups():
             if group.entry_dn not in existing:
                 available.append(group)
 
         return self._entries_to_permission_list(user, available)
-
 
     def existing_permissions(self, user: User) -> list[Permission]:
         if self._my_permissions:
@@ -68,3 +68,8 @@ class LDAPPermissions(BaseBackend):
         ldap_user = bituldap.get_user(user.get_username())
         self._my_permissions = self._entries_to_permission_list(user, bituldap.member_of(ldap_user.entry_dn))
         return self._my_permissions
+
+    def get_pending(self, user: User) -> list[Permission]:
+        groups = bituldap.list_groups()
+        requests = PermissionRequest.objects.filter(key__in=[group.entry_dn for group in groups], system='ldapbackend')
+        return requests

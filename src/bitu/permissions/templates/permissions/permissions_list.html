@@ -6,6 +6,10 @@
 {% endblock %}
 
 {% block content %}
+<div class="codex_content">
+  <div class="content_box">
+    <h4>{% translate "Request new permissions" %}</h4>
+
 <div class="cdx-table">
     <!-- Header has been omitted since there is no header content. -->
     <div class="cdx-table__table-wrapper">
@@ -24,7 +28,7 @@
         <tbody>
           {% for permission in my_permissions %}
           <tr>
-            <td>{{ permission.name }}</td>
+            <td>{{ permission.name|capfirst }}</td>
             <td>{{ permission.description }}</td>
             <td class="cdx-table__table__cell--align-number">{{ permission.source_display }}</td>
             <td>
@@ -38,16 +42,16 @@
           {% endfor %}
           {% for permission in permissions %}
           <tr>
-            <td>{{ permission.name }}</td>
+            <td>{{ permission.name|capfirst }}</td>
             <td>{{ permission.description }}</td>
             <td class="cdx-table__table__cell--align-number">{{ permission.source_display }}</td>
             <td>
-            {% if permission.state == 'SY' %}
-              <a href="{% url 'permissions:request' system=permission.source key=permission.key %}">Request</a>
-            {% elif permission.state == 'PN' and permission.request %}
+            {% if permission.state == 'AP' %}
+              {{ permission.state_display }}
+            {% elif permission.state == 'PN' %}
               <a href="{% url 'permissions:log' pk=permission.request.pk %}">{{ permission.state_display }}</a>
             {% else %}
-              {{ permission.state_display }}
+              <a href="{% url 'permissions:request' system=permission.source key=permission.key %}">Request</a>
             {% endif %}
             </td>
           </tr>
@@ -56,4 +60,6 @@
       </table>
     </div>
   </div>
+</div>
+</div>
 {% endblock %}

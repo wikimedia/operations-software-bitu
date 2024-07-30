@@ -16,6 +16,14 @@ class Permission(object):
         )
 
     @property
+    def description_display(self):
+        if self.description:
+            return self.description
+        elif self.name:
+            return self.name.__str__().capitalize()
+        return self.key
+
+    @property
     def state_display(self):
         for status in PermissionRequest.REQUEST_STATUS:
             if status[0] == self.state:
@@ -37,7 +45,7 @@ class PermissionRequest(models.Model):
         (APPROVED, _('Approved')),
         (CANCELLED, _('Cancelled')),
         (PENDING, _('Pending')),
-        (SYNCRONIZED, _('Synchronized')),
+        (SYNCRONIZED, _('Existing Permission')),
         (REJECTED, _('Rejected')),
     ]
 
@@ -50,6 +58,11 @@ class PermissionRequest(models.Model):
     status = models.CharField(max_length=2, choices=REQUEST_STATUS, default=PENDING)
     comment = models.TextField(help_text=_('Please provide a reasoning for this request'))
     ticket = models.CharField(max_length=256, blank=True, default='', help_text=_('Phabricator ticket, if available.'))
+
+    @property
+    def permission(self):
+        from .permission import permission_set
+        return permission_set.get_permission(self.system, self.key)
 
 
 class Log(models.Model):
