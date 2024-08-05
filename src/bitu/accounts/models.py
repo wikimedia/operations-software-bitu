@@ -1,10 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import base64
+import textwrap
 import uuid
 
 from dataclasses import dataclass
 from io import BytesIO
 from typing import Any
+from urllib.parse import quote as html_quote
 
 import pyotp
 import qrcode
@@ -56,13 +58,29 @@ class SecurityToken(models.Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+    def create_recovery_codes(self, number=10):
+        if not self.pk:
+            raise RuntimeError('Cannot create recovery codes for unsaved security token')
+
+        if self.recoverycode_set.count() == number:
+            return
+
+        for i in range(0, number):
+            RecoveryCode(token=self).save()
+
+    def recovery_codes_download(self):
+        text = ''
+        for code in self.recoverycode_set.all():
+            text = text + f'{code.get_code_display()}\n'
+        return html_quote(text)
+
     def uri(self):
         totp = pyotp.totp.TOTP(self.secret)
         return totp.provisioning_uri(
             name=self.user.get_username(),
             issuer_name=settings.TWOFA_DISPLAY_NAME)
 
-    def validate(self, token):
+    def validate(self, token, recovery_allowed=True):
         cache_key = f'user:totp:spend:{self.user.get_username()}'
         r_conn = django_rq.get_connection('default')
 
@@ -71,6 +89,12 @@ class SecurityToken(models.Model):
 
         r_conn.sadd(cache_key, token)
         r_conn.expire(cache_key, 90, gt=True)
+
+        if recovery_allowed:
+            count, _ = self.recoverycode_set.filter(code=token.strip().replace(' ', '')).delete()
+            if count:
+                return True
+
         totp = pyotp.totp.TOTP(self.secret)
         return totp.verify(token)
 
@@ -80,3 +104,27 @@ class SecurityToken(models.Model):
         img.save(buf)
         s = base64.b64encode(buf.getvalue())
         return s.decode('ascii')
+
+    def get_secret_display(self):
+        return ' '.join(textwrap.wrap(self.secret, 4))
+
+    def __unicode__(self):
+        return self.user.get_username()
+
+    def __str__(self):
+        return self.user.get_username()
+
+
+def generate_recovery_key():
+    return pyotp.random_base32()[:16]
+
+
+class RecoveryCode(models.Model):
+    token = models.ForeignKey(SecurityToken, on_delete=models.CASCADE)
+    code = models.CharField(max_length=16, null=False, blank=False, default=generate_recovery_key)
+
+    def get_code_display(self):
+        return ' '.join(textwrap.wrap(self.code, 4))
+
+    def __unicode__(self):
+        return self.token.user

@@ -6,35 +6,80 @@
 {% endblock %}
 
 {% block content %}
-<div class="content">
-    {% if security_token %}
-    <img src="data:image/png;base64,{{security_token.qrcode }}" alt="qrcode" width="200px">
-
-    <pre>
-        {{ security_token.secret }}
-    </pre>
-
-    <form method="post">{% csrf_token %}
-        {{ form.as_p }}
-        <div class="center-block">
-        <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
-            {% translate "Validate and save" %}
-          </button>
-          <a href="{% url "ldapbackend:properties" %}"
-          class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Cancel" %}</a>
-        </div>
-    </form>
-    {% else %}
-        <h2>2-Factor Authentication is enabled</h2>
+{% if security_token %}
+<div class="codex_content">
+    <div class="content_box">
+        <h4>{% translate "Step 1: Download a two-factor authentication program" %}</h4>
+        <p>{% blocktrans %}
+            Download a program for two-factor authentication. That can be a mobile or desktop application, such as
+            <a href="https://authy.com/">Authy</a>, <a href="https://freeotp.github.io/">FreeOTP</a>,
+            <a href="https://support.google.com/accounts/answer/1066447">Google Authenticator</a> or
+            <a href="https://www.microsoft.com/en-us/account/authenticator/">Microsoft Authenticator</a>.
+            A browser extension. Or a password manager such as <a href="https://1password.com/">1Password</a> or
+            <a href="https://bitwarden.com/">Bitwarden</a>.
+            {% endblocktrans %}
+        </p>
+    </div>
+</div>
+<div class="codex_content">
+    <div class="content_box">
+        <h4>{% translate "Step 2: Scan the QR code" %}</h4>
+        <p>{% translate "Scan the QR code using the application or browser extension you downloaded in step 1 for two-factor authentication." %}</p>
+        <img src="data:image/png;base64,{{security_token.qrcode }}" alt="qrcode" width="300px">
+        <p>{% translate "If you are unable to scan the QR code, enter the secret key and account name manually" %}</p>
+        <strong>{% translate "Two-factor authentication secret key" %}:</strong>
+        <pre class="two_fa">   {{ security_token.get_secret_display }}</pre>
+        <strong>{% translate "Account name" %}:</strong>
+        <pre class="two_fa">   {{ security_token.user.get_username }}</pre>
+        </p>
+    </div>
+</div>
+<div class="codex_content">
+    <div class="content_box">
+        <h4>{% translate "Step 3: Write down the recovery codes" %}</h4>
+        <p><strong>{% translate "This step is important! Do not skip this step!" %}</strong>
+        {% translate "The following list is a list of one-time use recovery codes. These codes can only be used once, and are for emergency use when you don't have access to your device. Please write these down and keep them in a secure location. It is recommended that you mark each code as used when you have logged in using it. If you lose your device, these codes are the only way to rescue your account. <strong>These codes will never be shown again.</strong>" %}
+        </p>
+        <pre class="two_fa">
+            {% for code in security_token.recoverycode_set.all %}
+                {{ code.get_code_display }}
+            {% endfor %}
+        </pre>
+        <p>
+            <a href="data:text/plain;charset=utf-8,{{ security_token.recovery_codes_download }}"" download="recovery-codes.txt" >Download recovery codes</a>
+        </p>
+    </div>
+</div>
+<div class="codex_content">
+    <div class="content_box">
+        <h4>{% translate "Step 4: Verification" %}</h4>
+        <form method="post">{% csrf_token %}
+            {{ form.as_p }}
+            <div class="center-block">
+            <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
+                {% translate "Validate and save" %}
+              </button>
+              <a href="{% url "ldapbackend:properties" %}"
+              class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Cancel" %}</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% else %}
+<div class="codex_content">
+    <div class="content_box">
+        <h2>{% translate "2-Factor Authentication is enabled" %}</h2>
         <p>
             {% blocktrans %}
             If you no longer require 2-factor authentication, or wish to reset your code, you can use the disable button to remove your current 2FA token.
             {% endblocktrans %}
         </p>
+        <p>
         <a href="{% url "accounts:2fa_disable" %}"
           class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-destructive cdx-button--weight-primary">{% translate "Disable" %}
         </a>
-
-    {% endif %}
+        </p>
 </div>
+</div>
+{% endif %}
 {% endblock %}

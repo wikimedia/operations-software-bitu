@@ -66,17 +66,35 @@ class SecurityTokenTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.user.refresh_from_db()
+
+        # The form for enabling 2FA should generate 10 recovery keys
+        self.assertEqual(self.user.securitytoken.recoverycode_set.count(), 10)
         self.assertTrue(self.user.securitytoken.enabled)
 
     def test_token_disable(self):
-        enabled_url = reverse('accounts:2fa_disable')
+        disable_url = reverse('accounts:2fa_disable')
 
         self.assertEqual(SecurityToken.objects.filter(user=self.user).count(), 0)
         st = SecurityToken.objects.create(user=self.user, enabled=True)
         totp = pyotp.TOTP(st.secret)
 
-        response = self.client.post(enabled_url,
+        response = self.client.post(disable_url,
                                     {'validation_code': totp.now(),
+                                     'username': self.user.username,
+                                     'security_token': st.pk})
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(0, SecurityToken.objects.filter(user=self.user).count())
+
+    def test_recovery_code(self):
+        # Test that we can disable 2FA using the recovery codes.
+        disable_url = reverse('accounts:2fa_disable')
+        st = SecurityToken.objects.create(user=self.user, enabled=True)
+        st.create_recovery_codes()
+        st.refresh_from_db()
+
+        response = self.client.post(disable_url,
+                                    {'validation_code': st.recoverycode_set.first().code,
                                      'username': self.user.username,
                                      'security_token': st.pk})
 

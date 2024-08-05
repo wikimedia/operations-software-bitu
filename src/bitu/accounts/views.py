@@ -197,6 +197,7 @@ class TOTPCreateView(FormView):
             st = SecurityToken(user=self.request.user, enabled=False)
             st.save()
             self.request.user.refresh_from_db()
+        self.request.user.securitytoken.create_recovery_codes()
         return self.request.user.securitytoken
 
     def get_initial(self):

@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import User, Token, SecurityToken
+from .models import User, Token, SecurityToken, RecoveryCode
 
 
 class AccountUserAdmin(UserAdmin):
@@ -19,6 +19,15 @@ class SecurityTokenAdmin(admin.ModelAdmin):
     exclude = ('secret',)
 
 
+class RecoveryCodeAdmin(admin.ModelAdmin):
+    list_display = ('get_username',)
+    readonly_fields = ('token', 'code')
+
+    def get_username(self, obj):
+        return obj.token.user.username
+
+
+admin.site.register(RecoveryCode, RecoveryCodeAdmin)
 admin.site.register(SecurityToken, SecurityTokenAdmin)
 admin.site.register(Token, TokenAdmin)
 admin.site.register(User, AccountUserAdmin)

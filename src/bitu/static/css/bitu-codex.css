@@ -159,6 +159,20 @@ p.center {
     display: none;
 }
 
+.codex_content {
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-bottom: 20px;
+    width: 60vw;
+}
+
+pre.two_fa{
+    font-size: 14pt;
+}
+
 @media only screen and (min-width: 833px) {
     header.hero img {
         max-width: 184px;

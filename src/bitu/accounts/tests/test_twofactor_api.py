@@ -84,3 +84,36 @@ class SecurityTokenAPITest(TestCase):
         client.credentials(HTTP_AUTHORIZATION='Token ' + '1234567890abcdefghijklmnopqxyz')
         response = client.post(totp_api, {'user': self.user.get_username(), 'token': token})
         self.assertEqual(response.status_code, 401)
+
+    def test_recoverycodes_api(self):
+        totp_api = reverse('accounts:api_totp')
+
+        # Create a security token for our test user.
+        st = SecurityToken(user=self.user, enabled=True)
+        st.save()
+        st.create_recovery_codes()
+
+        st.refresh_from_db()
+        self.assertEqual(st.recoverycode_set.count(), 10)
+        recovery_code = st.recoverycode_set.first()
+
+        # Create API token for API user.
+        api_token = Token(user=self.api_user)
+        api_token.save()
+
+        # Authenticated API client
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + api_token.key)
+        response = client.post(totp_api, {'user': self.user.get_username(), 'token': recovery_code.code})
+        self.assertTrue(response.data['valid'])
+        self.assertEqual(st.recoverycode_set.count(), 9)
+
+        response = client.post(totp_api, {'user': self.user.get_username(), 'token': recovery_code.code})
+        self.assertFalse(response.data['valid'])
+        self.assertEqual(st.recoverycode_set.count(), 9)
+
+        # Users are given recovery codes with spaces, ensure that the spaces are accepted:
+        recovery_code = st.recoverycode_set.first()
+        response = client.post(totp_api, {'user': self.user.get_username(), 'token': recovery_code.get_code_display() })
+        self.assertTrue(response.data['valid'])
+        self.assertEqual(st.recoverycode_set.count(), 8)

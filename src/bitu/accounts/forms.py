@@ -34,7 +34,8 @@ class TokenForm(GenericCodexForm):
 class SecurityTokenForm(GenericCodexForm):
     security_token = forms.CharField(widget=forms.HiddenInput)
     username = forms.CharField(widget=forms.HiddenInput)
-    validation_code = forms.CharField()
+    validation_code = forms.CharField(help_text="Enter a code from your authentication device to verify")
+    recovery_allowed = False
 
     def clean_validation_code(self):
         token = self.cleaned_data.get('security_token')
@@ -48,7 +49,7 @@ class SecurityTokenForm(GenericCodexForm):
                 code='validation_code_invalid'
             )
 
-        if not st.validate(code):
+        if not st.validate(code, recovery_allowed=self.recovery_allowed):
             raise ValidationError(
                 'Invalid code',
                 code='validation_code_invalid'
@@ -60,6 +61,8 @@ class SecurityTokenForm(GenericCodexForm):
 
 
 class SecurityTokenDeleteForm(SecurityTokenForm):
+    recovery_allowed = True
+
     def clean_validation_code(self):
         token = self.cleaned_data.get('security_token')
         username = self.cleaned_data.get('username')
