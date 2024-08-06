@@ -19,5 +19,6 @@ use cases.
 
 .. toctree::
 
+   wikimedia.commands
    wikimedia.pipeline
    wikimedia.validators
