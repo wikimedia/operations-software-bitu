@@ -86,10 +86,9 @@ class PermissionSet(BaseBackend):
         for permission in permissions:
             if permission.source not in settings.ACCESS_REQUEST_RULES:
                 continue
-            if permission.name.lower() not in settings.ACCESS_REQUEST_RULES[permission.source]:
+            if permission.key.lower() not in settings.ACCESS_REQUEST_RULES[permission.source]:
                 continue
             filtered.append(permission)
-        print(filtered)
         return filtered
 
     def available_permissions(self, user: 'User') -> list[Permission]:

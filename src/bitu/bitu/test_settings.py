@@ -114,7 +114,7 @@ STATICFILES_DIRS = [
 
 ACCESS_REQUEST_RULES = {
     'ldapbackend': {
-        'nda': [{
+        'cn=nda,ou=groups,dc=example,dc=org': [{
             'module': 'permissions.validators.manager_approval',
             'managers': [],
             'count': 2

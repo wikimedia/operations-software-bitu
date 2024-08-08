@@ -1,11 +1,17 @@
 import uuid
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils.module_loading import import_string
 
 
 User = get_user_model()
+
+
+class PermissionValidationError(Exception):
+    pass
 
 
 class Permission(object):
@@ -63,6 +69,28 @@ class PermissionRequest(models.Model):
     def permission(self):
         from .permission import permission_set
         return permission_set.get_permission(self.system, self.key)
+
+    @property
+    def rules(self):
+        try:
+            validation_rules = settings.ACCESS_REQUEST_RULES[self.system][self.key.lower()]
+            return validation_rules
+        except Exception:
+            raise PermissionValidationError(f'No rules found for {self.system}:{self.key}, validating: {self.id}')
+
+    def validate(self):
+        for rule in self.rules:
+            validator = import_string(rule['module'])
+            if not validator(self, **rule):
+                # All validation checks must parse
+                return False
+
+        # At this point all validator checks have parsed, or zero was given.
+        # Do not approve requests validated by zero rules.
+        result = True if len(self.rules) > 0 else False
+        if result:
+            self.status = self.APPROVED
+            self.save()
 
 
 class Log(models.Model):

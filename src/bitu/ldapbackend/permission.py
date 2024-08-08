@@ -42,8 +42,8 @@ class LDAPPermissions(BaseBackend):
         for entry in permissions:
             if key == entry.entry_dn:
                 return Permission(
-                    key=entry.entry_dn,
-                    name=entry.cn,
+                    key=entry.entry_dn.__str__(),
+                    name=entry.cn.__str__(),
                     description=entry.description if entry.description else '',
                     source='ldapbackend',
                     source_display='LDAP',
