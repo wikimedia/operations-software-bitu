@@ -23,7 +23,6 @@ INSTALLED_APPS = [
     'captcha',
     'signups',
     'ldapbackend.apps.LdapConfig',
-    'mediawiki.apps.MediawikiConfig',
     'permissions.apps.PermissionsConfig',
     'wikimedia.apps.WikimediaConfig',
     'keymanagement.apps.KeymanagementConfig'
