@@ -1,5 +1,7 @@
 import uuid
 
+import structlog
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -7,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.module_loading import import_string
 
 
+audit = structlog.getLogger('audit')
 User = get_user_model()
 
 
@@ -38,7 +41,9 @@ class Permission(object):
 
     @property
     def request(self):
-        return PermissionRequest.objects.filter(user=self.user, system=self.source, key=self.key).order_by('-created').first()
+        return PermissionRequest.objects.filter(user=self.user,
+                                                system=self.source,
+                                                key=self.key).order_by('-created').first()
 
 
 class PermissionRequest(models.Model):
@@ -93,6 +98,9 @@ class PermissionRequest(models.Model):
                 self.status = self.REJECTED
                 self.save()
                 return False
+            audit.info('validation',
+                       id=self.id, user=self.user.get_username(),
+                       status=self.get_status_display, rule=rule['module'], validation='success')
 
         # At this point all validator checks have parsed, or zero was given.
         # Do not approve requests validated by zero rules.
@@ -100,6 +108,9 @@ class PermissionRequest(models.Model):
         if result:
             self.status = self.APPROVED
             self.save()
+            audit.info('request',
+                       id=self.id, user=self.user.get_username(),
+                       status=self.get_status_display(), success=result)
 
 
 class Log(models.Model):

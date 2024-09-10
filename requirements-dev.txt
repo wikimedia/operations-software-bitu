@@ -18,3 +18,4 @@ Bitu-LDAP @ git+https://gerrit.wikimedia.org/r/operations/software/bitu-ldap@f96
 tox
 setuptools
 sshpubkeys==3.1.0
+structlog==22.3.0

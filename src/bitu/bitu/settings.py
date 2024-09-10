@@ -8,6 +8,7 @@ environent. Settings that are expected to work in both production,development,
 and any other environments should go into base_settings.py.
 """
 import ldap
+import structlog
 
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 from django.urls import reverse_lazy
@@ -49,11 +50,28 @@ DATABASES = {
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "console": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.dev.ConsoleRenderer(),
+        },
+        "json": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.processors.JSONRenderer(),
+        }
+    },
     "handlers": {
         "console": {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
+            "formatter": "console"
         },
+        "audit": {
+            "level": "INFO",
+            "class": "logging.handlers.WatchedFileHandler",
+            "filename": "/tmp/bitu_audit.log",
+            "formatter": "json"
+        }
     },
     "loggers": {
         "bitu": {
@@ -61,8 +79,30 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": True,
         },
+        "audit": {
+            "handlers": ["console", "audit"],
+            "level": "INFO",
+            "propagate": True
+        }
     },
 }
+
+structlog.configure(
+    processors=[
+        structlog.contextvars.merge_contextvars,
+        structlog.stdlib.filter_by_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.stdlib.add_logger_name,
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.PositionalArgumentsFormatter(),
+        structlog.processors.StackInfoRenderer(),
+        structlog.processors.format_exc_info,
+        structlog.processors.UnicodeDecoder(),
+        structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+    ],
+    logger_factory=structlog.stdlib.LoggerFactory(),
+    cache_logger_on_first_use=True,
+)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

@@ -1,12 +1,17 @@
 from typing import TYPE_CHECKING
 
+import structlog
+
 from .notification import send_permission_request_email
 
+
 if TYPE_CHECKING:
-    from permissions.models import PermissionRequest
+    from permissions.models import Log, PermissionRequest
+
+audit = structlog.getLogger('audit')
 
 
-def permission_validation(sender, instance: 'PermissionRequest', created: bool, **kwargs):
+def permission_validation(sender, instance: 'Log', created: bool, **kwargs):
     instance.request.validate()
 
 
@@ -17,3 +22,9 @@ def request_notification(sender, instance: 'PermissionRequest', created: bool, *
         return
 
     send_permission_request_email(instance)
+
+
+def permission_audit(sender, instance: 'Log', created: bool, **kwargs):
+    if created:
+        audit.info('log object created', id=instance.id, request=instance.request.id,
+                   user=instance.created_by, approved=instance.approved, sender=sender)

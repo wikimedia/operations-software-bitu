@@ -1,4 +1,6 @@
-from typing import Any, TYPE_CHECKING
+import logging
+
+from typing import TYPE_CHECKING
 
 import bituldap
 
@@ -12,6 +14,8 @@ from django.urls import reverse
 if TYPE_CHECKING:
     from .models import PermissionRequest
 
+logger = logging.getLogger('bitu')
+
 
 def load_templates() -> dict[str:str]:
     """Load template configuration for settings.
@@ -21,7 +25,7 @@ def load_templates() -> dict[str:str]:
     """
     name = settings.BITU_NOTIFICATION.get('pending_permissions_template_prefix', 'pending_manager_approval')
     plaintext = f'permissions/email/{name}.txt'
-    return {'plaintext': get_template(plaintext),}
+    return {'plaintext': get_template(plaintext), }
 
 
 def get_managers(request: 'PermissionRequest') -> set[str]:
@@ -94,20 +98,25 @@ def send_permission_request_email(request: 'PermissionRequest') -> None:
     Args:
         request (PermissionRequest): Bitu PermissionRequest object.
     """
+
     managers = get_managers(request)
+    logger.info(
+        f'email notification triggered by permission request, permission_request:{request.pk}, \
+user: {request.user}, \
+managers: {",".join(managers)}')
 
     # Get full URI for pending list
     uri = settings.BITU_DOMAIN + reverse('permissions:pending')
     templates = load_templates()
 
-    subject = settings.BITU_NOTIFICATION.get('pending_permission_request_subject', 'Bitu IDM - Pending permission requests')
+    subject = settings.BITU_NOTIFICATION.get('pending_permission_request_subject',
+                                             'Bitu IDM - Pending permission requests')
     from_email = settings.BITU_NOTIFICATION['default_sender']
 
     # Loop over all managers, rather than adding multiple receipients to one email.
     # This is done because we include all permissions currently pending our approval, but
     # those may not be the same for all managers.
     for manager in managers:
-
         # Don't notify ourselves, if we happen to be managing the permission we're applying for.
         # Users cannot approve their own requests.
         if manager == request.user.get_username():
@@ -118,8 +127,12 @@ def send_permission_request_email(request: 'PermissionRequest') -> None:
         to_email = bituldap.get_user(manager).mail
         requests = get_pending_requests(manager)
         context = {'uri': uri, 'requests': requests}
-        msg = EmailMultiAlternatives(subject,
-                                 templates['plaintext'].render(context),
-                                 from_email,
-                                 [to_email])
+        msg = EmailMultiAlternatives(
+            subject,
+            templates['plaintext'].render(context),
+            from_email,
+            [to_email])
         msg.send()
+        logger.info(
+            f'email pending requests for {manager}, email: {to_email}, requests pending: {len(requests)}'
+        )
