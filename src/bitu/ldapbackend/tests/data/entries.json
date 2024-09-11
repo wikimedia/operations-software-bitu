@@ -1050,6 +1050,9 @@
                     "uid=jonathan42,ou=people,dc=example,dc=org",
                     "uid=ethanwalton,ou=people,dc=example,dc=org"
                 ],
+                "owner": [
+                    "uid=wwaller,ou=people,dc=example,dc=org"
+                ],
                 "objectClass": [
                     "groupOfNames",
                     "posixGroup",
@@ -1064,6 +1067,9 @@
                 "gidNumber": [
                     "4000"
                 ],
+                "owner": [
+                    "uid=wwaller,ou=people,dc=example,dc=org"
+                ],
                 "member": [
                     "uid=stephanie74,ou=people,dc=example,dc=org",
                     "uid=imurray,ou=people,dc=example,dc=org",
@@ -1072,7 +1078,6 @@
                     "uid=conleyjonathan,ou=people,dc=example,dc=org",
                     "uid=autumn24,ou=people,dc=example,dc=org",
                     "uid=christina06,ou=people,dc=example,dc=org",
-                    "uid=rachel32,ou=people,dc=example,dc=org",
                     "uid=sarah65,ou=people,dc=example,dc=org",
                     "uid=smithwendy,ou=people,dc=example,dc=org",
                     "uid=ewatkins,ou=people,dc=example,dc=org",

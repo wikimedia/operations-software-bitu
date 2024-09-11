@@ -2,17 +2,22 @@
 {% load i18n %}
 
 {% block title %}
-{% translate "Access request" %}
+{% translate "Access request, Approval" %}
 {% endblock %}
 
 {% block content %}
-<div class="codex_content">
-  <div class="content_box">
-    <h4>{% blocktranslate with permission.name as name %}You are about to request access to: '{{ name }}'.{% endblocktranslate %}</h4>
-    {% if permission.description %}
-    <em>{{ permission.description }}</em>
-    {% endif %}
-  <div class="content">
+<div class="content">
+  <h2>
+    {% blocktranslate with request.permission.name as name %}You are about to approve access to: '{{ name }}'.{% endblocktranslate %}
+  </h2>
+  <p>
+    <strong>{% translate "User" %}: </strong>{{ request.user.username }}<br>
+    <strong>{% translate "Request date" %}: </strong>{{ request.created }}<br>
+    <strong>{% translate "Comment" %}</strong>: <br>
+    <code>
+      {{ request.comment }}
+    </code>
+  </p>
   <p>
     <form method="post">{% csrf_token %}
         {% for field in form %}
@@ -20,7 +25,7 @@
             <div class="cdx-field">
               <div class="cdx-label">
                 <label class="cdx-label__label" for="cdx-{{ field.name }}">
-                  <span class="cdx-label__label__text">{{ field.label }}</span>
+                  <span class="cdx-label__label__text">{{ field.label }}{% if field.field.required %}*{% endif %}</span>
                 </label>
               </div>
               <div class="cdx-field__control cdx-field__control--has-help-text">
@@ -48,15 +53,13 @@
           {% endfor %}
           <div class="center-block">
             <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
-                {% translate "Request access" %}
+                {% translate "Approve" %}
             </button>
-            <a href="{% url "permissions:list" %}"
+            <a href="{% url "permissions:pending" %}"
             class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Cancel" %}</a>
           </div>
     </form>
   </p>
-</div>
-</div>
 </div>
 {% endblock %}
 

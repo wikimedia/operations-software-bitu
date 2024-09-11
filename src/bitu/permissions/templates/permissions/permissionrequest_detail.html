@@ -7,14 +7,14 @@
 {% endblock %}
 
 {% block content %}
+<div class="codex_content">
+  <div class="content_box">
+    <h4>{% blocktranslate with object.permission.name as name and object.permission.source_display as source %}Eventlog for: '{{ name }} ({{ source }})' access request.{% endblocktranslate %}</h4>
 <div class="content">
-    <h2>
-        {% blocktranslate with object.key as name %}Eventlog for: '{{ name }}' access request.{% endblocktranslate %}
-    </h2>
     <p>
-    <strong>{% translate 'Permission' %}</strong>: {{ object.key }}<br />
+    <strong>{% translate 'Permission' %}</strong>: {{ object.permission.name }}<br />
     <strong>{% translate 'Status' %}</strong>: {{ object.get_status_display}}<br />
-    <strong>{% translate 'System' %}</strong>: {{ object.system }}<br />
+    <strong>{% translate 'System' %}</strong>: {{ object.permission.source_display }}<br />
     <strong>{% translate 'Ticket' %}</strong>: {{ object.ticket|ticket_link }}<br />
     <strong>{% translate 'Comment' %}</strong>: {{ object.comment }}<br />
     </p>
@@ -46,5 +46,7 @@
             </div>
           </div>
     </div>
+</div>
+</div>
 </div>
 {% endblock%}

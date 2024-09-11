@@ -88,6 +88,7 @@ LDAP_USER_CONF = {
 
 BITU_SUB_SYSTEMS = {
     'ldapbackend': {
+        'permissions': 'ldapbackend.permission.LDAPPermissions',
         'manage_ssh_keys': True,
         'ssh_keys_display_name': 'LDAP',
         'default_gid': 2000,
@@ -110,3 +111,13 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATICFILES_DIRS = [
     BASE_DIR / "static", # noqa
 ]
+
+ACCESS_REQUEST_RULES = {
+    'ldapbackend': {
+        'nda': [{
+            'module': 'permissions.validators.manager_approval',
+            'managers': [],
+            'count': 2
+        }]
+    }
+}
