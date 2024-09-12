@@ -62,4 +62,44 @@
   </div>
 </div>
 </div>
+
+
+{% if logs %}
+<div class="codex_content">
+  <div class="content_box">
+      <h4>{% translate "Event log" %}</h4>
+  <div class="cdx-table">
+    <!-- Header has been omitted since there is no header content. -->
+    <div class="cdx-table__table-wrapper">
+      <table class="cdx-table__table">
+        <caption>
+          {% translate "Event log" %}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">{% translate "Date" %}</th>
+            <th scope="col">{% translate "Manager" %}</th>
+            <th scope="col">{% translate "Permission" %}</th>
+            <th scope="col">{% translate "Reason" %}</th>
+            <th scope="col">{% translate "Status" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+          <tr>
+            <td>{{ log.created }}</td>
+            <td>{{ log.created_by }}</td>
+            <td>{{ log.request.permission.name }}</td>
+            <td>{{ log.comment }}</td>
+            <td>{% if log.approved %}{% translate "Approved" %}{%else %}{% translate "Rejected" %}{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+{% endif %}
+
 {% endblock %}
