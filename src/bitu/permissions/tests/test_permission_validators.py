@@ -48,6 +48,50 @@ class PermissionRequestApprovalTest(TestCase):
             }
         }
 
+    def test_manager_quick_rejection(self):
+        # Get a test users
+        user = User(username='coxsarah')
+        user.save()
+
+        pr = PermissionRequest(user=user)
+        pr.system = 'ldapbackend'
+        pr.key = 'nda'
+        pr.comment = 'Test access request'
+        pr.save()
+
+        with self.settings(ACCESS_REQUEST_RULES=self.rules):
+            self.assertTrue(pr.status == pr.PENDING)
+            log = PermissionLog(request=pr, created_by=self.manager1, comment='Rejected', approved=False)
+            log.save()
+
+            pr.refresh_from_db()
+            self.assertTrue(pr.status == pr.REJECTED)
+
+    def test_manager_approve_reject(self):
+        # Get a test users
+        user = User(username='coxsarah')
+        user.save()
+
+        pr = PermissionRequest(user=user)
+        pr.system = 'ldapbackend'
+        pr.key = 'nda'
+        pr.comment = 'Test access request'
+        pr.save()
+
+        with self.settings(ACCESS_REQUEST_RULES=self.rules):
+            self.assertTrue(pr.status == pr.PENDING)
+            log = PermissionLog(request=pr, created_by=self.manager1, comment='Approved', approved=True)
+            log.save()
+
+            pr.refresh_from_db()
+            self.assertTrue(pr.status == pr.PENDING)
+
+            log = PermissionLog(request=pr, created_by=self.manager2, comment='Rejected', approved=False)
+            log.save()
+
+            pr.refresh_from_db()
+            self.assertTrue(pr.status == pr.REJECTED)
+
     def test_manager_approval(self):
         # Get a test users
         user = User(username='coxsarah')
@@ -64,6 +108,7 @@ class PermissionRequestApprovalTest(TestCase):
             log.save()
 
             pr.refresh_from_db()
+            self.assertTrue(pr.status == pr.PENDING)
             self.assertFalse(pr.status == pr.APPROVED)
 
             # Check that one manager cannot just approve multiple times.

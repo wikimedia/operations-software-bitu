@@ -9,10 +9,6 @@ from permissions.permission import BaseBackend, User
 
 
 class LDAPPermissions(BaseBackend):
-    def __init__(self) -> None:
-        self._my_permissions: list[Permission] = []
-        self._permissions: list[Permission] = []
-
     def get_state(self, user, entry: Entry):
         pr = PermissionRequest.objects.filter(
             user=user,
@@ -63,11 +59,8 @@ class LDAPPermissions(BaseBackend):
         return self._entries_to_permission_list(user, available)
 
     def existing_permissions(self, user: User) -> list[Permission]:
-        if self._my_permissions:
-            return self._my_permissions
         ldap_user = bituldap.get_user(user.get_username())
-        self._my_permissions = self._entries_to_permission_list(user, bituldap.member_of(ldap_user.entry_dn))
-        return self._my_permissions
+        return self._entries_to_permission_list(user, bituldap.member_of(ldap_user.entry_dn))
 
     def get_pending(self, user: User) -> list[Permission]:
         groups = bituldap.list_groups()
