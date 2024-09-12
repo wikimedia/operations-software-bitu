@@ -16,6 +16,9 @@
           <li><a href="{% url 'accounts:2fa' %}">{% translate "Multi-factor Authentication" %}</a></li>
           {% endif %}
           <li><a href="{% url 'permissions:list' %}">{% translate "Permissions" %}</a></li>
+          {% if managed_permissions %}
+          <li><a href="{% url 'permissions:pending' %}">{% translate "Pending your approval" %} ({{ pending_permissions }})</a></li>
+          {% endif %}
           <br />
           <li class="bottom"><a href="{% url 'ldapbackend:properties' %}">{% translate "My account" %}</a></li></ul>
       </li>
