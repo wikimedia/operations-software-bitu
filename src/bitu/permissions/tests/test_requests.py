@@ -2,6 +2,8 @@ from django.core import mail
 from django.test import Client, TestCase
 from django.urls import reverse
 
+import bituldap
+
 from accounts.models import User
 from ldapbackend.tests import dummy_ldap
 from permissions.models import PermissionRequest
@@ -24,6 +26,12 @@ class PermissionRequestTest(TestCase):
         self.admin, _ = User.objects.get_or_create(username='wwaller')
         self.admin.set_password('secret')
         self.admin.save()
+
+    def _user_in_ldap_group(self, username, group_dn):
+        ldap_user = bituldap.get_user(username)
+        groups = bituldap.member_of(ldap_user.entry_dn)
+        group_dn_list = [g.entry_dn for g in groups]
+        return group_dn in group_dn_list
 
     def test_permission_request(self):
         c = Client()
@@ -65,6 +73,9 @@ class PermissionRequestTest(TestCase):
         response = c.get(pending_url)
         self.assertInHTML('<td>Approved</td>', str(response.content), 1)
 
+        self.assertTrue(self._user_in_ldap_group('rachel32', 'cn=NDA,ou=groups,dc=example,dc=org'))
+
+
     def test_filtering(self):
         """Test that users are not given their own requests to approve.
         """
@@ -82,6 +93,9 @@ class PermissionRequestTest(TestCase):
         # Create http client for requesting user permissions.
         c = Client()
         c.login(username='rachel32', password='secret')
+
+        # Check that the user is not already a member of the LDAP group
+        self.assertFalse(self._user_in_ldap_group('rachel32', 'cn=NDA,ou=groups,dc=example,dc=org'))
 
         # Create http client for approving user permissions.
         c_admin = Client()
@@ -128,6 +142,9 @@ class PermissionRequestTest(TestCase):
         permission_request.refresh_from_db()
         self.assertEqual(permission_request.status, PermissionRequest.REJECTED)
 
+        self.assertFalse(self._user_in_ldap_group('rachel32', 'cn=NDA,ou=groups,dc=example,dc=org'))
+
+
         # User retries request for access to the NDA group.
         response = c.post(request_url, {'comment': 'Please grant access'})
         self.assertEqual(response.status_code, 302)
@@ -151,3 +168,6 @@ class PermissionRequestTest(TestCase):
         response = c.get(list_url)
         self.assertContains(response, 'NDA')
         self.assertContains(response, 'Approved')
+
+        # Verify that the user is now in the correct LDAP group
+        self.assertTrue(self._user_in_ldap_group('rachel32', 'cn=NDA,ou=groups,dc=example,dc=org'))

@@ -70,6 +70,17 @@ class BaseBackend():
         """
         raise NotImplementedError()
 
+    def grant(cls, user: 'User', permission: Permission):
+        """Grant permission to user.
+
+        Args:
+            user (User): Bitu User Object
+            permission (Permission): Bitu Permission Object
+
+        Raises:
+            NotImplemented: Not implemented
+        """
+        raise NotImplementedError()
 
 class PermissionSet(BaseBackend):
     _backends = {}

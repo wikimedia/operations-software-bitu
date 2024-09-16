@@ -66,3 +66,19 @@ class LDAPPermissions(BaseBackend):
         groups = bituldap.list_groups()
         requests = PermissionRequest.objects.filter(key__in=[group.entry_dn for group in groups], system='ldapbackend')
         return requests
+
+    def grant(cls, user: User, permission: Permission):
+        if permission.source != 'ldapbackend':
+            # Permission does not belong to this backend.
+            return
+
+        ldap_user = bituldap.get_user(user.get_username())
+        groups = bituldap.member_of(ldap_user.entry_dn)
+
+        if permission.key in [g.entry_dn for g in groups]:
+            # Already have permission.
+            return
+
+        group = bituldap.get_group(permission.name)
+        group.member.add(ldap_user.entry_dn)
+        group.entry_commit_changes()

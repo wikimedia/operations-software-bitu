@@ -112,6 +112,17 @@ class PermissionRequest(models.Model):
                        id=self.id, user=self.user.get_username(),
                        status=self.get_status_display(), success=result)
 
+            if self.permission:
+                self.grant()
+
+    def grant(self):
+        if self.status != self.APPROVED:
+            return
+
+        from .permission import permission_set
+        backend = permission_set._backends[self.system]
+        backend.grant(self.user, self.permission)
+
 
 class Log(models.Model):
     created = models.DateTimeField(auto_now_add=True)
