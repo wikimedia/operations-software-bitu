@@ -86,6 +86,10 @@ LDAP_USER_CONF = {
     'default_gid': 2000
 }
 
+BITU_DOMAIN = 'https://localhost'
+BITU_NOTIFICATION = {
+    'default_sender': 'no-reply@example.org'
+}
 BITU_SUB_SYSTEMS = {
     'ldapbackend': {
         'permissions': 'ldapbackend.permission.LDAPPermissions',

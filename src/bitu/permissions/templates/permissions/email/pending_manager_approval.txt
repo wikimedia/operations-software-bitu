@@ -1,0 +1,11 @@
+{% load i18n %}
+{% blocktrans with count=requests|length%}You currently have {{ count }} pending.{% endblocktrans %}
+{% for request in requests %}
+{% blocktrans with  user=request.user.get_username permission=request.permission.name comment=request.comment %}
+* {{ user }} has requested access to {{ permission }}
+  comment: {{ comment }}
+{% endblocktrans %}
+{% endfor %}
+{% blocktrans with uri=uri %}
+Go to pending requests to approve: {{ uri }}
+{% endblocktrans%}

@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 from django.db.models.signals import post_save
 
-from .signals import permission_validation
+from .signals import permission_validation, request_notification
 
 
 class PermissionsConfig(AppConfig):
@@ -9,5 +9,6 @@ class PermissionsConfig(AppConfig):
     name = 'permissions'
 
     def ready(self) -> None:
-        from permissions.models import Log
+        from permissions.models import Log, PermissionRequest
         post_save.connect(permission_validation, Log)
+        post_save.connect(request_notification, PermissionRequest)

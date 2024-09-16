@@ -1,3 +1,4 @@
+from django.core import mail
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -45,6 +46,9 @@ class PermissionRequestTest(TestCase):
 
         response = c.get(list_url)
         self.assertContains(response, 'Pending')
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'Bitu IDM - Pending permission requests')
 
         c = Client()
         c.login(username='wwaller', password='secret')

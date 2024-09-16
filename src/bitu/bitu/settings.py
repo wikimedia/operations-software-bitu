@@ -222,7 +222,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 BITU_NOTIFICATION = {
     'default_sender': 'noc@example.org',
     'signup_template_prefix': 'email_wmf_signup_activation',
-    'signup_subject': 'Wikimedia Developer Account activation'
+    'signup_subject': 'Wikimedia Developer Account activation',
+    'pending_permissions_template_prefix': 'pending_manager_approval'
 }
 
 SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator',
