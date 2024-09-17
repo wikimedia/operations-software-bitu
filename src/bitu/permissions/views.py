@@ -68,9 +68,6 @@ class PermissionRequestLogCreateView(CreateView):
 
     model = PermissionLog
     fields = ('comment',)
-
-    _permission_request = None
-
     success_url = reverse_lazy('permissions:pending')
 
     @property
@@ -78,9 +75,7 @@ class PermissionRequestLogCreateView(CreateView):
         # No need to check return value, as objects.get will raise
         # PermissionRequest.DoesNotExist and trigger a 404 if pk is
         # invalid.
-        if not self._permission_request:
-            self._permission_request = PermissionRequest.objects.get(pk=self.kwargs['pk'])
-        return self._permission_request
+        return PermissionRequest.objects.get(pk=self.kwargs['pk'])
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         # Verify that we're allowed to approve or reject this requests by

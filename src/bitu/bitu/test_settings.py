@@ -116,8 +116,8 @@ ACCESS_REQUEST_RULES = {
     'ldapbackend': {
         'cn=nda,ou=groups,dc=example,dc=org': [{
             'module': 'permissions.validators.manager_approval',
-            'managers': [],
-            'count': 2
+            'managers': ['wwaller'],
+            'count': 1
         }]
     }
 }

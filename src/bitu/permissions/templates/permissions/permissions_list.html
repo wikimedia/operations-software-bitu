@@ -46,9 +46,7 @@
             <td>{{ permission.description }}</td>
             <td class="cdx-table__table__cell--align-number">{{ permission.source_display }}</td>
             <td>
-            {% if permission.state == 'AP' %}
-              {{ permission.state_display }}
-            {% elif permission.state == 'PN' %}
+            {% if permission.state == 'AP' or permission.state == 'PN' %}
               <a href="{% url 'permissions:log' pk=permission.request.pk %}">{{ permission.state_display }}</a>
             {% else %}
               <a href="{% url 'permissions:request' system=permission.source key=permission.key %}">Request</a>

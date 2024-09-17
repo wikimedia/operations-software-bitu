@@ -34,11 +34,11 @@ class Permission(object):
         for status in PermissionRequest.REQUEST_STATUS:
             if status[0] == self.state:
                 return status[1]
-        return _('Uknown')
+        return _('Unknown')
 
     @property
     def request(self):
-        return PermissionRequest.objects.filter(user=self.user, system=self.source, key=self.key).first()
+        return PermissionRequest.objects.filter(user=self.user, system=self.source, key=self.key).order_by('-created').first()
 
 
 class PermissionRequest(models.Model):
@@ -79,15 +79,24 @@ class PermissionRequest(models.Model):
             raise PermissionValidationError(f'No rules found for {self.system}:{self.key}, validating: {self.id}')
 
     def validate(self):
+        process_count = 0
         for rule in self.rules:
             validator = import_string(rule['module'])
-            if not validator(self, **rule):
+            approved, processed = validator(self, **rule)
+            if not processed:
+                continue
+
+            process_count += 1
+
+            if not approved:
                 # All validation checks must parse
+                self.status = self.REJECTED
+                self.save()
                 return False
 
         # At this point all validator checks have parsed, or zero was given.
         # Do not approve requests validated by zero rules.
-        result = True if len(self.rules) > 0 else False
+        result = True if len(self.rules) > 0 and len(self.rules) == process_count else False
         if result:
             self.status = self.APPROVED
             self.save()
