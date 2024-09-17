@@ -1,9 +1,11 @@
+from datetime import timedelta
 from typing import Any
 
 from django.db.models.query import QuerySet
 from django.forms import BaseModelForm
 from django.http import HttpRequest, HttpResponse, Http404
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
@@ -23,6 +25,7 @@ class MyPermissionView(TemplateView):
             permission_set.available_permissions(self.request.user), key=lambda x: x.name.__str__().lower())
         context['my_permissions'] = sorted(
             permission_set.existing_permissions(self.request.user), key=lambda x: x.name.__str__().lower())
+        context['logs'] = PermissionLog.objects.filter(request__user=self.request.user).order_by('-created')
         return context
 
 
