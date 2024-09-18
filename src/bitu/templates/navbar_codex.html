@@ -19,8 +19,8 @@
           {% if managed_permissions %}
           <li><a href="{% url 'permissions:pending' %}">{% translate "Pending your approval" %} ({{ pending_permissions }})</a></li>
           {% endif %}
-          <br />
-          <li class="bottom"><a href="{% url 'ldapbackend:properties' %}">{% translate "My account" %}</a></li></ul>
+          <li class="bottom"><a href="{% url 'ldapbackend:properties' %}">{% translate "My account" %}</a></li>
+          <li><a href="{% url 'accounts:logout' %}?next=/">{% translate "Sign out" %}</a></li></ul>
       </li>
     </ul>
   </span>
