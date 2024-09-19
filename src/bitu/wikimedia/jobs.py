@@ -15,6 +15,8 @@ from django.utils.translation import gettext as _
 from django_rq import job
 from ldap3 import Entry
 
+from .integrations import gitlab, gerrit, phabricator
+from .models import UserBlockEventLog
 from .tokens import default_token_generator
 
 logger = logging.getLogger('bitu')
@@ -89,3 +91,45 @@ def send_forgot_username_email(email):
     msg.attach_alternative(html.render(context), 'text/html')
     msg.send()
     logger.info('sending username reminder to user: %s, email: %s', entry.uid, email)
+
+
+@job('default')
+def update_account(entry: bituldap.Entry, manager: 'User', action: str):
+    """Block account across systems, given an LDAP username
+
+    Args:
+        username (Entry): LDAP Entry
+    """
+    uid = entry.uid.__str__()
+    if action not in ['block_user', 'unblock_user']:
+        logger.error(f'user account block/unblock action unknown, user: {uid}')
+        return
+
+    clients = {
+        'gerrit': {'client': gerrit.Gerrit(), 'user': entry.cn.__str__() },
+        'gitlab': {'client': gitlab.Gitlab(), 'user': entry.cn.__str__()},
+        'phabricator': {'client': phabricator.PhabClient(), 'user': entry.cn.__str__() },
+    }
+
+    for name, options in clients.items():
+        try:
+            client = options['client']
+            user = options['user']
+            func = getattr(client, action)
+            func(user)
+
+            logger.info(f'user block/unblock success, system: {name}, action: {action}, user: {uid}, manager: {manager.get_username()}')
+            UserBlockEventLog.objects.create(
+                username=uid,
+                created_by=manager.get_username(),
+                action=f'{name} {action}',
+                comment=f'Successfully updated in {name}, action was {action}'
+            )
+        except Exception as e:
+            logger.error(f'user block/unblock failed, system: {name}, action: {action}, user: {uid}, manager: {manager.get_username()}, error: {e}')
+            UserBlockEventLog.objects.create(
+                username=uid,
+                created_by=manager.get_username(),
+                action=f'{name} {action}',
+                comment=f'Failed: {e}'
+            )

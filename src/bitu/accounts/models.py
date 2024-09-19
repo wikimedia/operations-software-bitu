@@ -28,6 +28,9 @@ class User(AbstractUser):
                 return True
         return False
 
+    @property
+    def account_manager(self):
+        return self.get_username() in getattr(settings, 'ACCOUNT_MANAGERS', [])
 
 @dataclass
 class EmailUpdate:

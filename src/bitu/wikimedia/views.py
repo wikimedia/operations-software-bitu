@@ -1,8 +1,13 @@
+from typing import Any
+
 import bituldap
 
+from django.conf import settings
 from django.contrib import messages
-from django.core.exceptions import ImproperlyConfigured
-from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
+from django.db.models.query import QuerySet
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_decode
@@ -11,10 +16,19 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import FormView
+from django.views.generic.edit import CreateView
+from django.views.generic.list import ListView
 
 from . import jobs
-from .forms import ForgotUsernameForm, RequestPasswordResetForm, PasswordResetForm
+from .forms import (BlockUserForm,
+                    BlockUserSearchForm,
+                    ForgotUsernameForm,
+                    RequestPasswordResetForm,
+                    PasswordResetForm)
+
+from .models import UserBlockEventLog
 from .tokens import default_token_generator
+
 
 INTERNAL_RESET_SESSION_TOKEN = "_password_reset_token"
 
@@ -113,3 +127,155 @@ class PasswordResetView(FormView):
                 }
             )
         return context
+
+
+class AccountManagersPermissionMixin():
+    """Mixin for checking if a user is an account manager and should be able to
+    access special functionality, such as account blocking.
+    """
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        """Check if the user has signed in, and if the user is in the list
+        of account managers. Account managers being specfied in the settings file under
+        ACCOUNT_MANAGERS (list).
+
+        This is a MIXIN and cannot be used on it's own. It must always be used as a mixin
+        for a class-based view.
+
+        Args:
+            request (HttpRequest): Django HttpRequest object.
+
+        Raises:
+            PermissionDenied: Return 403 if the user has not signed in or is not an account manager.
+
+        Returns:
+            HttpResponse: Django HttpResponse object
+        """
+
+        # Regardless of the anonymous user being listed as a account manager, unauthenticated users
+        # should not be allowed to block users.
+        if not request.user.is_authenticated:
+            raise PermissionDenied()
+
+        # Lookup account managers in settings.
+        account_managers = getattr(settings, 'ACCOUNT_MANAGERS', [])
+        if request.user.get_username() not in account_managers:
+            raise PermissionDenied()
+
+        # Hand over control to the views internal dispatch.
+        return super().dispatch(request, *args, **kwargs)
+
+
+class BlockUserView(AccountManagersPermissionMixin, CreateView):
+    model = UserBlockEventLog
+    fields = ['action', 'comment', 'created_by', 'username']
+    template_name = 'wikimedia/block_user.html'
+    success_url = reverse_lazy('wikimedia:block_search')
+    action = 'block_user'
+
+    def get_ldap_user(self):
+        return bituldap.get_user(self.kwargs['username'])
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        # Get username from URL parameter and lookup LDAP user.
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.get_ldap_user()
+        return context
+
+    def get_success_url(self) -> str:
+        # Append query parameter to success_url to let managers easily locate the user.
+        # that where just blocked.
+        url = super().get_success_url()
+        return url + f'?q={self.kwargs["username"]}'
+
+    def get_initial(self) -> dict[str, Any]:
+        # Fill in initial form data.
+        initial = super().get_initial()
+        initial['username'] = self.kwargs['username']
+        initial['created_by'] = self.request.user.get_username()
+        initial['action'] = self.action
+        return initial
+
+    def form_valid(self, form: Any) -> HttpResponse:
+        user = self.get_ldap_user()
+        if form.is_valid():
+            if form.cleaned_data['created_by'] != self.request.user.get_username():
+                # Form data manipulated.
+                raise PermissionDenied()
+            self.update_user(user)
+
+        return super().form_valid(form)
+
+    def update_user(self, user: bituldap.Entry):
+        # Flash success message and queue blocking actions.
+        messages.add_message(self.request, level=messages.SUCCESS, message=f'{user.cn} queued for blocking')
+        jobs.update_account(user, self.request.user, self.action)
+
+
+class UnBlockUserView(BlockUserView):
+    action = 'unblock_user'
+    template_name = 'wikimedia/unblock_user.html'
+
+    def update_user(self, user: bituldap.Entry):
+        # Flash success message and queue blocking actions.
+        messages.add_message(self.request, level=messages.SUCCESS, message=f'{user.cn} queued for unblocking')
+        jobs.update_account(user, self.request.user, self.action)
+
+
+class BlockUserSearch(AccountManagersPermissionMixin, FormView):
+    form_class = BlockUserSearchForm
+    template_name = 'wikimedia/block_user_search.html'
+
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        # Django doesn't really have a good way to do search view.
+        # Intercept post and get Form and misuse is_valid to do the actual search.
+        form = self.get_form(self.form_class)
+        if form.is_valid():
+            return self.form_valid(form, **kwargs)
+        return super().post(request, *args, **kwargs)
+
+    def search(self, value):
+        # Setup bitulap for generic user queries.
+        query_options = bituldap.read_configuration().users
+        _, connection = bituldap.create_connection()
+        object_def = bituldap.ObjectDef(query_options.object_classes,
+                           connection,
+                           auxiliary_class=query_options.auxiliary_classes)
+
+
+        # Query is an email.
+        if '@' in value:
+            return bituldap.ldap_query(connection=connection, object_def=object_def, dn=query_options.dn, query=f'mail: {value}*')
+
+        # Search both CN and UID in LDAP and add to entries dict for de-duplication.
+        # Bituldap utilized the LDAP3 abstraction layer, which does not easily to OR queries. Instead we do two queries and merge
+        # the results based on DN.
+        entries = {}
+        for entry in bituldap.ldap_query(connection=connection, object_def=object_def, dn=query_options.dn, query=f'CommonName: {value}*'):
+            entries[entry.entry_dn] = entry
+        for entry in bituldap.ldap_query(connection=connection, object_def=object_def, dn=query_options.dn, query=f'uid:{value}*'):
+            entries[entry.entry_dn] = entry
+
+        return entries.values()
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        # Handle returns from block and unblock pages. The q parameter is parsed back to trigger a
+        # search for the user currently being blocked/unblocked.
+        context = super().get_context_data(**kwargs)
+        if 'q' in self.request.GET:
+            context['query'] = self.request.GET['q']
+            context['users'] = self.search(self.request.GET['q'])
+        return context
+
+    def form_valid(self, form, **kwargs):
+        context = self.get_context_data(**kwargs)
+        context['form'] = form
+        context['users'] = self.search(form.cleaned_data['username'])
+        return self.render_to_response(context)
+
+
+class BlockEventLog(AccountManagersPermissionMixin, ListView):
+    model = UserBlockEventLog
+
+    def get_queryset(self) -> QuerySet[Any]:
+        qs = super().get_queryset()
+        return qs.filter(username=self.kwargs['username']).order_by('-created_at')

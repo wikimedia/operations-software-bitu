@@ -1,0 +1,68 @@
+{% extends 'single_column_codex_with_nav.html' %}
+{% load i18n %}
+
+{% block title %}
+{% translate "User account blocking" %}
+{% endblock %}
+
+{% block content %}
+<div class="codex_content">
+  <div class="content_box">
+    <h4>{% translate "Block or unblock account" %}</h4>
+    <form method="post">{% csrf_token %}
+      {% for field in form %}
+      <div class="cdx-text-input">
+        <!-- Input element with CSS class and attributes. -->
+        <input
+          id="id_username"
+          name="username"
+          required=""
+          class="cdx-text-input__input"
+          type="text"
+          placeholder="{% translate 'Search for username, or email' %}"
+          value="{% if query %}{{ query }}{% endif %}"
+        />
+
+      </div>
+      {% endfor %}
+  </form>
+<br />
+<div class="cdx-table">
+    <!-- Header has been omitted since there is no header content. -->
+    <div class="cdx-table__table-wrapper">
+      <table class="cdx-table__table">
+        <caption>
+          {% translate "Block or unblock account" %}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">{% translate "Developer account" %}</th>
+            <th scope="col">{% translate "Shell account" %}</th>
+            <th scope="col">{% translate "Email" %}</th>
+            <th scope="col" class="cdx-table__table__cell--align-number"></th>
+            <th scope="col" class="cdx-table__table__cell--align-number"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user.cn }}</td>
+            <td>{{ user.uid}} </td>
+            <td>{{ user.mail }}</td>
+            <th scope="col" class="cdx-table__table__cell--align-number"><a href="{% url "wikimedia:block_eventlog" user.uid %}">View logs</a></th>
+            <td class="cdx-table__table__cell--align-number">
+              <a href="{% url "wikimedia:unblock_user" user.uid %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Unblock" %}</a>
+              <a href="{% url "wikimedia:block_user" user.uid %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-destructive">{% translate "Block" %}</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tfoot>
+      </table>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

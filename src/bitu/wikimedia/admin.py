@@ -1,3 +1,11 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import UserBlockEventLog
+
+
+class UserBlockEventLogAdmin(admin.ModelAdmin):
+    list_display = ['username', 'action', 'created_by', 'created_at']
+    readonly_fields = ['username', 'action', 'created_by', 'created_at', 'comment']
+
+
+admin.site.register(UserBlockEventLog, UserBlockEventLogAdmin)

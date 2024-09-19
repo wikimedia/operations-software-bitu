@@ -1,0 +1,51 @@
+{% extends 'single_column_codex_with_nav.html' %}
+{% load i18n %}
+
+{% block title %}
+{% translate "User account unblocking" %}
+{% endblock %}
+
+{% block content %}
+<div class="codex_content">
+  <div class="content_box">
+    <h4>{% blocktrans with username=user.cn %}Unblock user: {{ username }}{% endblocktrans %}</h4>
+    <ul>
+        <li><strong>Email:</strong> {{ user.mail }}</li>
+        <li><strong>Wikimedia Developer Account:</strong> {{ user.cn }}</li>
+    </ul>
+
+    <p>
+        <form method="post">{% csrf_token %}
+            {% for field in form %}
+                {% if field.name == 'comment' %}
+                <h5>Comment</h5>
+                <div class="cdx-text-area">
+                    <!-- Textarea element with CSS class and attributes. -->
+                    <textarea
+                    id="id_comment"
+                    name="comment"
+                    required=""
+                      class="cdx-text-area__textarea"
+                      placeholder=""
+                    ></textarea>
+                </div>
+                {% else %}
+                {{ field.as_hidden }}
+                {% endif %}
+            {% endfor %}
+              <div class="center-block">
+                <button type="submit" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
+                    {% translate "Unblock" %}
+                </button>
+                <a href="{% url "wikimedia:block_search" %}?q={{ user.uid }}"
+                class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Cancel" %}</a>
+              </div>
+        </form>
+      </p>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
