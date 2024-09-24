@@ -15,7 +15,7 @@ from django.utils.translation import gettext as _
 from django_rq import job
 from ldap3 import Entry
 
-from .integrations import gitlab, gerrit, phabricator
+from .integrations import gitlab, gerrit, ldap, phabricator
 from .models import UserBlockEventLog
 from .tokens import default_token_generator
 
@@ -24,13 +24,13 @@ User = get_user_model()
 
 
 @job
-def update_ldap_attributes(user:'User', attributes:Dict):
+def update_ldap_attributes(user: 'User', attributes:Dict):
     ldap_user = bituldap.get_user(user.get_username())
     if not ldap_user:
         logger.warning(f'user: {user.get_username()} not found in ldap')
         return
 
-    for k,v in attributes.items():
+    for k, v in attributes.items():
         setattr(ldap_user, k, v)
         ldap_user.entry_commit_changes()
 
@@ -57,8 +57,8 @@ def send_email_password_reset(username):
 
     plaintext = get_template('email/email_password_reset.txt')
     html = get_template('email/email_password_reset.html')
-    context = { 'url': settings.BITU_DOMAIN + url , 'timeout': timeout }
-    subject =  _('Password reset')
+    context = {'url': settings.BITU_DOMAIN + url , 'timeout': timeout}
+    subject = _('Password reset')
     from_email = settings.BITU_NOTIFICATION['default_sender']
     to_email = ldap_user.mail
 
@@ -81,8 +81,8 @@ def send_forgot_username_email(email):
 
     plaintext = get_template('email/forgot_username.txt')
     html = get_template('email/forgot_username.html')
-    context = { 'site': settings.BITU_DOMAIN, 'username': entry.uid }
-    subject =  _('Reminder for your Wikimedia Developer username')
+    context = {'site': settings.BITU_DOMAIN, 'username': entry.uid}
+    subject = _('Reminder for your Wikimedia Developer username')
     from_email = settings.BITU_NOTIFICATION['default_sender']
     msg = EmailMultiAlternatives(subject,
                                  plaintext.render(context),
@@ -106,6 +106,7 @@ def update_account(entry: bituldap.Entry, manager: 'User', action: str):
         return
 
     clients = {
+        'ldap': {'client': ldap.LDAP(), 'user': uid},
         'gerrit': {'client': gerrit.Gerrit(), 'user': entry.cn.__str__() },
         'gitlab': {'client': gitlab.Gitlab(), 'user': entry.cn.__str__()},
         'phabricator': {'client': phabricator.PhabClient(), 'user': entry.cn.__str__() },

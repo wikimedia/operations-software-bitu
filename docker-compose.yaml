@@ -2,7 +2,7 @@
 services:
   ldap:
     build: ./docker/openldap/build
-    image: docker-registry.wikimedia.org/dev/bullseye-openldap:1.0.6-dev
+    image: docker-registry.wikimedia.org/dev/bullseye-openldap:1.0.7-dev
     platform: linux/amd64
     healthcheck:
       test: ["CMD", "ldapsearch", "-x", "-H", "ldap://localhost:389", "-D", "cn=admin,dc=example,dc=org", "-w", "adminpassword", "-b", "dc=example,dc=org", "|", "grep", "-q", "cn=www"]
@@ -29,7 +29,7 @@ services:
     image: mariadb
     platform: linux/amd64
     ports:
-      - "3307:3306"
+      - "3306:3306"
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: password

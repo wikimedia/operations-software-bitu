@@ -130,6 +130,7 @@ BITU_LDAP = {
     'uri': 'ldap://openldap.local.wmftest.net:2389',
     'username': 'cn=admin,dc=example,dc=org',
     'password': 'adminpassword',
+    'ppolicy': 'cn=disabled,ou=ppolicies,dc=example,dc=org',
     'readonly': False,
     'connection_timeout': 5,
     'users': {
