@@ -1,0 +1,47 @@
+{% extends 'single_column_codex_with_nav.html' %}
+{% load i18n %}
+
+{% block title %}
+{% translate "User account blocking" %}
+{% endblock %}
+
+{% block content %}
+<div class="codex_content">
+  <div class="content_box">
+    <h4>{% blocktrans with username=object_list.first.username %}Block event log for user: {{ username }}{% endblocktrans %}</h4>
+    <div class="cdx-table">
+      <!-- Header has been omitted since there is no header content. -->
+      <div class="cdx-table__table-wrapper">
+        <table class="cdx-table__table">
+          <caption>
+            {% translate "Event log" %}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">{% translate "Date" %}</th>
+              <th scope="col">{% translate "User" %}</th>
+              <th scope="col">{% translate "Author" %}</th>
+              <th scope="col">{% translate "Action" %}</th>
+              <th scope="col">Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for entry in object_list %}
+            <tr>
+              <td>{{ entry.created_at }}</td>
+              <td>{{ entry.username }}</td>
+              <td>{{ entry.created_by }}</td>
+              <td>{{ entry.action }}</td>
+              <td>{{ entry.comment }}</td>
+            </tr>
+            {% endfor %}
+          </tfoot>
+        </table>
+      </div>
+  </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

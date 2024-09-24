@@ -20,13 +20,14 @@ class PhabClient:
         resp = requests.post(url, data=data)
         return resp.json()
 
-    def lookup_user_by_uid(self, uid: str):
+    def lookup_user_by_cn(self, cn: str):
         resp = self.query('user.ldapquery', {
-            'ldapnames': [uid,],
+            'ldapnames': [cn,],
             'offset': 0,
             'limit': 1
         })
 
+        print(resp)
         if not resp['result'] or len(resp['result']) < 0:
             raise Exception('Phabricator failed to lookup user.')
         elif len(resp['result']) > 1:
@@ -34,7 +35,7 @@ class PhabClient:
 
         return resp['result'][0]
 
-    def block_user_by_phid(self, PHID: str):
+    def update_user_by_phid(self, PHID: str, disabled: bool):
         if not PHID.startswith('PHID-USER-'):
             raise Exception('Cannot block user, invalid Phabricator User ID.')
 
@@ -42,7 +43,7 @@ class PhabClient:
         query = {
             'transactions': [{
                 'type': 'disabled',
-                'value': True
+                'value': disabled
             },],
             'objectIdentifier': PHID
         }
@@ -50,10 +51,18 @@ class PhabClient:
         resp = self.query(path, query)
         return resp
 
-    def block_user(self, uid:str):
-        resp = self.lookup_user_by_uid(uid)
+    def block_user(self, cn:str):
+        resp = self.lookup_user_by_cn(cn)
         phid = resp['phid']
-        resp = self.block_user_by_phid(phid)
+        resp = self.update_user_by_phid(phid, True)
+        if not resp['result']:
+            raise Exception(resp['error_info'])
+        return
+
+    def unblock_user(self, cn:str):
+        resp = self.lookup_user_by_cn(cn)
+        phid = resp['phid']
+        resp = self.update_user_by_phid(phid, False)
         if not resp['result']:
             raise Exception(resp['error_info'])
         return
