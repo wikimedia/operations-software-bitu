@@ -207,7 +207,7 @@ class BlockUserView(AccountManagersPermissionMixin, CreateView):
 
     def update_user(self, user: bituldap.Entry):
         # Flash success message and queue blocking actions.
-        messages.add_message(self.request, level=messages.SUCCESS, message=f'{user.cn} queued for blocking')
+        messages.add_message(self.request, level=messages.SUCCESS, message=f'{user.cn} scheduled for blocking')
         jobs.update_account(user, self.request.user, self.action)
 
 
@@ -217,9 +217,11 @@ class UnBlockUserView(BlockUserView):
 
     def update_user(self, user: bituldap.Entry):
         # Flash success message and queue blocking actions.
-        messages.add_message(self.request, level=messages.SUCCESS, message=f'{user.cn} queued for unblocking')
-        jobs.update_account(user, self.request.user, self.action)
-
+        messages.add_message(self.request, level=messages.SUCCESS, message=f'{user.cn} scheduled for unblocking')
+        if getattr(settings, 'ACCOUNT_BLOCKING_ASYNC', False):
+            jobs.update_account(user, self.request.user, self.action)
+        else:
+            jobs.update_account.delay(user, self.request.user, self.action)
 
 class BlockUserSearch(AccountManagersPermissionMixin, FormView):
     form_class = BlockUserSearchForm

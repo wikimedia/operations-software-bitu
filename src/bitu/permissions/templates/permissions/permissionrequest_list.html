@@ -38,8 +38,8 @@
               <td>{{ request.ticket|ticket_link }}</td>
               <td>{{ request.get_status_display }}</td>
               <td>
-                <a href="{% url 'permissions:approve' request.pk %}">{% translate "Approve" %}</a>
-                <a href="{% url 'permissions:reject' request.pk %}">{% translate "Reject" %}</a>
+                <a href="{% url 'permissions:approve' request.pk %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled  cdx-button--weight-primary cdx-button--action-progressive">{% translate "Approve" %}</a>
+                <a href="{% url 'permissions:reject' request.pk %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled  cdx-button--weight-primary cdx-button--action-destructive">{% translate "Reject" %}</a>
               </td>
             </tr>
             {% endfor %}

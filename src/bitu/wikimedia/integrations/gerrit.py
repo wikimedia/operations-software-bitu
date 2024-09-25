@@ -45,7 +45,7 @@ class Gerrit():
         url = f'{self.base_url}/r/a/accounts/{gerrit_id}/active'
         resp = method(url, auth=self.auth)
         logger.info(f'Update user in Gerrit, username: {uid}, gerrit_id: {gerrit_id}, block: {block}, http_status: {resp.status_code}, message: {resp.text}')
-        if resp.status_code not in [201, 409]:
+        if resp.status_code not in [201, 204, 409]:
             logger.warning(f'Failed to update user in Gerrit, username: {uid}, gerrit_id: {gerrit_id}, status: {resp.status_code}, message: {resp.text}, block: {block}')
             raise Exception('Failed to updated user in Gerrit')
 
