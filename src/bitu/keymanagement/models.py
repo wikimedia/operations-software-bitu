@@ -66,7 +66,8 @@ class SSHKey(models.Model):
         # For display purposes viewing the entire key isn't required and will
         # make layouting harder. Truncate the key to 125 characters, consisting
         # of the first 80, a separator and the last 80.
-        return self.ssh_public_key[0:20] + ' ... ' + self.ssh_public_key[-80:]
+        short_form = self.ssh_public_key[0:20] + ' ... ' + self.ssh_public_key[-80:]
+        return short_form if len(short_form) < len(self.ssh_public_key) else self.ssh_public_key
 
     def get_finger_print(self) -> str:
         obj = SSHPublicKey(keydata=self.ssh_public_key)

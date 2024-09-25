@@ -6,7 +6,16 @@
 {% endblock %}
 
 {% block content %}
-<div class="content">
+<div class="codex_content">
+    <div class="content_box">
+      <h4>{% translate "Manage SSH keys for Wikimedia Cloud Services" %}</h4>
+      <p>
+      {% blocktrans %}
+      This page allows you to manage SSH keys used for accessing Wikimedia Cloud Services.
+      {% endblocktrans %}
+      </p>
+      <hr />
+      <br />
 <table class="vertical">
     <thead class="vertical">
         <tr class="vertical">
@@ -51,6 +60,7 @@
 </table>
 <div class="center-block">
     <a href="{% url "keymanagement:create" %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled  cdx-button--weight-primary cdx-button--action-progressive">Upload new key</a>
+</div>
 </div>
 </div>
 {% endblock %}

@@ -15,7 +15,9 @@
           {% if two_factor_auth %}
           <li><a href="{% url 'accounts:2fa' %}">{% translate "Multi-factor Authentication" %}</a></li>
           {% endif %}
+          {% if permission_request_enabled %}
           <li><a href="{% url 'permissions:list' %}">{% translate "Permissions" %}</a></li>
+          {% endif %}
           {% if managed_permissions %}
           <li><a href="{% url 'permissions:pending' %}">{% translate "Pending your approval" %} ({{ pending_permissions }})</a></li>
           {% endif %}

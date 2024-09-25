@@ -18,7 +18,9 @@ def is_manager(user):
 
 
 def permissions(request):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated or \
+        not hasattr(settings, 'ACCESS_REQUEST_RULES') or \
+        not settings.ACCESS_REQUEST_RULES:
         return {
         'pending_permissions': 0,
         'managed_permissions': False

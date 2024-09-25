@@ -93,7 +93,14 @@ footer ul {
     float: right;
     text-align: left;
     margin-left: 3ch;
+    margin-right: 1ch;
     width: 5ch;
+}
+
+hr {
+    background-color: black;
+    border: 0 none;
+    height: 1px;
 }
 
 .center-block {
@@ -316,14 +323,12 @@ span.logo {
     clear: both;
     width: 100%;
     text-decoration: underline;
-    padding-bottom: 10px;
 }
 
 .menu ul li:hover{
     clear: both;
     width: 100%;
     text-decoration: underline;
-    padding-bottom: 10px;
 }
 
 .menu li.bottom{

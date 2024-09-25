@@ -9,11 +9,19 @@
 <div class="codex_content">
   <div class="content_box">
     <h4>{% blocktrans with username=user.cn %}Block user: {{ username }}{% endblocktrans %}</h4>
+    <div class="cdx-message cdx-message--block cdx-message--warning" aria-live="polite">
+      <span class="cdx-message__icon"></span>
+      <div class="cdx-message__content">
+      {% blocktrans %}
+      This will block the user from accessing Gerrit, Gitlab, Phabricator, idp.wikimedia.org (CAS/SSO) and
+      other systems which directly authenticate with LDAP.
+      {% endblocktrans %}
+      </div>
+  </div>
     <ul>
-        <li><strong>Email:</strong> {{ user.mail }}</li>
         <li><strong>Wikimedia Developer Account:</strong> {{ user.cn }}</li>
-    </ul>
-
+        <li><strong>Email:</strong> {{ user.mail }}</li>
+      </ul>
     <p>
         <form method="post">{% csrf_token %}
             {% for field in form %}
