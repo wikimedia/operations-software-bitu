@@ -10,6 +10,7 @@ from bitu.helpers import capitalize_first
 from django.conf import settings
 from ldap3.utils.hashed import hashed
 from ldap3 import HASHED_SALTED_SHA
+from passlib.hash import ldap_salted_sha1 as lsm
 
 
 if TYPE_CHECKING:
@@ -87,6 +88,12 @@ def get_comment_from_imported_ssh_key(key: bytes) -> str:
         comment = ' '.join(elems[2:])
         return comment.strip('\n').strip()[:256]
     return ''
+
+
+def change_password(user, password):
+    entry = bituldap.get_user(user.get_username())
+    entry.userPassword = lsm.hash(password)
+    return entry.entry_commit_changes()
 
 
 def check_ssh_key(key: 'SSHKey'):

@@ -5,11 +5,15 @@ import bituldap
 
 from django import forms
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import password_validation
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.module_loading import import_string
+from django.utils.translation import gettext_lazy as _
 from ldap3 import Entry
 
 from .models import get_ldap_attributes_editable
+from .validators import ldap_password_verification
+
 
 logger = logging.getLogger('bitu')
 
@@ -78,3 +82,34 @@ class LDAPUserForm(forms.Form):
             setattr(self.user, name, value)
 
         return self.user.entry_commit_changes()
+
+
+class PasswordChangeForm(forms.Form):
+    username = forms.CharField(
+        widget=forms.widgets.HiddenInput
+    )
+
+    old_password = forms.CharField(
+        widget=forms.widgets.PasswordInput,
+    )
+
+    password1 = forms.CharField(label=_('New password'),
+                                widget=forms.widgets.PasswordInput,
+                                validators=[password_validation.validate_password,]
+    )
+
+    password2 = forms.CharField(label=_('Repeat password'),
+                                widget=forms.widgets.PasswordInput,
+                                validators=[password_validation.validate_password,]
+    )
+
+    def clean_old_password(self):
+        ldap_password_verification(self.cleaned_data['username'],
+                                   self.cleaned_data['old_password'])
+
+    def clean_password2(self):
+        # In the case that password1 is not valid, not following set password rules,
+        # it will not appear in cleaned_data, and can not compared to password2.
+        if 'password1' not in self.cleaned_data or (
+            self.cleaned_data['password1'] != self.cleaned_data['password2']):
+            raise ValidationError(_('Passwords do not match'), code='password_mismatch')
