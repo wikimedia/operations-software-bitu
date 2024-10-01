@@ -10,7 +10,7 @@
           <path d="M2 6.32001H22" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
       </a>
-        <ul class="dropdown">
+        <ul id="nav_menu" class="dropdown">
           <li><a href="{% url 'keymanagement:list' %}">{% translate "SSH key management" %}</a></li>
           {% if two_factor_auth %}
           <li><a href="{% url 'accounts:2fa' %}">{% translate "Multi-factor Authentication" %}</a></li>
