@@ -69,7 +69,7 @@ class Signup(models.Model):
                If you are setting up an account for a bot,\
                please use a dedicated email address or an\
               address suffix, e.g. user+bot@example.com\
-              (if you mailserver supports this).')),
+              (if your mailserver supports this).')),
         error_messages={
             "unique": _("Email address already in use."),
         },
