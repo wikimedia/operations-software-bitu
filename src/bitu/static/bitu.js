@@ -28,6 +28,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     };
+
+    // Allow users to hidde the menu by clicking the hamburger menu.
+    document.getElementsByClassName('menu')[0].addEventListener("click", (event) => {
+        var dropdown = document.getElementById("nav_menu");
+        if (dropdown.style.display === "") {
+            dropdown.style.display = "none";
+        } else {
+            dropdown.style.display = "";
+            dropdown.style.visibility = "visible";
+        }
+    });
+
+    // Ensure that mouseover still triggers the menu after earlier dismissal.
+    document.getElementsByClassName('menu')[0].addEventListener("mouseover", (event) => {
+        var dropdown = document.getElementById("nav_menu");
+        dropdown.style.display = "";
+        dropdown.style.visibility = "visible";
+    });
+
 }, false);
 
 function toggle_ssh_key_display(element){
