@@ -88,7 +88,9 @@ def add_to_default_groups(user_dn):
 def update_ldap_attributes(user: 'User', attributes: Dict):
     ldap_user = bituldap.get_user(user.get_username())
     if not ldap_user:
-        logger.warning(f'user: {user.get_username()} not found in ldap')
+        logger.warning(
+            f'failed to update user attributes, user not found in LDAP, user={user.get_username()},\
+attributes={attributes}')
         return
 
     for k, v in attributes.items():

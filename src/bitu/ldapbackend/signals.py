@@ -18,7 +18,3 @@ def create_user(sender, instance: 'Signup', created: bool, **kwargs):
 
     if instance.is_active:
         jobs.create_user.delay(instance)
-
-
-def update_user(sender, instance: 'User', created: bool, **kawrgs):
-    jobs.update_ldap_attributes.delay(instance, {'mail': instance.email})
