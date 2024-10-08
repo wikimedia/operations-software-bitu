@@ -9,6 +9,7 @@ from django.conf import settings
 from django.core import validators
 from django.forms import ValidationError
 from django.utils.translation import gettext_lazy as _
+from passlib.hash import ldap_salted_sha1 as lsm
 
 logger = logging.getLogger(__name__)
 
@@ -118,6 +119,14 @@ class LDAPPasswordValidator:
         return _(
             "Some rule for LDAP, if needed."
         )
+
+
+def ldap_password_verification(username: str, password: str):
+    ldap_user = b.get_user(username)
+    if not lsm.verify(password, ldap_user.userPassword.value):
+        raise ValidationError(
+            _("Invalid password"), code='invalid_ldap_password')
+
 
 def login_shell_validator(shell: str):
     shells = ['/bin/sh',
