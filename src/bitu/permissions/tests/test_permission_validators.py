@@ -25,16 +25,16 @@ class PermissionRequestApprovalTest(TestCase):
 
         self.rules = {
             'ldapbackend': {
-                'nda': [{
+                'cn=NDA,ou=groups,dc=example,dc=org': [{
                     'module': 'permissions.validators.manager_approval',
                     'managers': [self.manager1.get_username(), self.manager2.get_username()],
                     'count': 2
                 }],
-                'staff': [{
+                'cn=staff,ou=groups,dc=example,dc=org': [{
                     'module': 'permissions.validators.email_domain',
                     'domain': 'example.com',
                 }],
-                'www': [{
+                'cn=www,ou=groups,dc=example,dc=org': [{
                     'module': 'permissions.validators.ldap_attribute',
                     'attribute': 'mail',
                     'operator': 'endswith',
@@ -55,7 +55,7 @@ class PermissionRequestApprovalTest(TestCase):
 
         pr = PermissionRequest(user=user)
         pr.system = 'ldapbackend'
-        pr.key = 'nda'
+        pr.key = 'cn=NDA,ou=groups,dc=example,dc=org'
         pr.comment = 'Test access request'
         pr.save()
 
@@ -74,7 +74,7 @@ class PermissionRequestApprovalTest(TestCase):
 
         pr = PermissionRequest(user=user)
         pr.system = 'ldapbackend'
-        pr.key = 'nda'
+        pr.key = 'cn=NDA,ou=groups,dc=example,dc=org'
         pr.comment = 'Test access request'
         pr.save()
 
@@ -99,7 +99,7 @@ class PermissionRequestApprovalTest(TestCase):
 
         pr = PermissionRequest(user=user)
         pr.system = 'ldapbackend'
-        pr.key = 'nda'
+        pr.key = 'cn=NDA,ou=groups,dc=example,dc=org'
         pr.comment = 'Test access request'
         pr.save()
 
@@ -138,7 +138,7 @@ class PermissionRequestApprovalTest(TestCase):
 
         pr = PermissionRequest(user=user)
         pr.system = 'ldapbackend'
-        pr.key = 'staff'
+        pr.key = 'cn=staff,ou=groups,dc=example,dc=org'
         pr.comment = 'Test access request'
         pr.save()
 
@@ -162,7 +162,7 @@ class PermissionRequestApprovalTest(TestCase):
 
         pr = PermissionRequest(user=user)
         pr.system = 'ldapbackend'
-        pr.key = 'www'
+        pr.key = 'cn=www,ou=groups,dc=example,dc=org'
         pr.comment = 'Test access request'
         pr.save()
 
