@@ -1,4 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
+import bituldap
+
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.forms import BaseModelForm
@@ -127,17 +129,38 @@ class VerifyEmailView(FormView):
         valid = super().form_valid(form)
 
         user_id = form.cleaned_data.get("user_id")
+        email = form.cleaned_data.get("email")
 
         # Avoid users manipulating POST/Form data and changing the
         # email address of other users.
         if user_id != self.request.user.id:
             raise PermissionDenied()
 
+        if email != self.email:
+            raise PermissionDenied()
+
         if valid:
             email = form.cleaned_data.get("email")
+
+            # Update django model, to avoid any mismatch in display and actual data.
+            # The django model will only be updated on re-login, and might not reflect
+            # the data in e.g. LDAP, if not use here.
             user = User.objects.get(pk=user_id)
             user.email = email
             user.save()
+
+            # Previously this was hooked up as a post_save signal on the user model, this
+            # can have the unfurtunate effect of setting the users mail attribute in LDAP to
+            # whatever the user model happens to have set as the email attriute on ANY save.
+            # Any mismatch between test, staging, production system database model could trigger
+            # an update to LDAP.
+            #
+            # Instead, assure that the only place that can set the user email is form_valid,
+            # after verifying email ownership.
+            ldap_user = bituldap.get_user(user.get_username())
+            ldap_user.mail = email
+            ldap_user.entry_commit_changes()
+
             messages.success(self.request, _(
                 'Email address successfully updated. \
                 Please allow for a few minutes for the change to propagate.'))

@@ -3,7 +3,7 @@ import logging
 
 from django.apps import AppConfig
 from django.conf import settings
-from .signals import create_user, update_user
+from .signals import create_user
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save
 
@@ -24,4 +24,3 @@ class LdapConfig(AppConfig):
         User = get_user_model()
 
         post_save.connect(create_user, Signup)
-        post_save.connect(update_user, User)
