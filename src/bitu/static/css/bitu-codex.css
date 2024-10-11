@@ -409,3 +409,9 @@ table.vertical td:nth-of-type(3):before { content: attr(data-label); }
     }
 }
 /* endtables */
+
+.pagination {
+    margin-top: 10px;
+    margin-right: 10px;
+    float: right;
+}

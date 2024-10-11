@@ -94,7 +94,7 @@ def send_forgot_username_email(email):
 
 
 @job('default')
-def update_account(entry: bituldap.Entry, manager: 'User', action: str):
+def update_account(entry: bituldap.Entry, manager: 'User', parent: UserBlockEventLog, action: str):
     """Block account across systems, given an LDAP username
 
     Args:
@@ -123,6 +123,7 @@ def update_account(entry: bituldap.Entry, manager: 'User', action: str):
             UserBlockEventLog.objects.create(
                 username=uid,
                 created_by=manager.get_username(),
+                parent=parent,
                 action=f'{name} {action}',
                 comment=f'Successfully updated in {name}, action was {action}'
             )
@@ -131,6 +132,7 @@ def update_account(entry: bituldap.Entry, manager: 'User', action: str):
             UserBlockEventLog.objects.create(
                 username=uid,
                 created_by=manager.get_username(),
+                parent=parent,
                 action=f'{name} {action}',
                 comment=f'Failed: {e}'
             )

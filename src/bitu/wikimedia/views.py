@@ -201,14 +201,18 @@ class BlockUserView(AccountManagersPermissionMixin, CreateView):
             if form.cleaned_data['created_by'] != self.request.user.get_username():
                 # Form data manipulated.
                 raise PermissionDenied()
-            self.update_user(user)
+
+            # Ensure that the log message from the form is created first.
+            valid = super().form_valid(form)
+            self.update_user(user, form.instance)
+            return valid
 
         return super().form_valid(form)
 
-    def update_user(self, user: bituldap.Entry):
+    def update_user(self, user: bituldap.Entry, log: UserBlockEventLog):
         # Flash success message and queue blocking actions.
         messages.add_message(self.request, level=messages.SUCCESS, message=f'{user.cn} scheduled for blocking')
-        jobs.update_account(user, self.request.user, self.action)
+        jobs.update_account(user, self.request.user, log, self.action)
 
 
 class UnBlockUserView(BlockUserView):
@@ -279,3 +283,13 @@ class BlockEventLog(AccountManagersPermissionMixin, ListView):
     def get_queryset(self) -> QuerySet[Any]:
         qs = super().get_queryset()
         return qs.filter(username=self.kwargs['username']).order_by('-created_at')
+
+
+class PublicBlockEventLog(ListView):
+    model = UserBlockEventLog
+    template_name = 'wikimedia/publicuserblockeventlog_list.html'
+    paginate_by = 25
+
+    def get_queryset(self) -> QuerySet[UserBlockEventLog]:
+        qs = super().get_queryset()
+        return qs.filter(parent=None, action__in=['block_user', 'unblock_user']).order_by('-created_at')

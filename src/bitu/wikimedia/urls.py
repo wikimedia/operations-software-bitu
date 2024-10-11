@@ -9,7 +9,8 @@ from .views import (BlockEventLog,
                     ForgotUsernameView,
                     RequestPasswordResetView,
                     PasswordResetView,
-                    UnBlockUserView)
+                    UnBlockUserView,
+                    PublicBlockEventLog)
 
 
 app_name = 'wikimedia'
@@ -23,4 +24,5 @@ urlpatterns = [
     path('block/<str:username>/log', login_required(BlockEventLog.as_view()), name="block_eventlog"),
     path('block/<str:username>', login_required(BlockUserView.as_view()), name="block_user"),
     path('unblock/<str:username>', login_required(UnBlockUserView.as_view()), name="unblock_user"),
+    path('log/', PublicBlockEventLog.as_view(), name="public_block_log")
 ]

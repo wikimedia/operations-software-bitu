@@ -1,0 +1,67 @@
+{% extends 'single_column_codex_with_nav.html' %}
+{% load i18n %}
+
+{% block title %}
+{% translate "User account blocking" %}
+{% endblock %}
+
+{% block content %}
+<div class="codex_content">
+  <div class="content_box">
+    <h4>{% blocktrans %}Block event log{% endblocktrans %}</h4>
+    <p>
+      {% blocktrans %}Administrative banned/unbanned developer accounts.{% endblocktrans %}
+    </p>
+    <div class="cdx-table">
+      <!-- Header has been omitted since there is no header content. -->
+      <div class="cdx-table__table-wrapper">
+        <table class="cdx-table__table">
+          <caption>
+            {% translate "Event log" %}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">{% translate "Date" %}</th>
+              <th scope="col">{% translate "User" %}</th>
+              <th scope="col">{% translate "Action" %}</th>
+              <th scope="col">Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for entry in object_list %}
+            <tr>
+              <td>{{ entry.created_at }}</td>
+              <td>{{ entry.username }}</td>
+              <td>{{ entry.get_display_action }}</td>
+              <td>{{ entry.comment }}</td>
+            </tr>
+            {% endfor %}
+          </tfoot>
+        </table>
+      </div>
+  </div>
+  <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; {% translate "first" %}</a>
+            <a href="?page={{ page_obj.previous_page_number }}">{% translate "previous" %}</a>
+        {% endif %}
+
+        <span class="current">
+          {% blocktrans with page_number=page_obj.number pages=page_obj.paginator.num_pages %}
+          Page {{ page_number }} of {{ pages }}.
+          {% endblocktrans %}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">{% translate "next" %}</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">{% translate "last" %} &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
