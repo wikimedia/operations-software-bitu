@@ -21,7 +21,7 @@
           {% if managed_permissions %}
           <li><a href="{% url 'permissions:pending' %}">{% translate "Pending your approval" %} ({{ pending_permissions }})</a></li>
           {% endif %}
-          {% if not user.anonymous and user.account_manager %}
+          {% if not user.is_anonymous and user.account_manager %}
           <li><a href="{% url 'wikimedia:block_search' %}">{% translate "Block/unblock accounts" %}</a></li>
           {% endif %}
           <li class="bottom"><a href="{% url 'ldapbackend:properties' %}">{% translate "My account" %}</a></li>
