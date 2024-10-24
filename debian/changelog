@@ -1,3 +1,14 @@
+bitu (0.1.0) bookworm-wikimedia; urgency=low
+
+  * Minor UI improvements.
+  * Fix menu bug on mobile (T376108).
+  * Fix email update bug (T346601).
+  * Allow users to change their password (T365370).
+  * Public log for blocking and unblocking actions (T376991).
+  * Improve code for permission requests reduce latency.
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Thu, 24 Oct 2024 09:36:28 +0000
+
 bitu (0.0.9) bookworm-wikimedia; urgency=low
 
   * Improvements and bugfixes for SSH key management (T366525).
