@@ -38,7 +38,7 @@ def get_managers(request: 'PermissionRequest') -> set[str]:
         set[str]: Usernames for approving managers.
     """
     managers = []
-    rules = settings.ACCESS_REQUEST_RULES.get(request.system, {}).get(request.key.lower(), [])
+    rules = settings.ACCESS_REQUEST_RULES.get(request.system, {}).get(request.key, [])
     for rule in rules:
         managers.extend(rule.get('managers', []))
     return set(managers)

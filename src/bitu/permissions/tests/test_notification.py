@@ -30,17 +30,17 @@ class PermissionNotficationTests(TestCase):
 
         self.rules = {
             'ldapbackend': {
-                'nda': [{
+                'cn=NDA,ou=groups,dc=example,dc=org': [{
                     'module': 'permissions.validators.manager_approval',
                     'managers': [self.manager1.get_username(), self.manager2.get_username()],
                     'count': 2
                 }],
-                'staff': [{
+                'cn=staff,ou=groups,dc=example,dc=org': [{
                     'module': 'permissions.validators.manager_approval',
                     'managers': [self.manager1.get_username(), self.manager3.get_username()],
                     'count': 2
                 }],
-                'www': [{
+                'cn=www,ou=groups,dc=example,dc=org': [{
                     'module': 'permissions.validators.manager_approval',
                     'managers': [self.manager2.get_username(), self.manager3.get_username()],
                     'count': 2
@@ -68,7 +68,7 @@ class PermissionNotficationTests(TestCase):
             PermissionRequest.objects.create(
                 user=user,
                 system='ldapbackend',
-                key='www',
+                key='cn=www,ou=groups,dc=example,dc=org',
                 comment='Request'
             )
 
@@ -78,7 +78,7 @@ class PermissionNotficationTests(TestCase):
             PermissionRequest.objects.create(
                 user=user,
                 system='ldapbackend',
-                key='staff',
+                key='cn=staff,ou=groups,dc=example,dc=org',
                 comment='Request'
             )
 
@@ -92,6 +92,6 @@ class PermissionNotficationTests(TestCase):
             requests = get_pending_requests('carol93')
             self.assertEqual(len(requests), 2)
 
-            request = PermissionRequest.objects.filter(key='www').first()
+            request = PermissionRequest.objects.filter(key='cn=www,ou=groups,dc=example,dc=org').first()
             managers = get_managers(request)
             self.assertEqual(managers, {'carol93', 'yharris'})

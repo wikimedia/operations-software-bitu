@@ -49,7 +49,7 @@
             {% if permission.state == 'AP' or permission.state == 'PN' %}
               <a href="{% url 'permissions:log' pk=permission.request.pk %}">{{ permission.state_display }}</a>
             {% else %}
-              <a href="{% url 'permissions:request' system=permission.source key=permission.key %}">Request</a>
+              <a href="{% url 'permissions:request' system=permission.source key=permission.key %}">Request {{ permission.state }}</a>
             {% endif %}
             </td>
           </tr>

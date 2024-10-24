@@ -43,14 +43,28 @@ class PermissionRequestTest(TestCase):
             'key': 'cn=NDA,ou=groups,dc=example,dc=org'
         })
 
+        ldap_user = bituldap.get_user(self.user.get_username())
+        groups = bituldap.member_of(ldap_user.entry_dn)
+        self.assertEqual(len(groups), 4)
+
+        self.assertFalse('cn=NDA,ou=groups,dc=example,dc=org' in [group.entry_dn for group in groups])
+
+        available = permission_set.available_permissions(self.user)
+        self.assertEqual(len(available), 1)
         pending_url = reverse('permissions:pending')
 
         response = c.get(list_url)
-        self.assertContains(response, 'cn=NDA,ou=groups,dc=example,dc=org')
+        self.assertContains(response, 'NDA')
         self.assertNotContains(response, 'pending')
 
         response = c.post(request_url, {'comment': 'Please grant access'})
         self.assertEqual(response.status_code, 302)
+
+        pr = PermissionRequest.objects.filter(user=self.user).all()
+        self.assertEqual(len(pr), 1)
+        self.assertEqual(pr[0].system, 'ldapbackend')
+        self.assertEqual(pr[0].status, PermissionRequest.PENDING)
+
 
         response = c.get(list_url)
         self.assertContains(response, 'Pending')
@@ -95,7 +109,7 @@ class PermissionRequestTest(TestCase):
         c.login(username='rachel32', password='secret')
 
         # Check that the user is not already a member of the LDAP group
-        self.assertFalse(self._user_in_ldap_group('rachel32', 'cn=NDA,ou=groups,dc=example,dc=org'))
+        self.assertFalse(self._user_in_ldap_group('rachel32', 'NDA'))
 
         # Create http client for approving user permissions.
         c_admin = Client()
@@ -114,7 +128,7 @@ class PermissionRequestTest(TestCase):
 
         # Check that user can request NDA group and has not done so already.
         response = c.get(list_url)
-        self.assertContains(response, 'cn=NDA,ou=groups,dc=example,dc=org')
+        self.assertContains(response, 'NDA')
         self.assertNotContains(response, 'pending')
 
         # Request NDA group access and redirect to list.

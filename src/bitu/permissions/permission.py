@@ -97,7 +97,7 @@ class PermissionSet(BaseBackend):
         for permission in permissions:
             if permission.source not in settings.ACCESS_REQUEST_RULES:
                 continue
-            if permission.key.lower() not in settings.ACCESS_REQUEST_RULES[permission.source]:
+            if permission.key not in settings.ACCESS_REQUEST_RULES[permission.source]:
                 continue
             filtered.append(permission)
         return filtered
@@ -119,21 +119,20 @@ class PermissionSet(BaseBackend):
         return self._backends[system].get_permission(key)
 
     def get_pending(self, user: User) -> QuerySet[PermissionRequest]:
-        # Get all requests from all backends, which have us listed as an approver and
-        # extact the IDs for those requests.
+        # Find all the rules which require approval of a manager and extract the id of
+        # the pending PermissionRequest for that permission.
         requests = []
-        [requests.extend(b.get_pending(user)) for b in self._backends.values()]
-        ids = [request.id for request in requests]
+        for system, rule_sets in settings.ACCESS_REQUEST_RULES.items():
+            for key, rules in rule_sets.items():
+                for rule in rules:
+                    if user.get_username() in rule.get('managers', []):
+                        requests.extend(PermissionRequest.objects.filter(system=system, key=key, status=PermissionRequest.PENDING).values_list('id', flat=True))
 
-        # Find any log object that we may already have created for any of the pending
-        # requests. Once we've created a log entry, either by approving or rejecting a
-        # request, we want that request to disappear from our list of pending requests.
-        logs = PermissionLog.objects.filter(request__in=requests)
-
-        # Get all the requests objects which we're allowed to approve, but exclude those
-        # for which we already created a log entries. Note that we are also not allowed
-        # to approve our own requests.
-        return PermissionRequest.objects.filter(id__in=ids).exclude(log__in=logs).exclude(user=user)
+        # Get all the log objects for the current pending requests made by the current user.
+        # Use the list of logs to exclude permissions we already approved and add an exclude to
+        # remove any requests made by the user.
+        logs = PermissionLog.objects.filter(request__id__in=requests, created_by=user)
+        return PermissionRequest.objects.filter(id__in=requests).exclude(log__in=logs).exclude(user=user)
 
 
 permission_set = PermissionSet()
