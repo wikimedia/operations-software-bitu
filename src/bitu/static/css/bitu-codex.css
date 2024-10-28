@@ -325,6 +325,12 @@ span.logo {
     text-decoration: underline;
 }
 
+.menu ul li ul li.no_hover:hover{
+    clear: both;
+    width: 100%;
+    text-decoration: none;
+}
+
 .menu ul li:hover{
     clear: both;
     width: 100%;
