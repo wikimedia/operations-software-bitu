@@ -11,6 +11,9 @@
           </svg>
       </a>
         <ul id="nav_menu" class="dropdown">
+          <li class="no_hover">
+            <strong>{% blocktrans with user.get_username as username %}Signed in as {{ username }}{% endblocktrans %}</strong></li>
+          <hr>
           <li><a href="{% url 'keymanagement:list' %}">{% translate "SSH key management" %}</a></li>
           {% if two_factor_auth %}
           <li><a href="{% url 'accounts:2fa' %}">{% translate "Multi-factor Authentication" %}</a></li>
