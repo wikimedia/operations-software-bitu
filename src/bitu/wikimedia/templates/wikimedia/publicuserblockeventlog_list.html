@@ -23,6 +23,7 @@
             <tr>
               <th scope="col">{% translate "Date" %}</th>
               <th scope="col">{% translate "User" %}</th>
+              <th scope="col">{% translate "Admin" %}</th>
               <th scope="col">{% translate "Action" %}</th>
               <th scope="col">Comment</th>
             </tr>
@@ -32,6 +33,7 @@
             <tr>
               <td>{{ entry.created_at }}</td>
               <td>{{ entry.username }}</td>
+              <td>{{ entry.created_by }}</td>
               <td>{{ entry.get_display_action }}</td>
               <td>{{ entry.comment }}</td>
             </tr>
