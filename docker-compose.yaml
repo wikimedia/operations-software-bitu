@@ -62,11 +62,11 @@ services:
       - "8080:8080"
     environment:
       DJANGO_SECRET_KEY: TESTING
-      RQ_REDIS_HOST: redis.local.wmftest.net
-      LDAP_SERVER_URI: ldap://openldap.local.wmftest.net:389
+      RQ_REDIS_HOST: redis
+      LDAP_SERVER_URI: ldap://ldap:389
       LDAP_USER_DN: cn=admin,dc=example,dc=org
       LDAP_PASSWORD: adminpassword
-      DATABASE_HOST: db.local.wmftest.net
+      DATABASE_HOST: db
       DATABASE_USER: idm
       DATABASE_NAME: idm
       DATABASE_PASSWORD: secret

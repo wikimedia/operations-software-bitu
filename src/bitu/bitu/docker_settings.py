@@ -26,10 +26,10 @@ ldap_aux_groups = os.environ['LDAP_AUX_GROUPS'].split(',') if 'LDAP_AUX_GROUPS' 
 ldap_user_active = os.environ['ACTIVE_GROUP_DN'] if 'ACTIVE_GROUP_DN' in os.environ else 'cn=staff,ou=groups,dc=example,dc=org'
 ldap_user_staff = os.environ['STAFF_GROUP_DN'] if 'STAFF_GROUP_DN' in os.environ else 'cn=staff,ou=groups,dc=example,dc=org'
 ldap_user_superuser = os.environ['SUPERUSER_GROUP_DN'] if 'SUPERUSER_GROUP_DN' in os.environ else 'cn=admin,ou=groups,dc=example,dc=org'
-database_username = os.environ['DATABASE_USER']
-database_password = os.environ['DATABASE_PASSWORD']
+database_username = os.environ['DATABASE_USER'] if 'DATABASE_USER' in os.environ else ''
+database_password = os.environ['DATABASE_PASSWORD'] if 'DATABASE_PASSWORD' in os.environ else ''
 database_name = os.environ['DATABASE_NAME']
-database_host = os.environ['DATABASE_HOST']
+database_host = os.environ['DATABASE_HOST'] if 'DATABASE_HOST' in os.environ else ''
 database_port = os.environ['DATABASE_PORT'] if 'DATABASE_PORT' in os.environ else '3306'
 database_driver = os.environ['DATABASE_ENGINE'] if 'DATABASE_ENGINE' in os.environ else 'django.db.backends.sqlite3'
 
