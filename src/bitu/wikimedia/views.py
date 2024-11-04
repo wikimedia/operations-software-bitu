@@ -219,10 +219,10 @@ class UnBlockUserView(BlockUserView):
     action = 'unblock_user'
     template_name = 'wikimedia/unblock_user.html'
 
-    def update_user(self, user: bituldap.Entry):
+    def update_user(self, user: bituldap.Entry, log: UserBlockEventLog):
         # Flash success message and queue blocking actions.
         messages.add_message(self.request, level=messages.SUCCESS, message=f'{user.cn} scheduled for unblocking')
-        jobs.update_account(user, self.request.user, self.action)
+        jobs.update_account(user, self.request.user, log, self.action)
 
 
 class BlockUserSearch(AccountManagersPermissionMixin, FormView):
