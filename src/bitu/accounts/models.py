@@ -8,9 +8,10 @@ from io import BytesIO
 from typing import Any
 from urllib.parse import quote as html_quote
 
+import bituldap
+import django_rq
 import pyotp
 import qrcode
-import django_rq
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -30,7 +31,27 @@ class User(AbstractUser):
 
     @property
     def account_manager(self):
-        return self.get_username() in getattr(settings, 'ACCOUNT_MANAGERS', [])
+        # Get account manager status from settings file, usernames are
+        # configured in a array in the Django settings.
+        if self.get_username() in getattr(settings, 'ACCOUNT_MANAGERS', []):
+            return True
+
+        # Check membership of a specific LDAP group, members are to be
+        # considered account managers.
+        if not hasattr(settings, 'ACCOUNT_MANAGERS_LDAP_GROUP'):
+            return False
+
+        account_manager_group = getattr(settings, 'ACCOUNT_MANAGERS_LDAP_GROUP')
+
+        # Get the DN of all groups the user is a member of.
+        ldap_user = bituldap.get_user(self.get_username())
+        groups = [entry.entry_dn for entry in bituldap.member_of(ldap_user.entry_dn)]
+
+        # Check if the account manager group DN is present in the list of LDAP group
+        # memberships.
+        is_member = True if account_manager_group in groups else False
+        return is_member
+
 
 @dataclass
 class EmailUpdate:

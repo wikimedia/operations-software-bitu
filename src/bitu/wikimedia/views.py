@@ -156,9 +156,7 @@ class AccountManagersPermissionMixin():
         if not request.user.is_authenticated:
             raise PermissionDenied()
 
-        # Lookup account managers in settings.
-        account_managers = getattr(settings, 'ACCOUNT_MANAGERS', [])
-        if request.user.get_username() not in account_managers:
+        if not request.user.account_manager:
             raise PermissionDenied()
 
         # Hand over control to the views internal dispatch.
