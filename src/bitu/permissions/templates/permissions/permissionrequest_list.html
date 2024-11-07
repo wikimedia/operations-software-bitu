@@ -22,7 +22,7 @@
             <tr>
               <th scope="col">{% translate "Permission" %}</th>
               <th scope="col">{% translate "User" %}</th>
-              <th scope="col">{% translate "Ticket" %}</th>
+              <th scope="col">{% translate "Comment" %}</th>
               <th scope="col">{% translate "Status" %}</th>
               <th scope="col"></th>
             </tr>
@@ -35,11 +35,10 @@
                 <small>{{ request.permission.description_display }}</small>
               </td>
               <td>{{ request.user }}</td>
-              <td>{{ request.ticket|ticket_link }}</td>
+              <td>{{ request.comment }}</td>
               <td>{{ request.get_status_display }}</td>
               <td>
-                <a href="{% url 'permissions:approve' request.pk %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled  cdx-button--weight-primary cdx-button--action-progressive">{% translate "Approve" %}</a>
-                <a href="{% url 'permissions:reject' request.pk %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled  cdx-button--weight-primary cdx-button--action-destructive">{% translate "Reject" %}</a>
+                <a href="{% url 'permissions:approve' request.pk %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled  cdx-button--weight-primary cdx-button--action-progressive">{% translate "Review request" %}</a>
               </td>
             </tr>
             {% endfor %}

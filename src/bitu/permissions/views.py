@@ -106,12 +106,12 @@ class PermissionRequestApprove(PermissionRequestLogCreateView):
     template_name = 'permissions/approve_form.html'
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        form.instance.approved = True
+        # Check for the name of the approve button in the form data.
+        # The name will be in the form data, if the "Approve" button
+        # was clicked, but not the "Reject" button.
+        if "approve" in self.request.POST:
+            form.instance.approved = True
         return super().form_valid(form)
-
-
-class PermissionRequestReject(PermissionRequestLogCreateView):
-    template_name = 'permissions/reject_form.html'
 
 
 class PermissionRequestList(ListView):

@@ -56,7 +56,7 @@ class PermissionRequest(models.Model):
         (APPROVED, _('Approved')),
         (CANCELLED, _('Cancelled')),
         (PENDING, _('Pending')),
-        (SYNCRONIZED, _('Existing Permission')),
+        (SYNCRONIZED, _('Enabled')),
         (REJECTED, _('Rejected')),
     ]
 

@@ -81,7 +81,7 @@ class PermissionRequestTest(TestCase):
         permission_request = PermissionRequest.objects.get(user=self.user)
         approve_url = reverse('permissions:approve', kwargs={'pk': permission_request.pk})
 
-        response = c.post(approve_url, {'comment': 'OK'})
+        response = c.post(approve_url, {'comment': 'OK', 'approve': ''})
         self.assertEqual(response.status_code, 302)
 
         response = c.get(pending_url)
@@ -146,8 +146,8 @@ class PermissionRequestTest(TestCase):
         # Reject request for NDA access, and check that the admin now sees
         # one rejection listed in the log entries.
         permission_request = PermissionRequest.objects.get(user=self.user)
-        reject_url = reverse('permissions:reject', kwargs={'pk': permission_request.pk})
-        response = c_admin.post(reject_url, {'comment': 'No'})
+        approve_url = reverse('permissions:approve', kwargs={'pk': permission_request.pk})
+        response = c_admin.post(approve_url, {'comment': 'No', 'reject': ''})
         self.assertEqual(response.status_code, 302)
         response = c_admin.get(pending_url)
         self.assertInHTML('<td>Rejected</td>', str(response.content), 1)
@@ -166,7 +166,7 @@ class PermissionRequestTest(TestCase):
         # Admin approves request
         permission_request = PermissionRequest.objects.get(user=self.user, status=PermissionRequest.PENDING)
         approve_url = reverse('permissions:approve', kwargs={'pk': permission_request.pk})
-        response = c_admin.post(approve_url, {'comment': 'Yes'})
+        response = c_admin.post(approve_url, {'comment': 'Yes', 'approve': ''})
         self.assertEqual(response.status_code, 302)
 
         # Reload from database to check that status is now "Approved"
