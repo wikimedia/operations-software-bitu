@@ -9,7 +9,7 @@
 <div class="codex_content">
   <div class="content_box">
     <h4>{% translate "Block or unblock account" %}</h4>
-    <form method="post">{% csrf_token %}
+    <form method="post" action="{% url "wikimedia:block_search" %}">{% csrf_token %}
       {% for field in form %}
       <div class="cdx-text-input">
         <!-- Input element with CSS class and attributes. -->
