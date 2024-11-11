@@ -1,3 +1,14 @@
+bitu (0.1.1) bookworm-wikimedia; urgency=low
+
+  * Minor UI improvements.
+  * Account managers can now be defined as an LDAP group.
+  * Unbreak account unblocking.
+  * Disable unused validators.
+  * Show user names of admins in public block log.
+  * Fix error in anonymous check in menu.
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Thu, 24 Oct 2024 08:34:16 +0000
+
 bitu (0.1.0) bookworm-wikimedia; urgency=low
 
   * Minor UI improvements.
