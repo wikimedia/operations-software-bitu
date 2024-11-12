@@ -38,14 +38,47 @@ class LDAP():
             raise Exception(f'ldap, failed to block user, username: {uid}')
         logger.info(f'ldap, account blocked, username: {uid}, locktime: {timestamp}')
 
-    def unblock_user(self, uid):
-        entry = self.fetch_entry(uid)
-        success, conn = bituldap.create_connection()
-        success = conn.modify(entry['dn'], {
-            'pwdAccountLockedTime': [(MODIFY_DELETE, [entry['attributes']['pwdAccountLockedTime']])],
-        })
+    def unblock_user(self, uid: str):
+        """Unblock an LDAP account.
 
+        Args:
+            uid (str): uid, Unix username.
+
+        Raises:
+            Exception: Failed to delete LDAP attribute.
+        """
+
+        # Fetch user entry, use internal fetch_entry to get policy attributes included.
+        entry = self.fetch_entry(uid)
+
+        # Create new LDAP connection, as modifying policy attributes requires raw LDAP queries
+        # and cannot be done using the LDAP3 abstraction layer.
+        success, conn = bituldap.create_connection()
         if not success:
-            logger.error(f'ldap, account unblocked failed, username: {uid}')
+            logger.error(f'ldap, account unblocked failed, could not create connection, username: {uid}')
             raise Exception(f'ldap, failed to unblock user, username: {uid}')
+
+        # Check if the account has the pwdAccountLockedTime attribute and remove if present.
+        if 'pwdAccountLockedTime' in entry['attributes'] and entry['attributes']['pwdAccountLockedTime']:
+            success = conn.modify(entry['dn'], {
+                'pwdAccountLockedTime': [(MODIFY_DELETE, [entry['attributes']['pwdAccountLockedTime']]),],
+            })
+
+            # Failed to remove the locked time, raise exception as pwdPolicySubentry cannot/should not be
+            # removed when associated attribute exists.
+            if not success:
+                logger.error(f'ldap, account unblock failed, could not delete pwdAccountLockedTime, username: {uid}')
+                raise Exception(f'ldap, failed to unblock user, username: {uid}')
+
+        # Remove pwdPolicySubentry (cn=disabled,ou=ppolicies,dc=example,dc=org), if present.
+        if ('pwdPolicySubentry' in entry['attributes']
+                and entry['attributes']['pwdPolicySubentry'] == settings.BITU_LDAP['ppolicy']):
+            success = conn.modify(entry['dn'], {
+                'pwdPolicySubentry': [(MODIFY_DELETE, [settings.BITU_LDAP['ppolicy']]),],
+            })
+
+            if not success:
+                logger.error(f'ldap, account unblocked failed, could not delete pwdPolicySubentry, username: {uid}')
+                raise Exception(f'ldap, failed to unblock user, username: {uid}')
+
         logger.info(f'ldap, account unblocked, username: {uid}')
