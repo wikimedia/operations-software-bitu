@@ -92,12 +92,12 @@ class PermissionSet(BaseBackend):
 
             self._backends[k] = import_string(v['permissions'])()
 
-    def filter_permissions(self, permissions: list[Permission]) -> list[Permission]:
+    def filter_permissions(self, permissions: list[Permission], user: 'User') -> list[Permission]:
         filtered: list[Permission] = []
         for permission in permissions:
-            if permission.source not in settings.ACCESS_REQUEST_RULES:
+            if not permission.configured:
                 continue
-            if permission.key not in settings.ACCESS_REQUEST_RULES[permission.source]:
+            if not permission.run_validators(user):
                 continue
             filtered.append(permission)
         return filtered
@@ -108,12 +108,12 @@ class PermissionSet(BaseBackend):
 
         permissions = []
         [permissions.extend(b.available_permissions(user)) for b in self._backends.values()]
-        return self.filter_permissions(permissions)
+        return self.filter_permissions(permissions, user)
 
     def existing_permissions(self, user: 'User') -> list[Permission]:
         permissions = []
         [permissions.extend(b.existing_permissions(user)) for b in self._backends.values()]
-        return self.filter_permissions(permissions)
+        return self.filter_permissions(permissions, user)
 
     def get_permission(self, system: str, key: str) -> Union[Permission, None]:
         return self._backends[system].get_permission(key)

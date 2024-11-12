@@ -25,6 +25,40 @@ class Permission(object):
         )
 
     @property
+    def configured(self) -> bool:
+        """Check if configuration for this permissions is available in
+        the settings file.
+
+        Returns:
+            bool: Configured, True/False
+        """
+        if not hasattr(settings, 'ACCESS_REQUEST_RULES'):
+            return False
+
+        if self.source not in settings.ACCESS_REQUEST_RULES:
+            return False
+
+        if self.key not in settings.ACCESS_REQUEST_RULES[self.source]:
+            return False
+
+        return True
+
+    def run_validators(self, user) -> bool:
+        if not self.configured:
+            return False
+        rules = [rule for rule in settings.ACCESS_REQUEST_RULES[self.source][self.key] if rule.get('prevalidate', False)]
+        request = PermissionRequest()
+        request.user = user
+        for rule in rules:
+            m = import_string(rule['module'])
+            approved, processed = m(request, **rule)
+            if not approved:
+                return False
+        return True
+
+
+
+    @property
     def description_display(self):
         if self.description:
             return self.description
