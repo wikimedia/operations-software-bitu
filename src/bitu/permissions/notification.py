@@ -100,6 +100,9 @@ def send_permission_request_email(request: 'PermissionRequest') -> None:
     """
 
     managers = get_managers(request)
+    if not managers:
+        return
+
     logger.info(
         f'email notification triggered by permission request, permission_request:{request.pk}, \
 user: {request.user}, \
