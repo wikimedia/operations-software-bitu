@@ -185,3 +185,24 @@ class PermissionRequestTest(TestCase):
 
         # Verify that the user is now in the correct LDAP group
         self.assertTrue(self._user_in_ldap_group('rachel32', 'cn=NDA,ou=groups,dc=example,dc=org'))
+
+    def test_prevalidation(self):
+        # Test that the current user only has access to one group permission,
+        # as the other is marked prevalidate and the user does not have
+        # an email address on the correct domain.
+        user, _ =  User.objects.get_or_create(username='hwalters')
+        permissions = permission_set.available_permissions(user)
+
+        self.assertEqual(1, len(permissions))
+        self.assertEqual(permissions[0].key, 'cn=NDA,ou=groups,dc=example,dc=org')
+
+        # Set user email address to be a @example.com address and fetch the
+        # available permissions again.
+        ldap_user = bituldap.get_user(user.get_username())
+        ldap_user.mail = "hwalters@example.com"
+        ldap_user.entry_commit_changes()
+        permissions = permission_set.available_permissions(user)
+
+        self.assertEqual(2, len(permissions))
+        self.assertEqual(permissions[0].key, 'cn=NDA,ou=groups,dc=example,dc=org')
+        self.assertEqual(permissions[1].key, 'cn=ITS,ou=groups,dc=example,dc=org')

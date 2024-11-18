@@ -122,6 +122,11 @@ ACCESS_REQUEST_RULES = {
             'module': 'permissions.validators.manager_approval',
             'managers': ['wwaller'],
             'count': 1
+        }],
+        'cn=ITS,ou=groups,dc=example,dc=org': [{
+            'module': 'permissions.validators.email_domain',
+            'domain': 'example.com',
+            'prevalidate': True
         }]
     }
 }
