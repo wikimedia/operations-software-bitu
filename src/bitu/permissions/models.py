@@ -111,11 +111,7 @@ class PermissionRequest(models.Model):
 
     @property
     def rules(self):
-        try:
-            validation_rules = settings.ACCESS_REQUEST_RULES[self.system][self.key]
-            return validation_rules
-        except Exception:
-            raise PermissionValidationError(f'No rules found for {self.system}:{self.key}, validating: {self.id}')
+        return getattr(settings, 'ACCESS_REQUEST_RULES', {}).get(self.system, {}).get(self.key, [])
 
     def validate(self):
         process_count = 0
