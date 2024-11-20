@@ -1,3 +1,12 @@
+bitu (0.1.2) bookworm-wikimedia; urgency=low
+
+  * Improve LDAP account unblocking error handling.
+  * Allow permissions to be prevalidated.
+  * Allow account managers to be defined in LDAP.
+  * Automatically attempt to validate permission requests on creation.
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Thu, 24 Oct 2024 08:53:15 +0200
+
 bitu (0.1.1) bookworm-wikimedia; urgency=low
 
   * Minor UI improvements.
