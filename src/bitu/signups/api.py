@@ -28,6 +28,5 @@ class UsernameValidatorApiView(generics.CreateAPIView):
 
     Return a HTTP 201 if the input is valid, HTTP 400 Bad request otherwise.
     """
-    permission_classes = [DjangoModelPermissions]
     serializer_class = UserValidationSerializer
     queryset = UserValidation.objects.all()
