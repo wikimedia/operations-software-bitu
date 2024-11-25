@@ -38,10 +38,13 @@ class User(AbstractUser):
 
         # Check membership of a specific LDAP group, members are to be
         # considered account managers.
-        if not hasattr(settings, 'ACCOUNT_MANAGERS_LDAP_GROUP'):
+        if not hasattr(settings, 'ACCOUNT_MANAGERS_LDAP_GROUP') and not hasattr(settings, 'ACCOUNT_MANAGERS_LDAP_GROUPS'):
             return False
 
-        account_manager_group = getattr(settings, 'ACCOUNT_MANAGERS_LDAP_GROUP')
+        account_manager_groups = getattr(settings, 'ACCOUNT_MANAGERS_LDAP_GROUPS', [])
+        if hasattr(settings, 'ACCOUNT_MANAGERS_LDAP_GROUP'):
+            account_manager_groups.append(settings['ACCOUNT_MANAGERS_LDAP_GROUP'])
+        account_manager_groups = set(account_manager_groups)
 
         # Get the DN of all groups the user is a member of.
         ldap_user = bituldap.get_user(self.get_username())
@@ -49,7 +52,7 @@ class User(AbstractUser):
 
         # Check if the account manager group DN is present in the list of LDAP group
         # memberships.
-        is_member = True if account_manager_group in groups else False
+        is_member = True if account_manager_groups.intersection(groups) else False
         return is_member
 
 
