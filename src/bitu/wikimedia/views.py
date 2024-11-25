@@ -2,9 +2,7 @@ from typing import Any
 
 import bituldap
 
-from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -20,12 +18,12 @@ from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
 
 from . import jobs
-from .forms import (BlockUserForm,
-                    BlockUserSearchForm,
+from .forms import (BlockUserSearchForm,
                     ForgotUsernameForm,
                     RequestPasswordResetForm,
                     PasswordResetForm)
 
+from .integrations.ldap import LDAP
 from .models import UserBlockEventLog
 from .tokens import default_token_generator
 
@@ -171,7 +169,8 @@ class BlockUserView(AccountManagersPermissionMixin, CreateView):
     action = 'block_user'
 
     def get_ldap_user(self):
-        return bituldap.get_user(self.kwargs['username'])
+        l = LDAP()
+        return l.fetch_entry(self.kwargs['username'])
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         # Get username from URL parameter and lookup LDAP user.

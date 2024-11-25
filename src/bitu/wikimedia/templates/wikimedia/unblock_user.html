@@ -10,8 +10,14 @@
   <div class="content_box">
     <h4>{% blocktrans with username=user.cn %}Unblock user: {{ username }}{% endblocktrans %}</h4>
     <ul>
-        <li><strong>Email:</strong> {{ user.mail }}</li>
-        <li><strong>Wikimedia Developer Account:</strong> {{ user.cn }}</li>
+      <li><strong>Wikimedia Developer Account:</strong> {{ user.cn }}</li>
+      <li><strong>Email:</strong> {{ user.attributes.mail.0 }}</li>
+      <li><strong>LDAP status:</strong> {% if user.attributes.pwdAccountLockedTime %}
+        {% blocktrans with user.attributes.pwdAccountLockedTime as lock_time %}
+        Blocked on {{ lock_time }}
+        {% endblocktrans %}
+        {% else %}{% translate "Active" %}{% endif %}
+      </li>
     </ul>
 
     <p>
