@@ -17,7 +17,7 @@ class LDAP():
             search_base=settings.BITU_LDAP['users']['dn'],
             search_filter=f'(uid={uid})',
             search_scope=SUBTREE,
-            attributes=['uid', 'pwdAccountLockedTime', 'pwdPolicySubEntry'])
+            attributes=['cn', 'uid', 'mail', 'pwdAccountLockedTime', 'pwdPolicySubEntry'])
 
         if not success or len(conn.response) != 1:
             raise Exception(f'ldap blocking, failed to lookup user, username: {uid}\
