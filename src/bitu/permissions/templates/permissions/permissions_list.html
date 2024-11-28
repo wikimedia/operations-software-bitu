@@ -43,7 +43,7 @@
           {% for permission in permissions %}
           <tr>
             <td>{{ permission.name|capfirst }}</td>
-            <td>{{ permission.description }}</td>
+            <td>{{ permission.description_display }}</td>
             <td class="cdx-table__table__cell--align-number">{{ permission.source_display }}</td>
             <td>
             {% if permission.state == 'AP' or permission.state == 'PN' %}
