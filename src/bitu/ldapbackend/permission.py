@@ -17,18 +17,13 @@ logger = logging.getLogger('bitu')
 class LDAPPermissions(BaseBackend):
     name = 'ldapbackend'
 
-    def __init__(self) -> None:
-        self._groups = []
-
     @property
     def groups(self):
-        if self._groups:
-            return self._groups
-
         keys = settings.ACCESS_REQUEST_RULES.get(self.name, {}).keys()
+        groups = []
         for key in keys:
-            self._groups.extend(self._get_groups_by_dn(key, attributes=['cn', 'owner', 'description']))
-        return self._groups
+            groups.extend(self._get_groups_by_dn(key, attributes=['cn', 'owner', 'description']))
+        return groups
 
     def _get_groups_by_dn(self, dn, attributes=[]):
         bound, connection = bituldap.create_connection()
