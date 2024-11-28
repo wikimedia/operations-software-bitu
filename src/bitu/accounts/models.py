@@ -21,6 +21,16 @@ from rest_framework.authtoken.models import Token as ABSToken
 
 
 class User(AbstractUser):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__ldap_user = None
+
+    @property
+    def _ldap_user(self):
+        if self.__ldap_user is None:
+            self.__ldap_user = bituldap.get_user(self.get_username())
+        return self.__ldap_user
+
     @property
     def allow_api_usage(self):
         api_permissions = getattr(settings, 'API_PERMISSIONS', ())
@@ -47,13 +57,18 @@ class User(AbstractUser):
         account_manager_groups = set(account_manager_groups)
 
         # Get the DN of all groups the user is a member of.
-        ldap_user = bituldap.get_user(self.get_username())
-        groups = [entry.entry_dn for entry in bituldap.member_of(ldap_user.entry_dn)]
+        groups = [entry.entry_dn for entry in bituldap.member_of(self._ldap_user.entry_dn)]
 
         # Check if the account manager group DN is present in the list of LDAP group
         # memberships.
         is_member = True if account_manager_groups.intersection(groups) else False
         return is_member
+
+    @property
+    def display_signed_in_as(self):
+        if self._ldap_user is None or self._ldap_user.cn == self.get_username():
+            return self.get_username()
+        return f'{self._ldap_user.cn} / {self.get_username()}'
 
 
 @dataclass
