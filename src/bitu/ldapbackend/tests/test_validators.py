@@ -4,7 +4,12 @@ import bituldap
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from ldapbackend.validators import unix_username_regex_validator, login_shell_validator, unix_username_length_validator, LDAPCommonNameValidator, LDAPUsernameValidator
+from ldapbackend.validators import (unix_username_regex_validator,
+                                    login_shell_validator,
+                                    unix_username_length_validator,
+                                    LDAPCommonNameValidator,
+                                    LDAPUsernameValidator,
+                                    ldap_password_verification)
 
 from . import dummy_ldap
 
@@ -84,3 +89,27 @@ class LDAPValidatorTestCase(TestCase):
         self.assertRaises(ValidationError, wrap_multiple_validator, validators, 'Test5')
 
         wrap_multiple_validator(validators, 'test6')
+
+    def test_password_verify(self):
+        test_password = "BituTestPassword"
+        wrong_password = "Wrong Password"
+
+        user = bituldap.new_user("test7")
+        user.cn = "Test7"
+        user.sn = "test7"
+        user.uidNumber = 5007
+        user.gidNumber = 5000
+        user.homeDirectory = "/home/test7"
+        user.userPassword = "{ssha}089Ir/TX7Mu+hiY08YNeHW5NmVoEfct/qlDZAQ=="
+        user.entry_commit_changes()
+
+        self.assertRaises(ValidationError, ldap_password_verification, "test7", wrong_password)
+        ldap_password_verification("test7", test_password)
+
+        user.userPassword = "{SSHA}089Ir/TX7Mu+hiY08YNeHW5NmVoEfct/qlDZAQ=="
+        user.entry_commit_changes()
+        ldap_password_verification("test7", test_password)
+
+        user.userPassword = "{SSHB}089Ir/TX7Mu+hiY08YNeHW5NmVoEfct/qlDZAQ=="
+        user.entry_commit_changes()
+        self.assertRaises(ValidationError, ldap_password_verification, "test7", wrong_password)

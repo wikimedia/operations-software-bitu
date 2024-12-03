@@ -123,7 +123,24 @@ class LDAPPasswordValidator:
 
 def ldap_password_verification(username: str, password: str):
     ldap_user = b.get_user(username)
-    if not lsm.verify(password, ldap_user.userPassword.value):
+
+    # We're using passlib to verify the password, but in some cases the
+    # password hash has been stored in LDAP prefixed with {ssha}. Passlib
+    # sees this as an "invalid hash", because it expects {SSHA}.
+    # Check the signature of the hash, and do and "correct" the casing.
+    existing_password = ldap_user.userPassword.value
+    if existing_password.startswith(b"{ssha}"):
+        existing_password = b"{SSHA}" + existing_password[6:]
+
+    verified = False
+    try:
+        verified  = lsm.verify(password, existing_password)
+    except ValueError as e:
+        logger.error(f"error in ldap password verification, exception: {e}")
+        raise ValidationError(_("Failed to validate password",
+                                code="passlib_verification_error"))
+
+    if not verified:
         raise ValidationError(
             _("Invalid password"), code='invalid_ldap_password')
 
