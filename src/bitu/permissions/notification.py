@@ -1,6 +1,6 @@
 import logging
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator
 
 import bituldap
 
@@ -28,19 +28,59 @@ def load_templates() -> dict[str:str]:
     return {'plaintext': get_template(plaintext), }
 
 
-def get_managers(request: 'PermissionRequest') -> set[str]:
-    """Find all managers who can approve a given request for additional permissions.
+def get_user_dns_from_ldap_group(group_dns: list[str]) -> set[str]:
+    """Fetch uids for all members of an LDAP group
+
+    Args:
+        group_dn (str): LDAP CN for group/groupOfNames
+
+    Returns:
+        set[str]: set of user DNs
+    """
+    members = []
+    for cn in group_dns:
+        # Get group name from DN
+        name = cn.split(',')[0].split('=')[1]
+        members.extend([m for m in bituldap.get_group(name).member])
+
+
+    # Convert to set to strip duplicates.
+    return set(members)
+
+
+def get_notification_email_for_users(users: Iterator[str]) -> set[str]:
+    emails = []
+    for user in users:
+        # Get uid from DN
+        uid = user.split(',')[0][4:]
+
+        user = bituldap.get_user(uid)
+        if user is None:
+            continue
+
+        # Because we're going to convert the resulting list to a set, get
+        # the value/email as a string, rather than a Writeable/Readable LDAP
+        # attribute, which cannot be hashed and automatically converted to a set.
+        emails.append(user.mail.value)
+    return set(emails)
+
+
+def get_manager_emails(request: 'PermissionRequest') -> set[str]:
+    """Find the email address for all who can approve a given request for additional permissions.
 
     Args:
         request (PermissionRequest): Bitu PermissionRequest object
 
     Returns:
-        set[str]: Usernames for approving managers.
+        set[str]: email for approving managers.
     """
     managers = []
     rules = settings.ACCESS_REQUEST_RULES.get(request.system, {}).get(request.key, [])
     for rule in rules:
-        managers.extend(rule.get('managers', []))
+        managers.extend(rule.get('notify', []))
+        manager_dns = get_user_dns_from_ldap_group(rule.get('notify_group', []))
+        managers.extend(get_notification_email_for_users(manager_dns))
+
     return set(managers)
 
 
@@ -99,7 +139,7 @@ def send_permission_request_email(request: 'PermissionRequest') -> None:
         request (PermissionRequest): Bitu PermissionRequest object.
     """
 
-    managers = get_managers(request)
+    managers = get_manager_emails(request)
     if not managers:
         return
 
@@ -122,14 +162,13 @@ managers: {",".join(managers)}')
     for manager in managers:
         # Don't notify ourselves, if we happen to be managing the permission we're applying for.
         # Users cannot approve their own requests.
-        if manager == request.user.get_username():
+        if manager == request.user.email:
             continue
 
         # Load email from LDAP, as we cannot be sure that the manager has
         # signed in before.
-        to_email = bituldap.get_user(manager).mail
-        requests = get_pending_requests(manager)
-        context = {'uri': uri, 'requests': requests}
+        to_email = manager
+        context = {'uri': uri, 'request': request}
         msg = EmailMultiAlternatives(
             subject,
             templates['plaintext'].render(context),
@@ -137,5 +176,5 @@ managers: {",".join(managers)}')
             [to_email])
         msg.send()
         logger.info(
-            f'email pending requests for {manager}, email: {to_email}, requests pending: {len(requests)}'
+            f'email pending requests for {manager}, email: {to_email}, request pending: {request.id}'
         )

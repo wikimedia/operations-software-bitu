@@ -1,11 +1,14 @@
 {% load i18n %}
-{% blocktrans with count=requests|length%}You currently have {{ count }} pending.{% endblocktrans %}
-{% for request in requests %}
-{% blocktrans with  user=request.user.get_username permission=request.permission.name comment=request.comment %}
-* {{ user }} has requested access to {{ permission }}
+{% blocktrans %}
+You are receiving this notification as an approver for one or several access groups.
+You currently have pending access requests in Bitu, the Wikimedia Identity Manager.
+{% endblocktrans %}
+
+{% blocktrans with user=request.user.get_username permission=request.permission.name comment=request.comment date=request.created %}
+* {{ user }} has requested access to {{ permission }} on {{ date }}
   comment: {{ comment }}
 {% endblocktrans %}
-{% endfor %}
+
 {% blocktrans with uri=uri %}
-Go to pending requests to approve: {{ uri }}
+These access requests can be approved or rejected here: {{ uri }}
 {% endblocktrans%}

@@ -121,6 +121,7 @@ ACCESS_REQUEST_RULES = {
         'cn=NDA,ou=groups,dc=example,dc=org': [{
             'module': 'permissions.validators.manager_approval',
             'managers': ['wwaller'],
+            'notify': ['wwaller@example.org',],
             'count': 1
         }],
         'cn=ITS,ou=groups,dc=example,dc=org': [{

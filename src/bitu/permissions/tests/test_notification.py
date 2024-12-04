@@ -7,9 +7,12 @@ from django.test import TestCase
 
 from ldapbackend.tests import dummy_ldap
 from permissions.models import PermissionRequest
-from permissions.notification import (get_managers,
+from permissions.notification import (get_manager_emails,
                                       get_pending_requests,
-                                      get_permission_for_manager)
+                                      get_permission_for_manager,
+                                      get_user_dns_from_ldap_group,
+                                      get_notification_email_for_users
+                                      )
 
 
 User = get_user_model()
@@ -38,19 +41,32 @@ class PermissionNotficationTests(TestCase):
                 'cn=staff,ou=groups,dc=example,dc=org': [{
                     'module': 'permissions.validators.manager_approval',
                     'managers': [self.manager1.get_username(), self.manager3.get_username()],
+                    'notify': ['www@example.com', 'business@example.com'],
                     'count': 2
                 }],
                 'cn=www,ou=groups,dc=example,dc=org': [{
                     'module': 'permissions.validators.manager_approval',
                     'managers': [self.manager2.get_username(), self.manager3.get_username()],
+                    'notify': ['admin@example.net', 'staff@example.org'],
                     'count': 2
                 }, {
                     'module': 'permissions.validators.manager_approval',
                     'managers': [self.manager2.get_username(),],
+                    'notify_group': ['cn=staff,ou=groups,dc=example,dc=org',],
                     'count': 1
                 }],
             }
         }
+
+    def test_group_notification(self):
+        with self.settings(ACCESS_REQUEST_RULES=self.rules):
+            managers = get_user_dns_from_ldap_group(['cn=staff,ou=groups,dc=example,dc=org',])
+            emails = get_notification_email_for_users(managers)
+
+            # Our test data has some duplication, so we expect fewer email addresses than managers.
+            self.assertEqual(len(managers), 868)
+            self.assertEqual(len(emails), 865)
+
     def test_get_managers(self):
         user = User(username='coxsarah')
         user.save()
@@ -72,7 +88,7 @@ class PermissionNotficationTests(TestCase):
                 comment='Request'
             )
 
-            self.assertEqual(len(mail.outbox), 2)
+            self.assertEqual(len(mail.outbox), 867)
             self.assertEqual(mail.outbox[0].subject, 'Bitu IDM - Pending permission requests')
 
             PermissionRequest.objects.create(
@@ -84,7 +100,7 @@ class PermissionNotficationTests(TestCase):
 
             requests = get_pending_requests('glopez')
             self.assertEqual(len(requests), 1)
-            self.assertEqual(len(mail.outbox), 4)  # Two new email, plus the two previous
+            self.assertEqual(len(mail.outbox), 869)  # Two new email, plus the 867 previous
 
             requests = get_pending_requests('yharris')
             self.assertEqual(len(requests), 1)
@@ -92,6 +108,6 @@ class PermissionNotficationTests(TestCase):
             requests = get_pending_requests('carol93')
             self.assertEqual(len(requests), 2)
 
-            request = PermissionRequest.objects.filter(key='cn=www,ou=groups,dc=example,dc=org').first()
-            managers = get_managers(request)
-            self.assertEqual(managers, {'carol93', 'yharris'})
+            request = PermissionRequest.objects.filter(key='cn=staff,ou=groups,dc=example,dc=org').first()
+            managers = get_manager_emails(request)
+            self.assertEqual(managers, {"www@example.com", "business@example.com"})
