@@ -16,6 +16,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import FormView
 from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
+from passlib.hash import ldap_salted_sha1 as lsm
 
 from . import jobs
 from .forms import (BlockUserSearchForm,
@@ -109,7 +110,8 @@ class PasswordResetView(FormView):
         return user
 
     def form_valid(self, form):
-        bituldap.set_user_password(self.user.entry_dn, form.cleaned_data['password1'])
+        self.user.userPassword = lsm.hash(form.cleaned_data['password1'])
+        self.user.entry_commit_changes()
         del self.request.session[INTERNAL_RESET_SESSION_TOKEN]
         return super().form_valid(form)
 
