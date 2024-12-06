@@ -33,6 +33,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+INSTALLED_APPS = INSTALLED_APPS + [
+    'django.contrib.admin',
+]
+
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 

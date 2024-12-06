@@ -19,7 +19,6 @@ favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
 
 urlpatterns = [
     path('favicon.ico', favicon_view),
-    path('admin/', admin.site.urls),
     path('captcha/', include('captcha.urls')),
     path('rq/', include('django_rq.urls')),
     path('', include('social_django.urls', namespace='social')),
@@ -48,5 +47,6 @@ if hasattr(settings, 'ACCESS_REQUEST_RULES') and settings.ACCESS_REQUEST_RULES:
 # When developing, allow the built in Django webserver to serve static
 # content. In production this is the job of the actual webserver.
 if settings.DEBUG:
+    urlpatterns.append(path('admin/', admin.site.urls))
     urlpatterns + static(settings.STATIC_URL,
                          document_root=settings.STATIC_ROOT)
