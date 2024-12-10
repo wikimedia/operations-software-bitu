@@ -10,6 +10,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.db.models import QuerySet
 from django.template.loader import get_template
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+
 
 if TYPE_CHECKING:
     from .models import PermissionRequest
@@ -178,3 +180,24 @@ managers: {",".join(managers)}')
         logger.info(
             f'email pending requests for {manager}, email: {to_email}, request pending: {request.id}'
         )
+
+
+@job('notification')
+def send_permission_status_change_email(request: 'PermissionRequest') -> None:
+    template_base = 'permissions/email/request_approved' if request.status == request.APPROVED else 'permissions/email/request_rejected'
+    context = {'request': request}
+    plaintext = get_template(template_base + '.txt').render(context)
+    html = get_template(template_base + '.html').render(context)
+
+    msg = EmailMultiAlternatives(
+        subject=_(
+            "Request for access to %(permission)s as been %(state)s.") % {
+                "permission": request.permission.name,
+                "state": request.status.lower()
+            },
+        body=plaintext,
+        from_email=settings.BITU_NOTIFICATION['default_sender'],
+        to=[request.user.email])
+    msg.attach_alternative(html, "text/html")
+    msg.send()
+
