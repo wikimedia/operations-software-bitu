@@ -2,6 +2,7 @@
 import base64
 import logging
 
+from datetime import timedelta
 from typing import Dict, Union
 
 import bituldap
@@ -11,6 +12,7 @@ from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext as _
 from django_rq import job
 from ldap3 import Entry
@@ -53,7 +55,7 @@ def send_email_password_reset(username):
     uid = base64.b64encode(bytes(ldap_user.uid.value, 'utf8'))
     url = reverse('wikimedia:reset', kwargs={'token': token, 'uidb64': uid.decode(encoding='utf8')})
 
-    timeout = int(settings.PASSWORD_RESET_TIMEOUT / 60)  # From seconds to minutes.
+    timeout = timezone.now() + timedelta(seconds=settings.PASSWORD_RESET_TIMEOUT)
 
     plaintext = get_template('email/email_password_reset.txt')
     html = get_template('email/email_password_reset.html')
