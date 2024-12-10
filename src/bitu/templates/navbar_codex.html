@@ -11,6 +11,12 @@
           </svg>
       </a>
         <ul id="nav_menu" class="dropdown">
+          {% if user.is_anonymous %}
+          <li class="no_hover">
+            <strong>{% translate "Not signed in" %}</strong></li>
+          <hr>
+          <li><a href="{% url 'accounts:overview' %}">{% translate "Sign in" %}</a></li>
+          {% else %}
           <li class="no_hover">
             <strong>{% blocktrans with user.display_signed_in_as as username %}Signed in as {{ username }}{% endblocktrans %}</strong></li>
           <hr>
@@ -29,7 +35,9 @@
           {% endif %}
           <li class="bottom"><a href="{% url 'ldapbackend:properties' %}">{% translate "My account" %}</a></li>
           <li><a href="{% url 'ldapbackend:change_password' %}">{% translate "Change password" %}</a></li>
-          <li><a href="{% url 'accounts:logout' %}?next=/">{% translate "Sign out" %}</a></li></ul>
+          <li><a href="{% url 'accounts:logout' %}?next=/">{% translate "Sign out" %}</a></li>
+          {% endif %}
+        </ul>
       </li>
     </ul>
   </span>
