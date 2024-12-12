@@ -191,9 +191,10 @@ def send_permission_status_change_email(request: 'PermissionRequest') -> None:
 
     msg = EmailMultiAlternatives(
         subject=_(
-            "Request for access to %(permission)s as been %(state)s.") % {
+            "%(domain)s: Access to %(permission)s as been %(state)s.") % {
+                "domain": settings.BITU_DOMAIN,
                 "permission": request.permission.name,
-                "state": request.status.lower()
+                "state": request.get_status_display().lower()
             },
         body=plaintext,
         from_email=settings.BITU_NOTIFICATION['default_sender'],
