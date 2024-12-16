@@ -2,7 +2,7 @@ import logging
 import re
 
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
+from django.core.validators import EmailValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger('bitu')
@@ -31,4 +31,20 @@ def IsURLValidator(username):
         logger.info(f'username blocked, URIs are not allowed, username: {username}')
         raise ValidationError(
             _("Invalid username, invalid format")
+        )
+
+
+def IsUsernameEmail(username):
+    validator = EmailValidator()
+    is_email = False
+    try:
+        validator(username)
+        is_email = True
+    except ValidationError:
+        pass
+
+    if is_email:
+        logger.info(f'username blocked, email addresses are not allowed, username: {username}')
+        raise ValidationError(
+            _("Invalid username, invalid format (email)")
         )
