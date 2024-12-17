@@ -64,7 +64,7 @@ def create_user(signup: 'Signup'):
 
     utils.send_service_message(f'LDAP user created: {signup.uid}',
                                f"""New user created successfully by Bitu.\n\n
-                               Username: {signup.username} as been created.\n
+                               Username: {signup.username} has been created.\n
                                UID: {signup.uid}\n
                                Email: {signup.email}\n
                                Creation time: {localtime()}\n
