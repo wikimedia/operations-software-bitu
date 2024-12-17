@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 
@@ -5,6 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from accounts.models import Token, User
+from ldapbackend.tests import dummy_ldap
 from signups.models import BlockListUsername, UserValidation
 
 
@@ -24,7 +27,8 @@ class UserValidationTests(APITestCase):
         self.token, _ = Token.objects.get_or_create(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
 
-    def test_query(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_query(self, mock_connect):
         response = self.client.post('/signup/api/username/', {'username': 'generic user'}, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -40,7 +44,8 @@ class UserValidationTests(APITestCase):
         self.assertEqual(response.data['sanitized'], 'Generic user')
         self.assertEqual(response.data['uid'], 'generic')
 
-    def test_blocklist(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_blocklist(self, mock_connect):
         response = self.client.post('/signup/api/username/', {'username': 'pUpPet'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -48,12 +53,14 @@ class UserValidationTests(APITestCase):
         response = self.client.post('/signup/api/username/', {'username': 'pUpPet'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_ldap_validation(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_ldap_validation(self, mock_connect):
         response = self.client.post('/signup/api/username/', {'username': self.user.username}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data['username'][0], 'Invalid username, may already in use.')
 
-    def test_url_validation(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_url_validation(self, mock_connect):
         username = 'https://en.wikipedia.org'
         response = self.client.post('/signup/api/username/', {'username': username}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

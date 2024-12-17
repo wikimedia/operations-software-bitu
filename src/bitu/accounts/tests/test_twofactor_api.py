@@ -6,16 +6,10 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from accounts.models import User, SecurityToken, Token
-from ldapbackend.tests import dummy_ldap
 
 
 class SecurityTokenAPITest(TestCase):
     def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        # Required because we have the LDAPBackend installed and enabled.
-        dummy_ldap.setup()
-        dummy_ldap.create_test_users()
-
         self.user, _ = User.objects.get_or_create(username='rachel32')
         self.user.set_password('secret')
         self.user.save()

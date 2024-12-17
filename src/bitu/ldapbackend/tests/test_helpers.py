@@ -20,11 +20,8 @@ def bituldap_new_uid():
 
 
 class LDAPHelpersTest(TestCase):
-    def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        dummy_ldap.setup()
-
-    def test_data_fill(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_data_fill(self, mock_connect):
         signup: Signup = Signup(username='test', uid='test', email='TeSt@exaMple.com')
         signup.save()
         signup.set_password('password')
@@ -49,8 +46,9 @@ class LDAPHelpersTest(TestCase):
         self.assertEqual(helpers.capitalize_first('peter jensen'), 'Peter jensen')
         self.assertEqual(helpers.capitalize_first('peter Jensen'), 'Peter Jensen')
 
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
     @patch('bituldap.next_uid_number')
-    def test_uid_validation(self, mock_next_uid_number: MagicMock):
+    def test_uid_validation(self, mock_next_uid_number: MagicMock, mock_connect: MagicMock):
         signup1: Signup = Signup(username='TestHelper1', uid='testhelper1', email='testhelper1@example.com')
         signup1.set_password('password')
         signup1.is_active = True

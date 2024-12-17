@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import bituldap
 
+from unittest.mock import patch
+
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -40,12 +42,9 @@ class ValidatorTestCase(TestCase):
 
 
 class LDAPValidatorTestCase(TestCase):
-    def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        dummy_ldap.setup()
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_ldap_exists(self, mock_connect):
         dummy_ldap.create_test_users()
-
-    def test_ldap_exists(self):
         self.assertRaises(ValidationError, LDAPCommonNameValidator, 'test1')
         self.assertRaises(ValidationError, LDAPUsernameValidator, 'test1')
 
@@ -57,8 +56,8 @@ class LDAPValidatorTestCase(TestCase):
         LDAPUsernameValidator('Test4')
         LDAPUsernameValidator('test4')
 
-
-    def test_ldap_overlap(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_ldap_overlap(self, mock_connect):
         # Test that we catch combinations of CommonNames and UID where a UID is available,
         # but the CommonName isn't e.g.
 
@@ -90,7 +89,8 @@ class LDAPValidatorTestCase(TestCase):
 
         wrap_multiple_validator(validators, 'test6')
 
-    def test_password_verify(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_password_verify(self, mock_connect):
         test_password = "BituTestPassword"
         wrong_password = "Wrong Password"
 

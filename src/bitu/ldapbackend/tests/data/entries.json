@@ -773,6 +773,86 @@
         {
             "attributes": {
                 "cn": [
+                    "db"
+                ],
+                "gidNumber": 6017,
+                "member": [
+                    "uid=glopez,ou=people,dc=example,dc=org",
+                    "uid=yharris,ou=people,dc=example,dc=org",
+                    "uid=carol93,ou=people,dc=example,dc=org",
+                    "uid=bryan38,ou=people,dc=example,dc=org"
+                ],
+                "objectClass": [
+                    "groupOfNames",
+                    "posixGroup",
+                    "top"
+                ]
+            },
+            "dn": "cn=db,ou=groups,dc=example,dc=org",
+            "raw": {
+                "cn": [
+                    "db"
+                ],
+                "gidNumber": [
+                    "6017"
+                ],
+                "member": [
+                    "uid=glopez,ou=people,dc=example,dc=org",
+                    "uid=yharris,ou=people,dc=example,dc=org",
+                    "uid=carol93,ou=people,dc=example,dc=org",
+                    "uid=bryan38,ou=people,dc=example,dc=org"
+                ],
+                "objectClass": [
+                    "groupOfNames",
+                    "posixGroup",
+                    "top"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "cn": [
+                    "db-manager"
+                ],
+                "gidNumber": 6017,
+                "member": [
+                    "uid=stephanie74,ou=people,dc=example,dc=org",
+                    "uid=imurray,ou=people,dc=example,dc=org",
+                    "uid=robertwells,ou=people,dc=example,dc=org",
+                    "uid=amanda13,ou=people,dc=example,dc=org",
+                    "uid=conleyjonathan,ou=people,dc=example,dc=org"
+                ],
+                "objectClass": [
+                    "groupOfNames",
+                    "posixGroup",
+                    "top"
+                ]
+            },
+            "dn": "cn=db-manager,ou=groups,dc=example,dc=org",
+            "raw": {
+                "cn": [
+                    "db-manager"
+                ],
+                "gidNumber": [
+                    "6018"
+                ],
+                "member": [
+                    "uid=stephanie74,ou=people,dc=example,dc=org",
+                    "uid=imurray,ou=people,dc=example,dc=org",
+                    "uid=robertwells,ou=people,dc=example,dc=org",
+                    "uid=amanda13,ou=people,dc=example,dc=org",
+                    "uid=conleyjonathan,ou=people,dc=example,dc=org"
+                ],
+                "objectClass": [
+                    "groupOfNames",
+                    "posixGroup",
+                    "top"
+                ]
+            }
+        },
+        {
+            "attributes": {
+                "cn": [
                     "NDA"
                 ],
                 "gidNumber": 4000,

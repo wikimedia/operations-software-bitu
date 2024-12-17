@@ -1,3 +1,6 @@
+from unittest import skip
+from unittest.mock import patch
+
 import bituldap
 
 from django.contrib.auth import get_user_model
@@ -13,9 +16,6 @@ User = get_user_model()
 
 class PermissionRequestApprovalTest(TestCase):
     def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        dummy_ldap.setup()
-
         # Load users which will act as our managers
         self.manager1 = User(username='glopez')
         self.manager2 = User(username='yharris')
@@ -26,7 +26,7 @@ class PermissionRequestApprovalTest(TestCase):
 
         self.rules = {
             'ldapbackend': {
-                'cn=NDA,ou=groups,dc=example,dc=org': [{
+                'cn=db,ou=groups,dc=example,dc=org': [{
                     'module': 'permissions.validators.manager_approval',
                     'managers': [self.manager1.get_username(), self.manager2.get_username()],
                     'count': 2
@@ -53,14 +53,15 @@ class PermissionRequestApprovalTest(TestCase):
             }
         }
 
-    def test_manager_quick_rejection(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_manager_quick_rejection(self, mock_connect):
         # Get a test users
         user = User(username='coxsarah')
         user.save()
 
         pr = PermissionRequest(user=user)
         pr.system = 'ldapbackend'
-        pr.key = 'cn=NDA,ou=groups,dc=example,dc=org'
+        pr.key = 'cn=db,ou=groups,dc=example,dc=org'
         pr.comment = 'Test access request'
         pr.save()
 
@@ -72,14 +73,15 @@ class PermissionRequestApprovalTest(TestCase):
             pr.refresh_from_db()
             self.assertTrue(pr.status == pr.REJECTED)
 
-    def test_manager_approve_reject(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_manager_approve_reject(self, mock_connect):
         # Get a test users
         user = User(username='coxsarah')
         user.save()
 
         pr = PermissionRequest(user=user)
         pr.system = 'ldapbackend'
-        pr.key = 'cn=NDA,ou=groups,dc=example,dc=org'
+        pr.key = 'cn=db,ou=groups,dc=example,dc=org'
         pr.comment = 'Test access request'
         pr.save()
 
@@ -97,14 +99,15 @@ class PermissionRequestApprovalTest(TestCase):
             pr.refresh_from_db()
             self.assertTrue(pr.status == pr.REJECTED)
 
-    def test_manager_approval(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_manager_approval(self, mock_connect):
         # Get a test users
         user = User(username='coxsarah')
         user.save()
 
         pr = PermissionRequest(user=user)
         pr.system = 'ldapbackend'
-        pr.key = 'cn=NDA,ou=groups,dc=example,dc=org'
+        pr.key = 'cn=db,ou=groups,dc=example,dc=org'
         pr.comment = 'Test access request'
         pr.save()
 
@@ -136,7 +139,8 @@ class PermissionRequestApprovalTest(TestCase):
             pr.refresh_from_db()
             self.assertTrue(pr.status == pr.APPROVED)
 
-    def test_email_domain_validation(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_email_domain_validation(self, mock_connect):
         # Get a test users
         user = User(username='coxsarah')
         user.save()
@@ -160,7 +164,8 @@ class PermissionRequestApprovalTest(TestCase):
             pr.refresh_from_db()
             self.assertTrue(pr.status == pr.APPROVED)
 
-    def test_ldap_attributes_validation(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_ldap_attributes_validation(self, mock_connect):
         # Get a test users
         user = User(username='coxsarah')
         user.save()
@@ -188,7 +193,8 @@ class PermissionRequestApprovalTest(TestCase):
 
             self.assertTrue(pr.status == pr.APPROVED)
 
-    def test_ldap_group_accept_validation(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_ldap_group_accept_validation(self, mock_connect):
         # Get a test users
         user = User(username='kevin48')
         user.save()
@@ -198,9 +204,6 @@ class PermissionRequestApprovalTest(TestCase):
         pr.key = 'cn=management,ou=groups,dc=example,dc=org'
         pr.comment = 'Request for management access'
         pr.save()
-
-        entry = bituldap.get_user(user.get_username())
-        print([entry.entry_dn for entry in bituldap.member_of(entry.entry_dn)])
 
         with self.settings(ACCESS_REQUEST_RULES=self.rules):
             self.assertEqual(len(pr.rules), 1)
@@ -218,7 +221,8 @@ class PermissionRequestApprovalTest(TestCase):
 
             self.assertTrue(pr.status == pr.APPROVED)
 
-    def test_ldap_group_reject_validation(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_ldap_group_reject_validation(self, mock_connect):
         # Get a test users
         user = User(username='coxsarah')
         user.save()

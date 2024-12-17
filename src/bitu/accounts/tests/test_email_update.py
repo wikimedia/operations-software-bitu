@@ -1,5 +1,7 @@
 import re
 
+from unittest.mock import patch
+
 import bituldap
 
 from django.core import mail
@@ -11,42 +13,31 @@ from ldapbackend.tests import dummy_ldap
 
 
 class TestEmailModelUpdate(TestCase):
-    def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        # Required because we have the LDAPBackend installed and enabled.
-        dummy_ldap.setup()
-        dummy_ldap.create_test_users()
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_unsynced(self, mock_connect):
+        user, _ = User.objects.get_or_create(username='amiller', email='smithjohn@example.org')
+        user.set_password('secret')
+        user.save()
+        email = user.email
+        ldap_user = bituldap.get_user(user.get_username())
 
-        self.user, _ = User.objects.get_or_create(username='amiller', email='smithjohn@example.org')
-        self.user.set_password('secret')
-        self.user.save()
+        self.assertEqual(str(ldap_user.mail), user.email)
+        user.email = 'amiller@example.org'
+        user.save()
 
-    def test_unsynced(self):
-        email = self.user.email
-        ldap_user = bituldap.get_user(self.user.get_username())
+        self.assertNotEqual(user.email, email)
 
-        self.assertEqual(str(ldap_user.mail), self.user.email)
-        self.user.email = 'amiller@example.org'
-        self.user.save()
-
-        self.assertNotEqual(self.user.email, email)
-
-        ldap_user = bituldap.get_user(self.user.get_username())
-        self.assertNotEqual(str(ldap_user.mail), self.user.email)
+        ldap_user = bituldap.get_user(user.get_username())
+        self.assertNotEqual(str(ldap_user.mail), user.email)
 
 
 class TestEmailUpdateFlow(TestCase):
-    def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        # Required because we have the LDAPBackend installed and enabled.
-        dummy_ldap.setup()
-        dummy_ldap.create_test_users()
-
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_email_update_flow(self, mock_connect):
         self.user, _ = User.objects.get_or_create(username='amiller', email='smithjohn@example.org')
         self.user.set_password('secret')
         self.user.save()
 
-    def test_email_update_flow(self):
         new_email = 'amiller@example.org'
         url = reverse('accounts:email')
         user = User.objects.get(username='amiller')

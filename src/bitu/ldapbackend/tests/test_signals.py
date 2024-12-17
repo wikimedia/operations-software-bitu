@@ -4,7 +4,7 @@ from signups.models import Signup
 from django.core import mail
 from django.db.models.signals import post_save
 from django.test import TestCase
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from ldapbackend import jobs
 
@@ -12,11 +12,9 @@ from . import dummy_ldap
 
 
 class LDAPSignalTest(TestCase):
-    def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        dummy_ldap.setup()
 
-    def test_signal_create(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_signal_create(self, mock_connect):
         # Test that signal have been hooked up correctly.
         handlers = [s.__name__ for s in post_save._live_receivers(Signup) if s.__module__ == 'ldapbackend.signals']
         self.assertIn('create_user', handlers)
@@ -41,7 +39,8 @@ class LDAPSignalTest(TestCase):
 
         self.assertEqual(signal_handler.call_count, 2)
 
-    def test_worker_function(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_worker_function(self, mock_connect):
         signup: Signup = Signup(username='Test2', uid='test2', email='test2@example.com')
         signup.set_password('password')
         signup.is_active = True

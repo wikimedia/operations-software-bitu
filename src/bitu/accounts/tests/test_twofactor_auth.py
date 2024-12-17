@@ -1,6 +1,8 @@
 import pyotp
 import time
 
+from unittest.mock import patch
+
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
@@ -11,11 +13,6 @@ from ldapbackend.tests import dummy_ldap
 
 class SecurityTokenTest(TestCase):
     def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        # Required because we have the LDAPBackend installed and enabled.
-        dummy_ldap.setup()
-        dummy_ldap.create_test_users()
-
         self.user, _ = User.objects.get_or_create(username='rachel32')
         self.user.set_password('secret')
         self.user.save()
@@ -27,7 +24,8 @@ class SecurityTokenTest(TestCase):
         self.client = Client()
         self.client.login(username='rachel32', password='secret')
 
-    def test_basic_token_generation(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_basic_token_generation(self, mock_connect):
         st1, st1_create = SecurityToken.objects.get_or_create(user=self.user)
         st2, st2_create = SecurityToken.objects.get_or_create(user=self.aux_user)
 
@@ -42,7 +40,8 @@ class SecurityTokenTest(TestCase):
         time.sleep(30)
         self.assertFalse(st1.validate(token))
 
-    def test_token_enabled(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_token_enabled(self, mock_connect):
         enabled_url = reverse('accounts:2fa')
 
         # Ensure that the user does not have 2FA enabled or attempt to enabled

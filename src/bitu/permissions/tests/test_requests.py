@@ -1,3 +1,6 @@
+from unittest import skip
+from unittest.mock import patch
+
 from django.core import mail
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -12,11 +15,6 @@ from permissions.permission import permission_set
 
 class PermissionRequestTest(TestCase):
     def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        # Required because we have the LDAPBackend installed and enabled.
-        dummy_ldap.setup()
-        dummy_ldap.create_test_users()
-
         # Get a user, who will be our requester.
         self.user, _ = User.objects.get_or_create(username='rachel32')
         self.user.set_password('secret')
@@ -33,7 +31,8 @@ class PermissionRequestTest(TestCase):
         group_dn_list = [g.entry_dn for g in groups]
         return group_dn in group_dn_list
 
-    def test_permission_request(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_permission_request(self, mock_connect):
         c = Client()
         c.login(username='rachel32', password='secret')
 
@@ -89,21 +88,22 @@ class PermissionRequestTest(TestCase):
 
         self.assertTrue(self._user_in_ldap_group('rachel32', 'cn=NDA,ou=groups,dc=example,dc=org'))
 
-
-    def test_filtering(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_filtering(self, mock_connect):
         """Test that users are not given their own requests to approve.
         """
         request = PermissionRequest.objects.create(
             user=self.admin,
             comment='Admin Test',
-            key='cn=NDA,ou=groups,dc=example,dc=org',
+            key='cn=db,ou=groups,dc=example,dc=org',
             system='ldapbackend'
         )
 
         pending = permission_set.get_pending(self.admin).filter(pk=request.pk)
         self.assertEqual(0, pending.count())
 
-    def test_reject_approve(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_reject_approve(self, mock_connect):
         # Create http client for requesting user permissions.
         c = Client()
         c.login(username='rachel32', password='secret')
@@ -186,7 +186,8 @@ class PermissionRequestTest(TestCase):
         # Verify that the user is now in the correct LDAP group
         self.assertTrue(self._user_in_ldap_group('rachel32', 'cn=NDA,ou=groups,dc=example,dc=org'))
 
-    def test_prevalidation(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_prevalidation(self, mock_connect):
         # Test that the current user only has access to one group permission,
         # as the other is marked prevalidate and the user does not have
         # an email address on the correct domain.

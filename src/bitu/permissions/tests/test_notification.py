@@ -1,4 +1,5 @@
-from django.test import TestCase
+from unittest import skip
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core import mail
@@ -20,54 +21,59 @@ User = get_user_model()
 
 class PermissionNotficationTests(TestCase):
     def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        dummy_ldap.setup()
-
-        # Load users which will act as our managers
-        self.manager1 = User(username='glopez')
-        self.manager2 = User(username='yharris')
-        self.manager3 = User(username='carol93')
-        self.manager1.save()
-        self.manager2.save()
-        self.manager3.save()
-
         self.rules = {
             'ldapbackend': {
                 'cn=NDA,ou=groups,dc=example,dc=org': [{
                     'module': 'permissions.validators.manager_approval',
-                    'managers': [self.manager1.get_username(), self.manager2.get_username()],
+                    'managers': ['glopez', 'yharris'],
                     'count': 2
                 }],
                 'cn=staff,ou=groups,dc=example,dc=org': [{
                     'module': 'permissions.validators.manager_approval',
-                    'managers': [self.manager1.get_username(), self.manager3.get_username()],
+                    'managers': ['glopez', 'carol93'],
                     'notify': ['www@example.com', 'business@example.com'],
                     'count': 2
                 }],
-                'cn=www,ou=groups,dc=example,dc=org': [{
+                'cn=db,ou=groups,dc=example,dc=org': [{
                     'module': 'permissions.validators.manager_approval',
-                    'managers': [self.manager2.get_username(), self.manager3.get_username()],
+                    'managers': ['yharris', 'carol93'],
                     'notify': ['admin@example.net', 'staff@example.org'],
                     'count': 2
                 }, {
                     'module': 'permissions.validators.manager_approval',
-                    'managers': [self.manager2.get_username(),],
-                    'notify_group': ['cn=staff,ou=groups,dc=example,dc=org',],
+                    'managers': ['yharris',],
+                    'notify_group': ['cn=db-manager,ou=groups,dc=example,dc=org',],
                     'count': 1
                 }],
             }
         }
 
-    def test_group_notification(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_group_notification(self, mock_connect):
+        manager1 = User(username='glopez')
+        manager2 = User(username='yharris')
+        manager3 = User(username='carol93')
+        manager1.save()
+        manager2.save()
+        manager3.save()
+
         with self.settings(ACCESS_REQUEST_RULES=self.rules):
-            managers = get_user_dns_from_ldap_group(['cn=staff,ou=groups,dc=example,dc=org',])
-            emails = get_notification_email_for_users(managers)
+            members = get_user_dns_from_ldap_group(['cn=db,ou=groups,dc=example,dc=org',])
+            emails = get_notification_email_for_users(members)
 
-            # Our test data has some duplication, so we expect fewer email addresses than managers.
-            self.assertEqual(len(managers), 868)
-            self.assertEqual(len(emails), 865)
+            self.assertEqual(len(members), 4)
+            self.assertEqual(len(emails), 4)
 
-    def test_get_managers(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_get_managers(self, mock_connect):
+        # Load users which will act as our managers
+        manager1 = User(username='glopez')
+        manager2 = User(username='yharris')
+        manager3 = User(username='carol93')
+        manager1.save()
+        manager2.save()
+        manager3.save()
+
         user = User(username='coxsarah')
         user.save()
 
@@ -84,11 +90,11 @@ class PermissionNotficationTests(TestCase):
             PermissionRequest.objects.create(
                 user=user,
                 system='ldapbackend',
-                key='cn=www,ou=groups,dc=example,dc=org',
+                key='cn=db,ou=groups,dc=example,dc=org',
                 comment='Request'
             )
 
-            self.assertEqual(len(mail.outbox), 867)
+            self.assertEqual(len(mail.outbox), 7)
             self.assertEqual(mail.outbox[0].subject, 'Bitu IDM - Pending permission requests')
 
             PermissionRequest.objects.create(
@@ -100,7 +106,7 @@ class PermissionNotficationTests(TestCase):
 
             requests = get_pending_requests('glopez')
             self.assertEqual(len(requests), 1)
-            self.assertEqual(len(mail.outbox), 869)  # Two new email, plus the 867 previous
+            self.assertEqual(len(mail.outbox), 9)  # 2 new email, plus the 7 previous
 
             requests = get_pending_requests('yharris')
             self.assertEqual(len(requests), 1)

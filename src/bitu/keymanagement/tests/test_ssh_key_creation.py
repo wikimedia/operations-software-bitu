@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
@@ -14,19 +16,14 @@ from paramiko.rsakey import RSAKey
 
 class ValidatorTest(TestCase):
     def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        # Required because we have the LDAPBackend installed and enabled.
-        dummy_ldap.setup()
-        dummy_ldap.create_test_users()
-
+        self.client = Client()
         self.user, _ = User.objects.get_or_create(username='rachel32')
         self.user.set_password('secret')
         self.user.save()
-
-        self.client = Client()
         self.client.login(username='rachel32', password='secret')
 
-    def test_create_insecure(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_create_insecure(self, mock_connect):
         """Test that only explicitly allowed key types are accepted.
         """
         dsa_key = 'ssh-dss AAAAB3NzaC1kc3MAAACBAJWKnNZ0FKMM1AOx78yPumR2YDGVrWN1IsEq+9oRHwofhmfLdVkRLXGmemapbXnSzFEqMsJiXziMqzxOBvvX+e/QE2FOvr3vUZgunHDcdi9lCb+7kPY6Vmc4k8nDyKwTWGlPm6dif3OQmtQXZcGGmm0uN6evfIGrt6c1czUvcCINAAAAFQDNYQ3Zea/1HVoZfTP0ZKC7qZZsTQAAAIEAhLjEpoHHus53XJ/O0cc9OCnNmOS4szU5sOefmBb3T0QOxtd8rloC72PIW+ErPgaKZFqjwHYmQhuwrSPl9yZARW+keYYizNUGFt6SWNaqBuqJzMTK9n8LmXQZiRE8B5YvdglHRNvs+XQpVAilk3pLXq2C5+wfTN7j/z40qRUvUGMAAACARNx1niuooHytbCY4ci5hOxUiuEokG7I4/WJyRyN403gnE+oYpKXEk4oYG45lSlCHofhlNyV4LMxg2ozhYu6I0Zc3ffzItlC702X81xCPWtfBEcyXvCL/6+1xYpn65X4nxLtrIAIFpH6h2SVHyBzJViMiwxJmqmXl7ztwH6PFV1w= Bitu DSA Test Key'  # noqa
@@ -41,7 +38,8 @@ class ValidatorTest(TestCase):
             self.assertContains(response, 'Key type ssh-dss')
             self.assertEqual(0, keys.count())
 
-    def test_create_view_dublication(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_create_view_dublication(self, mock_connect):
         """Test that the create view will trigger and respond correctly to in use validator.
         """
         key1 = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINTXBZrJkodCzdfHkuKy2+/yPHLrMkkMYWfIuDGaJy8t Bitu ED25519 Test Key 1'  # noqa
@@ -66,7 +64,8 @@ class ValidatorTest(TestCase):
         self.assertContains(response, key1)
         self.assertEqual(keys[0], self.user.ssh_keys.all()[0])
 
-    def test_create_view_sanitized(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_create_view_sanitized(self, mock_connect):
         key1 = '   ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAkTVYhMVOooNQwfxURKnFYav/huLuSh3B+vFiLm4UrL Bitu ED25519 Test Key 3'  # noqa
         create_url = reverse('keymanagement:create')
         response = self.client.post(create_url, {'comment': 'Whitespace Test', 'ssh_public_key': key1, 'system': 'ldapbackend'})

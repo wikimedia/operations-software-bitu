@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from keymanagement.models import SSHKey
 
 import bituldap
@@ -14,16 +15,14 @@ User = get_user_model()
 
 class LDAPSSHPublicKeyTest(TestCase):
     def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        dummy_ldap.setup()
-
         # Hook up fakeredis
         # django_rq.queues.get_redis_connection = get_fake_connection
 
         self.test_key1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE98KdrOV7JohIuejhoxwkhU4tXmyrscPCWDqeVAVXj3 Bitu test key 1"  # noqa: E501 line too long
         self.test_key2 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOxNideuQLvciH5ssbXrJAGUW4oPNVOcBJ/RlLQ5CEOI Bitu test key 2"  # noqa: E501 line too long
 
-    def test_ldap_key_storage(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_ldap_key_storage(self, mock_connect):
         user = User(username='scott72')
         ldap = bituldap.get_user(user)
 
@@ -45,7 +44,8 @@ class LDAPSSHPublicKeyTest(TestCase):
         self.assertIn(key2, ldap.sshPublicKey)
         self.assertEqual(len(ldap.sshPublicKey), 2)
 
-    def test_ssh_key_objects(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_ssh_key_objects(self, mock_connect):
         user = User(username='acarr')
         user.save()
 
@@ -100,7 +100,8 @@ class LDAPSSHPublicKeyTest(TestCase):
         self.assertEqual(len(ldap.sshPublicKey), 1)
         self.assertNotIn(ssh_key.key_as_byte_string, ldap.sshPublicKey)
 
-    def test_ldap_key_load(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_ldap_key_load(self, mock_connect):
         user = User(username='tina93')
         user.save()
 
@@ -125,7 +126,8 @@ class LDAPSSHPublicKeyTest(TestCase):
         self.assertEqual(len(ldap.sshPublicKey), 2)
         self.assertEqual(SSHKey.objects.filter(user=user).count(), 2)
 
-    def test_force_unsync(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_force_unsync(self, mock_connect):
         key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID4iz39KixPqiHBYBEjU3ZkEI7DpaLnXBqFNSjGqLWmI Bitu Test Key"
         user, _ = User.objects.get_or_create(username='ahall')
         ldap = bituldap.get_user(user.get_username())
@@ -140,7 +142,8 @@ class LDAPSSHPublicKeyTest(TestCase):
         self.assertEqual(key_obj.comment, 'Bitu Test Key')
         self.assertEqual(key_obj.system, 'ldapbackend')
 
-    def test_comment_cut_off(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_comment_cut_off(self, mock_connect):
         key1 = b"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBYfq+2dvlEWhIHOLL9BSXoxBm6mwU7mydyikBKDJPUM Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ridiculus mus mauris vitae ultricies leo integer malesuada. Mollis aliquam ut porttitor leo a diam sollicitudin tempor id. Integer enim neque volutpat ac tincidunt vitae. Eu nisl nunc mi ipsum faucibus vitae. Pretium aenean pharetra magna ac placerat. Pharetra vel turpis nunc eget lorem dolor sed viverra. Ac ut consequat semper viverra nam libero. Ut enim blandit volutpat maecenas volutpat blandit aliquam etiam erat. Aliquet enim tortor at auctor urna. Ultrices gravida dictum fusce ut placerat orci nulla."  # noqa: E501 line too long
         key2 = b"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGmGHA9lWHG88gMJ+XYABoOve2zqPiOB+WiPwBakWXAh Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ridiculus mus mauris vitae ultricies leo integer malesuada. Mollis aliquam ut porttitor leo a diam sollicitudin tempor id. Integer e  \n "  # noqa: E501 line too long
 
@@ -153,7 +156,8 @@ class LDAPSSHPublicKeyTest(TestCase):
         self.assertEqual(comment1, expected)
         self.assertEqual(comment2, expected)
 
-    def test_duplicate_keys(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_duplicate_keys(self, mock_connect):
         key1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKB2+iW03Y5zAEQCw0+h0b9Y/1wcvFy7Vl+UbOwx8iaC LDAP duplication 1"
         key2 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKB2+iW03Y5zAEQCw0+h0b9Y/1wcvFy7Vl+UbOwx8iaC LDAP duplication 1\n"
 
@@ -177,7 +181,8 @@ class LDAPSSHPublicKeyTest(TestCase):
         ldap = bituldap.get_user(user.get_username())
         self.assertEqual(len(ldap.sshPublicKey), 0)
 
-    def test_key_cleanup(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_key_cleanup(self, mock_connect):
         key1 = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC5slfyq3JcGv71K52pitHk+v5M7xSVgKT2zG7sgVcWvq+6aYzKxRE6HyPMSjW3NbVWre9673lz/hiTbqdGCf/l4IngQSjh3HHeZgILgpe1Jsgh2vGXEmEj/FBQSDmET4+m+xL5o+PZhXvhe55MQk1xq2tJM+UrfRrU5dhrhGLlh8Arl/8Ik3YWD7Q9PdmJB9vwWVvCBs10Vw55BYTDR4lSz3nkQa8UFjLhtruMpVBwmQ1e+sY8zR7Hd+C0H3Y6tL10RsSMuGiRJcMriQ8dOMa/tLMhMHbZ/+GAxaVlF0hJtsbWRN+xJ3clophZz7uD57MGa79lEQkiPzjl9Kfsjm4W1gFMaC/OovWIHZvGfIW4lx+o9KGG+SJAOVlCBPyk01xOmBHPDyNIebjepUsHk7MMDFFTSdqbkGcBgCRcjdyzLYW+s82E2ybs7c2wHH+uhcnxOn4GWHeWwPH+ZkHY1q4N3/1W+1hMLMooUPQLAZ4vzqzgtyGn9mN356bTzQ1yTyc=    \n"  # noqa: E501 line too long
         key2 = "           ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC5slfyq3JcGv71K52pitHk+v5M7xSVgKT2zG7sgVcWvq+6aYzKxRE6HyPMSjW3NbVWre9673lz/hiTbqdGCf/l4IngQSjh3HHeZgILgpe1Jsgh2vGXEmEj/FBQSDmET4+m+xL5o+PZhXvhe55MQk1xq2tJM+UrfRrU5dhrhGLlh8Arl/8Ik3YWD7Q9PdmJB9vwWVvCBs10Vw55BYTDR4lSz3nkQa8UFjLhtruMpVBwmQ1e+sY8zR7Hd+C0H3Y6tL10RsSMuGiRJcMriQ8dOMa/tLMhMHbZ/+GAxaVlF0hJtsbWRN+xJ3clophZz7uD57MGa79lEQkiPzjl9Kfsjm4W1gFMaC/OovWIHZvGfIW4lx+o9KGG+SJAOVlCBPyk01xOmBHPDyNIebjepUsHk7MMDFFTSdqbkGcBgCRcjdyzLYW+s82E2ybs7c2wHH+uhcnxOn4GWHeWwPH+ZkHY1q4N3/1W+1hMLMooUPQLAZ4vzqzgtyGn9mN356bTzQ1yTyc=    \n"  # noqa: E501 line too long
 

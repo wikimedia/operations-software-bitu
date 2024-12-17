@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from django.test import TestCase
 from django.test import Client
 from django.urls import reverse
@@ -5,14 +6,8 @@ from django.urls import reverse
 from accounts.models import User, Token
 from ldapbackend.tests import dummy_ldap
 
-
 class TokenUIAccessTest(TestCase):
     def setUp(self) -> None:
-        # Setup a mock LDAP server.
-        # Required because we have the LDAPBackend installed and enabled.
-        dummy_ldap.setup()
-        dummy_ldap.create_test_users()
-
         self.user, _ = User.objects.get_or_create(username='rachel32')
         self.user.set_password('secret')
         self.user.save()
@@ -24,7 +19,8 @@ class TokenUIAccessTest(TestCase):
         self.client = Client()
         self.client.login(username='rachel32', password='secret')
 
-    def test_keylisting(self):
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_keylisting(self, mock_connect):
         response = self.client.get(reverse('accounts:api_tokens'))
         self.assertContains(response, 'You do not current have any tokens.')
 
