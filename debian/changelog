@@ -1,3 +1,9 @@
+bitu (0.1.6) bookworm-wikimedia; urgency=low
+
+  * Fix spelling in notification emails.
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Wed, 18 Dec 2024 08:32:02 +0200
+
 bitu (0.1.5) bookworm-wikimedia; urgency=low
 
   * Improvements to workflow and language in permission handling.
