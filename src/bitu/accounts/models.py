@@ -26,10 +26,14 @@ class User(AbstractUser):
         self.__ldap_user = None
 
     @property
-    def _ldap_user(self):
+    def ldap_entry(self):
         if self.__ldap_user is None:
             self.__ldap_user = bituldap.get_user(self.get_username())
         return self.__ldap_user
+
+    @property
+    def ldap_groups(self):
+        return bituldap.member_of(self.ldap_entry.entry_dn)
 
     @property
     def allow_api_usage(self):
@@ -57,7 +61,7 @@ class User(AbstractUser):
         account_manager_groups = set(account_manager_groups)
 
         # Get the DN of all groups the user is a member of.
-        groups = [entry.entry_dn for entry in bituldap.member_of(self._ldap_user.entry_dn)]
+        groups = [entry.entry_dn for entry in bituldap.member_of(self.ldap_entry.entry_dn)]
 
         # Check if the account manager group DN is present in the list of LDAP group
         # memberships.
@@ -66,9 +70,9 @@ class User(AbstractUser):
 
     @property
     def display_signed_in_as(self):
-        if self._ldap_user is None or self._ldap_user.cn == self.get_username():
+        if self.ldap_entry is None or self.ldap_entry.cn == self.get_username():
             return self.get_username()
-        return f'{self._ldap_user.cn} / {self.get_username()}'
+        return f'{self.ldap_entry.cn} / {self.get_username()}'
 
 
 @dataclass

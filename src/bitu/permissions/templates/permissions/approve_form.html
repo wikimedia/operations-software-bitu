@@ -13,6 +13,15 @@
   </h2>
   <p>
     <strong>{% translate "User" %}: </strong>{{ request.user.username }}<br>
+    <strong>{% translate "Email" %}:</strong> {{ request.user.ldap_entry.mail }}<br>
+    <strong>{% translate "Wikimedia Global Account (SUL)" %}:</strong>
+    {% if request.user.ldap_entry.wikimediaGlobalAccountId %}
+    {{ request.user.ldap_entry.wikimediaGlobalAccountName }} ({{ request.user.ldap_entry.wikimediaGlobalAccountId }})
+    {% else %}
+     --
+    {% endif %}<br>
+    <strong>{% translate "Groups"%}:</strong>
+      {% for group in request.user.ldap_groups %}{{ group.cn }} / {% endfor %}<br>
     <strong>{% translate "Request date" %}: </strong>{{ request.created }}<br>
     <strong>{% translate "Ticket" %}: </strong>{{ request.ticket|ticket_link }}<br>
     <strong>{% translate "Comment" %}</strong>: <br>
