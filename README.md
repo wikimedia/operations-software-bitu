@@ -43,3 +43,10 @@ This is a LDAP backed Django superuser, which can also access the Django admin i
 The OpenLDAP container is accessible on openldap.local.wmftest.net, port: 1389, using the username: 'cn=admin,dc=example,dc=org' and password: 'adminpassword'.
 
 MariaDB can be accessed on db.local.wmftest.net, port 3306, using either the username: "idm", password: "secret", which will grant you access to the idm database, backing the Bitu environment. For root access to MariaDB please use username: 'root', password: 'password'
+
+### Renew keystore for CAS container
+CAS is exposed via https, which means including a certificate. This certificate has a 90 expiration and will routinely need to be updated/regenerated. This can be done using the following command:
+
+```
+keytool -genkeypair -alias cas -keyalg RSA -keypass changeit -storepass changeit -keystore docker/cas/keystore.jks -dname "CN=cas.example.org,OU=Example,OU=Org,C=US" -storetype PKCS12 -ext "SAN=dns:example.org,dns:localhost,ip:127.0.0.1"
+```

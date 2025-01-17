@@ -1,0 +1,48 @@
+{% extends 'hero_codex.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+{% translate "Wikimedia Identity Manager - Signin" %}
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="hero">
+    <div id="cookie_error" class="warning" style="display: none;">
+        <div class="cdx-message cdx-message--block cdx-message--warning" aria-live="polite">
+            <span class="cdx-message__icon"></span>
+              <div class="cdx-message__content">
+                {% blocktranslate %}
+                Your browser does not have cookies enabled, this will prevent you from signing in.
+                {% endblocktranslate %}
+              </div>
+        </div>
+    </div>
+
+    <h2>DEVELOPER SYSTEM</h2>
+
+    <form action="{% url 'social:begin' 'oidc' %}">
+    <button id="auth" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
+        <span>{% translate "Wikimedia Developer Single Sign On" %}</span>
+    </button>
+    </form>
+    <p>
+        {% url 'signups:signup' as signup_url %}
+        {% blocktrans %}
+        Don't have an account? Go to <a href="{{ signup_url }}">Create Account</a>
+        {% endblocktrans %}
+    </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+
+if(!navigator.cookieEnabled){
+    var cookie_error = document.getElementById('cookie_error')
+    cookie_error.style.display = 'block';
+}
+</script>
+{% endblock %}

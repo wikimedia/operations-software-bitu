@@ -1,0 +1,8 @@
+<Logger name="org.apereo.cas.oidc" level="debug" additivity="false">
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
+</Logger>
+<Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
+</Logger>

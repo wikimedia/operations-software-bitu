@@ -198,11 +198,10 @@ BITU_SSH_KEY_VALIDATOR = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    "django_auth_ldap.backend.LDAPBackend",
+    "social_core.backends.open_id_connect.OpenIdConnectAuth",
     "social_core.backends.mediawiki.MediaWiki",
     "django.contrib.auth.backends.ModelBackend",
 ]
-
 
 AUTH_LDAP_BIND_DN = "cn=admin,dc=example,dc=org"
 AUTH_LDAP_BIND_PASSWORD = "adminpassword"
@@ -232,16 +231,26 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 }
 
 
+SOCIAL_AUTH_OIDC_OIDC_ENDPOINT = 'https://localhost:8443/cas/oidc'
+SOCIAL_AUTH_OIDC_KEY = 'bitu'
+SOCIAL_AUTH_OIDC_SECRET = 'B015CFC3-A076-425D-B20C-DD9E48C1AF6E'
+SOCIAL_AUTH_OIDC_USERINFO_URL = 'https://localhost:8443/cas/oidc/profile'
+SOCIAL_AUTH_OIDC_SCOPE = ['openid', 'profile', 'email', 'groups']
+SOCIAL_AUTH_OIDC_ID_KEY = 'username'
+
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
-    'social_core.pipeline.social_auth.associate_by_email',
     'social_core.pipeline.user.create_user',
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
+)
+
+SOCIAL_AUTH_AUTHENTICATION_BACKENDS = (
+    'social_core.backends.open_id_connect.OpenIdConnectAuth',
 )
 
 # Byparse most pipelines to avoid issues with groups and
@@ -252,11 +261,15 @@ SOCIAL_AUTH_MEDIAWIKI_PIPELINE = (
 
 SOCIAL_AUTH_MEDIAWIKI_URL = 'https://meta.wikimedia.org/w/index.php'
 SOCIAL_AUTH_MEDIAWIKI_CALLBACK = 'http://localhost:8000/complete/mediawiki'
+SOCIAL_AUTH_VERIFY_SSL = False
+
 
 # Uncomment the lines below to test wikimedia IDP integration, leave commented
 # in developer environment to use LDAP backend directly.
-# LOGOUT_REDIRECT_URL = 'wikimedia:login'
-# LOGIN_URL = LOGOUT_REDIRECT_URL
+LOGOUT_REDIRECT_URL = 'wikimedia:login'
+LOGIN_URL = LOGOUT_REDIRECT_URL
+LOGIN_TEMPLATE = "oidc_login_dev.html"
+
 CAPTCHA_CHALLENGE_FUNCT = 'signups.forms.captcha_input_generator'
 CAPTCHA_IMAGE_SIZE = (130,40)
 CAPTCHA_FONT_SIZE = 28

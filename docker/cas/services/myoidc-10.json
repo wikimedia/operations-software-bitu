@@ -1,0 +1,38 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "name": "bitu",
+  "serviceId": "http://localhost:8000/complete/oidc/",
+  "attributeReleasePolicy": {
+      "@class": "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  },
+  "id": 10,
+  "accessStrategy": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy"
+  },
+  "clientId": "bitu",
+  "clientSecret": "B015CFC3-A076-425D-B20C-DD9E48C1AF6E",
+  "userProfileViewType": "FLAT",
+  "bypassApprovalPrompt": true,
+  "supportedResponseTypes": [
+      "java.util.HashSet",
+      [
+          "code"
+      ]
+  ],
+  "supportedGrantTypes": [
+      "java.util.HashSet",
+      [
+          "authorization_code"
+      ]
+  ],
+  "scopes": [
+      "java.util.HashSet",
+      [
+          "profile",
+          "openid",
+          "email",
+          "groups",
+          "memberOf"
+      ]
+  ]
+}
