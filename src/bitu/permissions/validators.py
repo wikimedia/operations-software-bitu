@@ -68,3 +68,30 @@ def email_domain(permission_request, **kwargs):
     # ensure that the @ is included.
     entry = bituldap.get_user(permission_request.user.get_username())
     return entry.mail.__str__().endswith(f'@{kwargs["domain"]}'), True
+
+
+def ldap_group_membership(permission_request, **kwargs) -> tuple[bool, bool]:
+    """Validate that a user is a member of an LDAP group.
+    The validator will return true if the requesting user is in the indicated
+    LDAP group (groupOfNames).
+
+    Args:
+        permission_request (PermissionRequest): Permission Request object
+        group_dn (str): Parsed as kwargs to provide a generic interface to all
+                        validators. Must be a full DN.
+
+    Returns:
+        tuple[bool, bool]: Returns to boolean.
+                           First boolean indicates if the condition has been met.
+                           Second boolean tells the consumer if enough information was
+                           present to correctly validate the condition. This will always
+                           be true for this validator, as the validation is a simple
+                           membership check.
+    """
+    entry = bituldap.get_user(permission_request.user.get_username())
+    groups = bituldap.member_of(entry.entry_dn)
+    required_group = kwargs["group_dn"]
+    for group in groups:
+        if group.entry_dn == required_group:
+            return True, True
+    return False, True

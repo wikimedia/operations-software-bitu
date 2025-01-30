@@ -6,6 +6,7 @@ from django.test import TestCase
 
 from ldapbackend.tests import dummy_ldap
 from permissions.models import PermissionRequest, Log as PermissionLog
+from permissions.validators import ldap_group_membership
 
 User = get_user_model()
 
@@ -44,6 +45,10 @@ class PermissionRequestApprovalTest(TestCase):
                     'attribute': 'loginShell',
                     'operator': '__eq__',
                     'value': '/bin/ksh'
+                }],
+                'cn=management,ou=groups,dc=example,dc=org': [{
+                    'module': 'permissions.validators.ldap_group_membership',
+                    'group_dn': 'cn=staff,ou=groups,dc=example,dc=org',
                 }],
             }
         }
@@ -182,3 +187,60 @@ class PermissionRequestApprovalTest(TestCase):
             pr.refresh_from_db
 
             self.assertTrue(pr.status == pr.APPROVED)
+
+    def test_ldap_group_accept_validation(self):
+        # Get a test users
+        user = User(username='kevin48')
+        user.save()
+
+        pr = PermissionRequest(user=user)
+        pr.system = 'ldapbackend'
+        pr.key = 'cn=management,ou=groups,dc=example,dc=org'
+        pr.comment = 'Request for management access'
+        pr.save()
+
+        entry = bituldap.get_user(user.get_username())
+        print([entry.entry_dn for entry in bituldap.member_of(entry.entry_dn)])
+
+        with self.settings(ACCESS_REQUEST_RULES=self.rules):
+            self.assertEqual(len(pr.rules), 1)
+
+            # Run "prevalidator"
+            valid, processed = ldap_group_membership(pr, group_dn='cn=staff,ou=groups,dc=example,dc=org')
+            self.assertTrue(valid)
+            self.assertTrue(processed)
+
+            # Test that prevalidation didn't accidentally approve the request
+            self.assertFalse(pr.status == pr.APPROVED)
+
+            pr.validate()
+            pr.refresh_from_db
+
+            self.assertTrue(pr.status == pr.APPROVED)
+
+    def test_ldap_group_reject_validation(self):
+        # Get a test users
+        user = User(username='coxsarah')
+        user.save()
+
+        pr = PermissionRequest(user=user)
+        pr.system = 'ldapbackend'
+        pr.key = 'cn=management,ou=groups,dc=example,dc=org'
+        pr.comment = 'Request for management access'
+        pr.save()
+
+        with self.settings(ACCESS_REQUEST_RULES=self.rules):
+            self.assertEqual(len(pr.rules), 1)
+
+            # Run "prevalidator"
+            valid, processed = ldap_group_membership(pr, group_dn='cn=staff,ou=groups,dc=example,dc=org')
+            self.assertFalse(valid)
+            self.assertTrue(processed)
+
+            # Test that prevalidation didn't accidentally approve the request
+            self.assertFalse(pr.status == pr.APPROVED)
+
+            pr.validate()
+            pr.refresh_from_db
+
+            self.assertFalse(pr.status == pr.APPROVED)

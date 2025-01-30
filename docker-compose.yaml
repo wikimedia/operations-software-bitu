@@ -10,7 +10,7 @@ services:
       - "2389:389"
     volumes:
       - type: bind
-        source: $PWD/docker/openldap/test_data
+        source: docker/openldap/test_data/
         target: /ldifs
     networks:
       default:
