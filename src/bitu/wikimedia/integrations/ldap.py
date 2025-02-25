@@ -4,13 +4,32 @@ import bituldap
 
 from django.conf import settings
 from django.utils import timezone
-from ldap3 import SUBTREE, MODIFY_REPLACE, MODIFY_DELETE
+from ldap3 import (SUBTREE, MODIFY_REPLACE, MODIFY_DELETE,
+                   Connection, ObjectDef, Reader)
+from ldap3.core.exceptions import LDAPBindError
 
 
 logger = logging.getLogger('bitu')
 
 
 class LDAP():
+    def _user_definition(self, conn: Connection) -> ObjectDef:
+        """Get object definition of LDAP3 query.
+        The object definition will be used to map attributes onto the Entry objects.
+
+        Args:
+            conn (Connection): LDAP connection
+
+        Returns:
+            ObjectDef: Object definition for users, including auxiliary classes.
+        """
+        config = bituldap.read_configuration()
+        return ObjectDef(
+            config.users.object_classes,
+            conn,
+            auxiliary_class=config.users.auxiliary_classes
+        )
+
     def fetch_entry(self, uid) -> dict:
         success, conn = bituldap.create_connection()
         conn.search(
@@ -23,6 +42,26 @@ class LDAP():
             raise Exception(f'ldap blocking, failed to lookup user, username: {uid}\
 , success: {success}, results: {len(conn.response)}')
         return conn.response[0]
+
+    def query(self, query: str, escape_filter_chars:bool = False) -> Reader:
+        """Search LDAP and return a reader object (iterable Entry objects.)
+
+        Args:
+            query (str): LDAP query
+            escape_filter_chars (bool, optional): Whether or not to escape LDAP filter characters. Defaults to False.
+
+        Returns:
+            Reader: Read-Only iterable Entry objects.
+        """
+        success, conn = bituldap.create_connection()
+        if not success:
+            raise LDAPBindError()
+        dn = settings.BITU_LDAP['users']['dn']
+        if escape_filter_chars:
+            query = escape_filter_chars(query)
+        reader = Reader(conn, self._user_definition(conn), dn, query)
+        reader.search()
+        return reader
 
     def block_user(self, uid):
         entry = self.fetch_entry(uid)

@@ -175,7 +175,10 @@ class BlockUserView(AccountManagersPermissionMixin, CreateView):
         return l.fetch_entry(self.kwargs['username'])
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        # Get username from URL parameter and lookup LDAP user.
+        # Add LDAP user to context.
+        # Note that this is NOT a standard Entry objects and those will
+        # not have the attributes we're interested in here, those being
+        # information on policies/account blocking.
         context = super().get_context_data(**kwargs)
         context['user'] = self.get_ldap_user()
         return context
@@ -195,7 +198,7 @@ class BlockUserView(AccountManagersPermissionMixin, CreateView):
         return initial
 
     def form_valid(self, form: Any) -> HttpResponse:
-        user = self.get_ldap_user()
+        user = bituldap.get_user(self.kwargs['username'])
         if form.is_valid():
             if form.cleaned_data['created_by'] != self.request.user.get_username():
                 # Form data manipulated.
@@ -227,6 +230,7 @@ class UnBlockUserView(BlockUserView):
 class BlockUserSearch(AccountManagersPermissionMixin, FormView):
     form_class = BlockUserSearchForm
     template_name = 'wikimedia/block_user_search.html'
+    l = LDAP()
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         # Django doesn't really have a good way to do search view.
@@ -237,25 +241,17 @@ class BlockUserSearch(AccountManagersPermissionMixin, FormView):
         return super().post(request, *args, **kwargs)
 
     def search(self, value):
-        # Setup bitulap for generic user queries.
-        query_options = bituldap.read_configuration().users
-        _, connection = bituldap.create_connection()
-        object_def = bituldap.ObjectDef(query_options.object_classes,
-                           connection,
-                           auxiliary_class=query_options.auxiliary_classes)
-
-
-        # Query is an email.
+        # The search term is probably an email.
         if '@' in value:
-            return bituldap.ldap_query(connection=connection, object_def=object_def, dn=query_options.dn, query=f'mail: {value}*')
+            return self.l.query(f'mail: {value}*')
 
         # Search both CN and UID in LDAP and add to entries dict for de-duplication.
         # Bituldap utilized the LDAP3 abstraction layer, which does not easily to OR queries. Instead we do two queries and merge
         # the results based on DN.
         entries = {}
-        for entry in bituldap.ldap_query(connection=connection, object_def=object_def, dn=query_options.dn, query=f'CommonName: {value}*'):
+        for entry in self.l.query(f'CommonName: {value}*'):
             entries[entry.entry_dn] = entry
-        for entry in bituldap.ldap_query(connection=connection, object_def=object_def, dn=query_options.dn, query=f'uid:{value}*'):
+        for entry in self.l.query(f'uid:{value}'):
             entries[entry.entry_dn] = entry
 
         return entries.values()

@@ -47,7 +47,7 @@
           {% for user in users %}
           <tr>
             <td>{{ user.cn }}</td>
-            <td>{{ user.uid}} </td>
+            <td>{{ user.uid}}</td>
             <td>{{ user.mail }}</td>
             <th scope="col" class="cdx-table__table__cell--align-number"><a href="{% url "wikimedia:block_eventlog" user.uid %}">View logs</a></th>
             <td class="cdx-table__table__cell--align-number">
