@@ -10,10 +10,17 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('days', type=int, default=30, help='Maximum number of days to keep.')
+
         parser.add_argument(
             '--check',
             action='store_true',
             help='List signups eligible for deletion.',
+        )
+
+        parser.add_argument(
+            '--uid',
+            type=str,
+            help='Delete signup request for a single username/uid'
         )
 
     def handle(self, *args, **options):
@@ -21,7 +28,10 @@ class Command(BaseCommand):
         today = timezone.now()
         expire_date = today - timedelta(days=options['days'])
 
-        signups = Signup.objects.filter(created_date__lt=expire_date)
+        if options['uid']:
+            signups = Signup.objects.filter(uid=options['uid'])
+        else:
+            signups = Signup.objects.filter(created_date__lt=expire_date)
 
         if options['check']:
             for signup in signups:
