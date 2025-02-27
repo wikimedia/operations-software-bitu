@@ -1,6 +1,7 @@
 {
   "@class": "org.apereo.cas.services.OidcRegisteredService",
-  "name": "bitu",
+  "name": "IDM",
+  "description": "Wikimedia Identity Manager",
   "serviceId": "http://localhost:8000/complete/oidc/",
   "attributeReleasePolicy": {
       "@class": "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"

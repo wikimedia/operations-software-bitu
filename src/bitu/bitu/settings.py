@@ -231,10 +231,10 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 }
 
 
-SOCIAL_AUTH_OIDC_OIDC_ENDPOINT = 'https://localhost:8443/cas/oidc'
+SOCIAL_AUTH_OIDC_OIDC_ENDPOINT = 'https://localhost:8443/oidc'
 SOCIAL_AUTH_OIDC_KEY = 'bitu'
 SOCIAL_AUTH_OIDC_SECRET = 'B015CFC3-A076-425D-B20C-DD9E48C1AF6E'
-SOCIAL_AUTH_OIDC_USERINFO_URL = 'https://localhost:8443/cas/oidc/profile'
+SOCIAL_AUTH_OIDC_USERINFO_URL = 'https://localhost:8443/oidc/profile'
 SOCIAL_AUTH_OIDC_SCOPE = ['openid', 'profile', 'email', 'groups']
 SOCIAL_AUTH_OIDC_ID_KEY = 'username'
 
