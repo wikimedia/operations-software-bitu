@@ -153,6 +153,9 @@ class PermissionRequest(models.Model):
         backend = permission_set._backends[self.system]
         backend.grant(self.user, self.permission)
 
+    def list_approvals(self):
+        return self.log_set.filter(approved=True).order_by("-created")
+
 
 class Log(models.Model):
     created = models.DateTimeField(auto_now_add=True)

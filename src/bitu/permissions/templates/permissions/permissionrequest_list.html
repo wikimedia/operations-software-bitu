@@ -36,7 +36,15 @@
               </td>
               <td>{{ request.user }}</td>
               <td>{{ request.comment }}</td>
-              <td>{{ request.get_status_display }}</td>
+              <td>{{ request.get_status_display }}
+                {% if request.list_approvals %}
+                {% blocktranslate count approvals=request.list_approvals|length %}
+                ({{ approvals }} approval)
+                {% plural %}
+                ({{ approvals}} approvals)
+                {% endblocktranslate %}
+                {% endif %}
+              </td>
               <td>
                 <a href="{% url 'permissions:approve' request.pk %}" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled  cdx-button--weight-primary cdx-button--action-progressive">{% translate "Review request" %}</a>
               </td>
