@@ -1,3 +1,12 @@
+bitu (0.1.7) bookworm-wikimedia; urgency=low
+
+  * Fix bug in account blocking/unblocking (T385947).
+  * Add new LDAP group membership validator.
+  * Improvements to permission approval flow.
+  * Add support email to password reset page.
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Mon, 11 Mar 2025 12:24:52 +0200
+
 bitu (0.1.6) bookworm-wikimedia; urgency=low
 
   * Fix spelling in notification emails.
