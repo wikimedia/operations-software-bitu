@@ -241,6 +241,10 @@ class BlockUserSearch(AccountManagersPermissionMixin, FormView):
         return super().post(request, *args, **kwargs)
 
     def search(self, value):
+        # Empty search input.
+        if not value:
+            return []
+
         # The search term is probably an email.
         if '@' in value:
             return self.l.query(f'mail: {value}*')
@@ -260,6 +264,8 @@ class BlockUserSearch(AccountManagersPermissionMixin, FormView):
         # Handle returns from block and unblock pages. The q parameter is parsed back to trigger a
         # search for the user currently being blocked/unblocked.
         context = super().get_context_data(**kwargs)
+        context["query"] = ""
+        context["users"] = []
         if 'q' in self.request.GET:
             context['query'] = self.request.GET['q']
             context['users'] = self.search(self.request.GET['q'])
