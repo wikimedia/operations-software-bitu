@@ -63,7 +63,7 @@ class LDAP():
         reader.search()
         return reader
 
-    def block_user(self, uid):
+    def block_user(self, uid: str):
         entry = self.fetch_entry(uid)
         timestamp = timezone.now().strftime('%Y%m%d%H%MZ')
         success, conn = bituldap.create_connection()

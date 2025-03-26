@@ -62,7 +62,7 @@ class Gerrit():
             raise Exception('Failed to updated user in Gerrit')
 
     def block_user(self, uid):
-        self.update_user(uid, True)
+        self.update_user(uid, block=True)
 
     def unblock_user(self, uid):
-        self.update_user(uid, False)
+        self.update_user(uid, block=False)
