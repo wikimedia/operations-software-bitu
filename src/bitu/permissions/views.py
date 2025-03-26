@@ -122,5 +122,5 @@ class PermissionRequestList(ListView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context['logs'] = PermissionLog.objects.filter(created_by=self.request.user).order_by('-created')[:50]
+        context['logs'] = PermissionLog.objects.order_by('-created')[:50]
         return context
