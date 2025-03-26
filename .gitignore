@@ -9,3 +9,4 @@ docs/build
 build
 debian/*.debhelper
 src/bitu/bitu/local_settings.py
+docker/cas/keystore.jks
