@@ -23,7 +23,6 @@
     <strong>{% translate "Groups"%}:</strong>
       {% for group in request.user.ldap_groups %}{{ group.cn }} / {% endfor %}<br>
     <strong>{% translate "Request date" %}: </strong>{{ request.created }}<br>
-    <strong>{% translate "Ticket" %}: </strong>{{ request.ticket|ticket_link }}<br>
     <strong>{% translate "Comment" %}</strong>:  {{ request.comment }}<br>
     <strong>{% translate "Log" %}</strong>:
     <ul>

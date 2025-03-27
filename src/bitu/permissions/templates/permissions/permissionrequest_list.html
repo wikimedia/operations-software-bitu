@@ -64,7 +64,6 @@
     <h4>{% translate "Your approvals and rejects for the last 60 days" %}</h4>
   {% if logs %}
   <div class="cdx-table">
-    <!-- Header has been omitted since there is no header content. -->
     <div class="cdx-table__table-wrapper">
       <table class="cdx-table__table">
         <caption>
@@ -72,9 +71,10 @@
         </caption>
         <thead>
           <tr>
+            <th scope="col">{% translate "Created" %}</th>
             <th scope="col">{% translate "Permission" %}</th>
-            <th scope="col">{% translate "User" %}</th>
-            <th scope="col">{% translate "Ticket" %}</th>
+            <th scope="col">{% translate "Approver" %}</th>
+            <th scope="col">{% translate "Requesting user" %}</th>
             <th scope="col">{% translate "Status" %}</th>
             <th scope="col">{% translate "Comment" %}</th>
           </tr>
@@ -82,9 +82,10 @@
         <tbody>
           {% for log in logs %}
           <tr>
+            <td>{{ log.created }}</td>
             <td>{{ log.request.permission.name|capfirst }} ({{ log.request.permission.source_display }})</td>
+            <td>{{ log.created_by }}</td>
             <td>{{ log.request.user }}</td>
-            <td>{{ log.request.ticket|ticket_link }}</td>
             <td>{% if log.approved %}{% translate "Approved" %}{% else %}{% translate "Rejected" %}{% endif %}</td>
             <td>{{ log.comment }}</td>
           </tr>
