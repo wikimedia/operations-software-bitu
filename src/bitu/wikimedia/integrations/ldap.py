@@ -67,6 +67,7 @@ class LDAP():
         entry = self.fetch_entry(uid)
         timestamp = timezone.now().strftime('%Y%m%d%H%MZ')
         success, conn = bituldap.create_connection()
+
         success = conn.modify(entry['dn'], {
             'pwdPolicySubEntry': [(MODIFY_REPLACE, [settings.BITU_LDAP['ppolicy']])],
             'pwdAccountLockedTime': [(MODIFY_REPLACE, [timestamp])],
