@@ -101,7 +101,7 @@ class PermissionRequest(models.Model):
     system = models.CharField(max_length=150)
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="permission_requests")
     status = models.CharField(max_length=2, choices=REQUEST_STATUS, default=PENDING)
-    comment = models.TextField(blank=True, default='', help_text=_('Please provide a reasoning for this request (if no Phabricator task was opened)'))
+    comment = models.TextField(blank=True, default='', help_text=_('Please provide a reasoning for this access request'))
     ticket = models.CharField(max_length=256, blank=True, default='', help_text=_('Phabricator task with access request, alternatively provide reasoning below'))
 
     @property
