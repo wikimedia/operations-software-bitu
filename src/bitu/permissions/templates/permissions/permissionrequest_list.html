@@ -83,9 +83,9 @@
           {% for log in logs %}
           <tr>
             <td>{{ log.created }}</td>
-            <td>{{ log.request.permission.name|capfirst }} ({{ log.request.permission.source_display }})</td>
-            <td>{{ log.created_by }}</td>
-            <td>{{ log.request.user }}</td>
+            <td>{{ log.request__key }} ({{ log.request__system }})</td>
+            <td>{{ log.created_by__username }}</td>
+            <td>{{ log.request__user__username }}</td>
             <td>{% if log.approved %}{% translate "Approved" %}{% else %}{% translate "Rejected" %}{% endif %}</td>
             <td>{{ log.comment }}</td>
           </tr>

@@ -122,5 +122,13 @@ class PermissionRequestList(ListView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context['logs'] = PermissionLog.objects.order_by('-created')[:50]
+        context['logs'] = PermissionLog.objects.values(
+            'created',
+            'request__system',
+            'request__key',
+            'request__user__username',
+            'created_by__username',
+            'comment',
+            'approved'
+            ).distinct().order_by('-created')[:50]
         return context
