@@ -1,3 +1,10 @@
+bitu (0.1.8) bookworm-wikimedia; urgency=low
+
+  * Remove the ticket field in permission request form.
+  * Handle missing input on account blocking, leading to a http 500 error.
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Mon, 31 Mar 2025 09:38:49 +0200
+
 bitu (0.1.7) bookworm-wikimedia; urgency=low
 
   * Fix bug in account blocking/unblocking (T385947).
