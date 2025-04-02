@@ -119,7 +119,7 @@ def update_account(entry: bituldap.Entry, manager: 'User', parent: UserBlockEven
 
         # Used for testing only a subset of clients
         if (
-            settings._UPDATE_ACCOUNT_CLIENTS_NAMES
+            hasattr(settings, "_UPDATE_ACCOUNT_CLIENTS_NAMES")
             and name not in settings._UPDATE_ACCOUNT_CLIENTS_NAMES
         ):
             continue
