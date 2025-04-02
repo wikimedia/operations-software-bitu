@@ -146,6 +146,9 @@ BITU_LDAP = {
 
 USER_AGENT = 'Bitu Identity Manager/0.1 (contact@example.org)'
 
+# Used in tests to limit which client integration to update accounts on
+_UPDATE_ACCOUNT_CLIENTS_NAMES = []
+
 LDAP_USER_CONF = {
     'default_gid': 2000,
 }

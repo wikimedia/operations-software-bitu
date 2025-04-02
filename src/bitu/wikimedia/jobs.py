@@ -116,6 +116,14 @@ def update_account(entry: bituldap.Entry, manager: 'User', parent: UserBlockEven
 
     for client, user in clients.items():
         name = client.__module__.split('.')[-1]
+
+        # Used for testing only a subset of clients
+        if (
+            settings._UPDATE_ACCOUNT_CLIENTS_NAMES
+            and name not in settings._UPDATE_ACCOUNT_CLIENTS_NAMES
+        ):
+            continue
+
         try:
             getattr(client, action)(user)
 
