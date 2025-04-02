@@ -64,7 +64,7 @@ class Gitlab():
             return
         raise Exception(f'Gitlab, failed to block user, cn: {cn}, gitlab_id: {gitlab_id}')
 
-    def unblock_user(self, cn):
+    def unblock_user(self, cn: str):
         gitlab_id = self.lookup_user(cn)
         url = f'{self.base_url}/users/{gitlab_id}/unblock'
         resp = requests.post(url, headers=self.headers)

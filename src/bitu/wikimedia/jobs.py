@@ -108,18 +108,16 @@ def update_account(entry: bituldap.Entry, manager: 'User', parent: UserBlockEven
         return
 
     clients = {
-        'ldap': {'client': ldap.LDAP(), 'user': uid},
-        'gerrit': {'client': gerrit.Gerrit(), 'user': entry.cn.__str__() },
-        'gitlab': {'client': gitlab.Gitlab(), 'user': entry.cn.__str__()},
-        'phabricator': {'client': phabricator.PhabClient(), 'user': entry.cn.__str__() },
+        ldap.LDAP(): uid,
+        gerrit.Gerrit(): entry.cn.__str__(),
+        gitlab.Gitlab(): entry.cn.__str__(),
+        phabricator.PhabClient(): entry.cn.__str__(),
     }
 
-    for name, options in clients.items():
+    for client, user in clients.items():
+        name = client.__module__.split('.')[-1]
         try:
-            client = options['client']
-            user = options['user']
-            func = getattr(client, action)
-            func(user)
+            getattr(client, action)(user)
 
             logger.info(f'user block/unblock success, system: {name}, action: {action}, user: {uid}, manager: {manager.get_username()}')
             UserBlockEventLog.objects.create(
