@@ -76,9 +76,27 @@ class TestIntegrations(TestCase):
         return logs
 
     @override_settings(_UPDATE_ACCOUNT_CLIENTS_NAMES='ldap')
-    @override_settings(BITU_LDAP={'users': {'dn': 'ou=people,dc=example,dc=org'}})
+    @override_settings(BITU_LDAP={
+        'users': {'dn': 'ou=people,dc=example,dc=org'},
+        'ppolicy': 'cn=disabled,ou=ppolicies,dc=example,dc=org',
+    })
     def test_ldap__update_user(self):
-        self.skipTest('Not implemented yet')
+        # LDAP client
+        mock_ldap_connection = Mock()
+        mock_ldap_connection.search.return_value = ['some response']
+        mock_ldap_connection.response = [TestIntegrations.user_entry]
+        mock_ldap_connection.modify.return_value = True
+        patch('bituldap.create_connection', return_value=(True, mock_ldap_connection))
+        patch('bituldap.get_user', return_value=TestIntegrations.user_entry)
+
+        with self.subTest(action='block_user'):
+            logs = self.do('block_user', 'ldap')
+            expected = 'INFO:bitu:ldap, account blocked, username: jdoe, locktime: '
+            assert logs.output[0].startswith(expected), \
+                'Could not find expected %s in %s' % (expected, logs.output)
+
+        with self.subTest(action='unblock_user'):
+            self.skipTest('Not implemented')
 
     @override_settings(_UPDATE_ACCOUNT_CLIENTS_NAMES='gerrit')
     @patch('wikimedia.integrations.gerrit.requests')
