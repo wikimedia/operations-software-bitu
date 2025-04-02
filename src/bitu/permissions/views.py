@@ -42,9 +42,12 @@ class PermissionRequestView(CreateView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context['permission'] = permission_set.get_permission(self.kwargs['system'], self.kwargs['key'])
-        if not context['permission']:
+        permission = permission_set.get_permission(self.kwargs['system'], self.kwargs['key'])
+        available = permission_set.available_permissions(self.request.user)
+        if not permission or permission not in available:
             raise Http404
+
+        context['permission'] = permission
         return context
 
 

@@ -56,6 +56,11 @@ class Permission(object):
                 return False
         return True
 
+    def __eq__(self, other):
+        if self.source == other.source and self.key == other.key:
+            return True
+        return False
+
 
 
     @property
