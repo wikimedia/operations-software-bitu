@@ -51,7 +51,7 @@
                 <button type="submit" class="cdx-button cdx-button--action-destructive cdx-button--weight-primary">
                     {% translate "Block" %}
                 </button>
-                <a href="{% url "wikimedia:block_search" %}?q={{ user.uid }}"
+                <a href="{% url "wikimedia:block_search" %}?q={{ user.attributes.uid.0 }}"
                 class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--action-progressive">{% translate "Cancel" %}</a>
               </div>
         </form>
