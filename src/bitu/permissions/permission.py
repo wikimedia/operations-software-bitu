@@ -129,10 +129,9 @@ class PermissionSet(BaseBackend):
                         requests.extend(PermissionRequest.objects.filter(system=system, key=key, status=PermissionRequest.PENDING).values_list('id', flat=True))
 
         # Get all the log objects for the current pending requests made by the current user.
-        # Use the list of logs to exclude permissions we already approved and add an exclude to
-        # remove any requests made by the user.
+        # Use the list of logs to exclude permissions we already approved.
         logs = PermissionLog.objects.filter(request__id__in=requests, created_by=user)
-        return PermissionRequest.objects.filter(id__in=requests).exclude(log__in=logs).exclude(user=user)
+        return PermissionRequest.objects.filter(id__in=requests).exclude(log__in=logs)
 
 
 permission_set = PermissionSet()
