@@ -14,7 +14,7 @@ bitu = ["**/*.html", "**/*.txt", "**/*.js", "**/*.css", "**/*.ico", "**/*.png", 
 [project]
 name = "bitu"
 dynamic = ["dependencies"]
-version = "0.1.10"
+version = "0.1.11"
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
