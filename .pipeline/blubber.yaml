@@ -12,6 +12,7 @@ variants:
           components: [main]
       packages:
         - git
+        - python3-bitu-ldap
         - python3-django
         - python3-django-auth-ldap
         - python3-django-captcha
@@ -28,10 +29,6 @@ variants:
         - python3-social-django
         - python3-structlog
         - uwsgi-plugin-python3
-    python:
-      version: python3
-      requirements:
-        - requirements-docker.txt
     copies:
       - from: local
         source: src/

@@ -64,12 +64,15 @@ if mediawiki_url:
         'access_secret': mediawiki_access_secret
     }
 
+INSTALLED_APPS = INSTALLED_APPS + [
+    'django.contrib.admin',
+]
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getattr(os.environ, 'DJANGO_DEBUGGING', True)
+DEBUG = getattr(os.environ, 'DJANGO_DEBUGGING', False)
 TESTING = True
 ALLOWED_HOSTS = allowed_hosts
 
@@ -86,8 +89,6 @@ DATABASES = {
         'PASSWORD': database_password,
     }
 }
-
-print(DATABASES)
 
 RQ_QUEUES = {
     'default': {
