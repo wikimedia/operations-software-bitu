@@ -1,11 +1,10 @@
-from datetime import timedelta
 from typing import Any
 
+from django.core.paginator import Paginator
 from django.db.models.query import QuerySet
 from django.forms import BaseModelForm
 from django.http import HttpRequest, HttpResponse, Http404
 from django.urls import reverse_lazy
-from django.utils import timezone
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
@@ -120,12 +119,21 @@ class PermissionRequestApprove(PermissionRequestLogCreateView):
 class PermissionRequestList(ListView):
     model = PermissionRequest
 
+    # Do not use "pagination" as this will paginate the model and not the logs.
+    log_pagination = 25
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not request.user.permission_manager:
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
     def get_queryset(self) -> QuerySet[Any]:
         return permission_set.get_pending(self.request.user)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        page_number = self.request.GET.get("page", 1)
         context = super().get_context_data(**kwargs)
-        context['logs'] = PermissionLog.objects.values(
+        page_obj = Paginator(PermissionLog.objects.values(
             'created',
             'request__system',
             'request__key',
@@ -133,5 +141,6 @@ class PermissionRequestList(ListView):
             'created_by__username',
             'comment',
             'approved'
-            ).distinct().order_by('-created')[:50]
+            ).distinct().order_by('-created'), self.log_pagination)
+        context['logs'] = page_obj.get_page(page_number)
         return context

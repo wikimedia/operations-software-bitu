@@ -69,6 +69,15 @@ class User(AbstractUser):
         return is_member
 
     @property
+    def permission_manager(self):
+        for system, rule_sets in settings.ACCESS_REQUEST_RULES.items():
+            for key, rules in rule_sets.items():
+                for rule in rules:
+                    if self.get_username() in rule.get('managers', []):
+                        return True
+        return False
+
+    @property
     def display_signed_in_as(self):
         if self.ldap_entry is None or self.ldap_entry.cn == self.get_username():
             return self.get_username()

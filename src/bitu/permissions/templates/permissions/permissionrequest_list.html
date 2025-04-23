@@ -92,6 +92,23 @@
           {% endfor %}
         </tbody>
       </table>
+      <div class="pagination">
+        <span class="step-links">
+            {% if logs.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ logs.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ logs.number }} of {{ logs.paginator.num_pages }}.
+            </span>
+
+            {% if logs.has_next %}
+                <a href="?page={{ logs.next_page_number }}">next</a>
+                <a href="?page={{ logs.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
     </div>
   </div>
   {% else %}
