@@ -1,0 +1,21 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite -c frontend/vite.config.js",
+    "build": "vite build -c frontend/vite.config.js",
+    "preview": "vite preview -c frontend/vite.config.js"
+  },
+  "dependencies": {
+    "@wikimedia/codex": "^1.23.0",
+    "@wikimedia/codex-icons": "^1.23.0",
+    "bootstrap": "^5.3.5",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.2",
+    "vite": "^6.3.1"
+  }
+}

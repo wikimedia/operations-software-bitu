@@ -9,7 +9,7 @@ Build-Depends:
  python3-setuptools,
  python3-all,
  python3-sphinx-argparse,
- python3-sphinx-autodoc-typehints,
+ python3-sphinx-autodoc-typehints
 Standards-Version: 4.6.2
 Homepage: https://gerrit.wikimedia.org/g/operations/software/bitu
 Vcs-Browser: https://gerrit.wikimedia.org/g/operations/software/bitu

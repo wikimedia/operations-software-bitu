@@ -17,6 +17,7 @@ Welcome to Bitu's documentation!
    :caption: Modules/API
 
    ldapbackend/index
+   permissions/index
    wikimedia/index
 
 

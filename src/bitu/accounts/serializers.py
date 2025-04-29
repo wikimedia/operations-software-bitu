@@ -1,6 +1,9 @@
 from rest_framework import serializers
 
-from .models import SecurityToken
+from bitu.helpers import list_backends
+from .models import SecurityToken, User
+
+from keymanagement.serializers import SSHKeySerializer
 
 
 class SecurityTokenValidationSerializer(serializers.Serializer):
@@ -30,3 +33,18 @@ class SecurityTokenValidationSerializer(serializers.Serializer):
     class Meta:
         model = SecurityToken
         fields = ['user', 'valid', 'enabled']
+
+
+class UserSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    username = serializers.CharField()
+    email = serializers.CharField()
+    ssh_keys = SSHKeySerializer(many=True, read_only=True)
+    backends = serializers.SerializerMethodField()
+
+    def get_backends(self, obj):
+        return list_backends(manage_ssh_keys=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'ssh_keys', 'backends']
