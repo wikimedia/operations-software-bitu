@@ -4,7 +4,7 @@ from bitu.helpers import list_backends
 from .models import SecurityToken, User
 
 from keymanagement.serializers import SSHKeySerializer
-
+from permissions.permission import permission_set
 
 class SecurityTokenValidationSerializer(serializers.Serializer):
     user = serializers.CharField(required=True)
@@ -41,10 +41,38 @@ class UserSerializer(serializers.Serializer):
     email = serializers.CharField()
     ssh_keys = SSHKeySerializer(many=True, read_only=True)
     backends = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField()
 
     def get_backends(self, obj):
         return list_backends(manage_ssh_keys=True)
 
+    def get_permissions(self, obj):
+        permissions = []
+        for permission in permission_set.existing_permissions(obj):
+            data = permission.__dict__
+            data['existing'] = True
+            data['description'] = permission.description_display.__str__()
+            data['status_display'] = permission.state_display
+            if permission.request:
+                data['request'] = permission.request.pk
+            else:
+                data['request'] = False
+            data.pop('user')
+            permissions.append(data)
+
+        for permission in permission_set.available_permissions(obj):
+            data = permission.__dict__
+            data['existing'] = False
+            data['description'] = permission.description_display.__str__()
+            data['status_display'] = permission.state_display
+
+            if permission.request:
+                data['request'] = permission.request.pk
+            else:
+                data['request'] = False
+            data.pop('user')
+            permissions.append(data)
+        return sorted(permissions, key=lambda d: d['name'])
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'ssh_keys', 'backends']

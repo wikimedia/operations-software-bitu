@@ -43,7 +43,7 @@ INSTALLED_APPS = INSTALLED_APPS + [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'idm',
         'HOST': 'db.local.wmftest.net',
         'PORT': 3306,
@@ -299,14 +299,15 @@ BITU_NOTIFICATION = {
 }
 
 SIGNUP_USERNAME_VALIDATORS = ['ldapbackend.validators.LDAPUsernameValidator',
-                              'signups.validators.UsernameValidator',
-                              'signups.validators.IsURLValidator',
+                              'ldapbackend.validators.LDAPCommonNameValidator',
                               'signups.validators.IsUsernameEmail',
-                              ]
+                              'signups.validators.UsernameValidator']
 
 SIGNUP_UID_VALIDATORS = ['ldapbackend.validators.unix_username_regex_validator',
                          'ldapbackend.validators.unix_username_length_validator',
-                         'signups.validators.UsernameValidator']
+                         'signups.validators.UsernameValidator',
+                         'ldapbackend.validators.LDAPUsernameValidator',
+                         'ldapbackend.validators.LDAPCommonNameValidator']
 
 SIGNUP_EMAIL_VALIDATORS = ['ldapbackend.validators.LDAPEmailValidator',]
 

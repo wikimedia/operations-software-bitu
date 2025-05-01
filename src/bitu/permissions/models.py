@@ -46,7 +46,10 @@ class Permission(object):
     def run_validators(self, user) -> bool:
         if not self.configured:
             return False
-        rules = [rule for rule in settings.ACCESS_REQUEST_RULES[self.source][self.key] if rule.get('prevalidate', False)]
+        rules = [
+            rule for rule in settings.ACCESS_REQUEST_RULES[
+                self.source][self.key] if rule.get('prevalidate', False)]
+
         request = PermissionRequest()
         request.user = user
         for rule in rules:
@@ -60,8 +63,6 @@ class Permission(object):
         if self.source == other.source and self.key == other.key:
             return True
         return False
-
-
 
     @property
     def description_display(self):
@@ -106,8 +107,12 @@ class PermissionRequest(models.Model):
     system = models.CharField(max_length=150)
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="permission_requests")
     status = models.CharField(max_length=2, choices=REQUEST_STATUS, default=PENDING)
-    comment = models.TextField(blank=True, default='', help_text=_('Please provide a reasoning for this access request'))
-    ticket = models.CharField(max_length=256, blank=True, default='', help_text=_('Phabricator task with access request, alternatively provide reasoning below'))
+    comment = models.TextField(blank=False, help_text=_('Please provide a reasoning for this access request'))
+    ticket = models.CharField(max_length=256,
+                              blank=True,
+                              default='',
+                              help_text=_(
+                                  'Phabricator task with access request, alternatively provide reasoning below'))
 
     @property
     def permission(self):

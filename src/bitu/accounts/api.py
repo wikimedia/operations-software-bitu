@@ -3,6 +3,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import SecurityToken
 from .serializers import SecurityTokenValidationSerializer, UserSerializer, SSHKeySerializer
+
 from django.http import HttpResponseForbidden
 
 class SecurityTokenValidationAPI(generics.GenericAPIView):
