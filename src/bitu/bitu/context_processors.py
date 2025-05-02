@@ -8,15 +8,6 @@ def bitu(request):
         'permission_request_enabled': permission_request_enabled}
 
 
-def is_manager(user):
-    for _, backend in settings.ACCESS_REQUEST_RULES.items():
-        for key, rules in backend.items():
-            for rule in rules:
-                if 'managers' in rule and user.get_username() in rule['managers']:
-                    return True
-    return False
-
-
 def permissions(request):
     if not request.user.is_authenticated or \
         not hasattr(settings, 'ACCESS_REQUEST_RULES') or \
@@ -33,5 +24,5 @@ def permissions(request):
 
     return {
         'pending_permissions': count,
-        'managed_permissions': is_manager(request.user)
+        'managed_permissions': request.user.permission_manager
     }
