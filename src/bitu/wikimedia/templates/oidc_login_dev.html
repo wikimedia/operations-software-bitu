@@ -23,9 +23,10 @@
     <h2>DEVELOPER SYSTEM</h2>
 
     <form action="{% url 'social:begin' 'oidc' %}">
-    <button id="auth" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
-        <span>{% translate "Wikimedia Developer Single Sign On" %}</span>
-    </button>
+        <input type="hidden" name="{{ REDIRECT_FIELD_NAME }}" value="{{ REDIRECT_FIELD_VALUE }}">
+        <button id="auth" class="cdx-button cdx-button--action-progressive cdx-button--weight-primary">
+            <span>{% translate "Wikimedia Developer Single Sign On" %}</span>
+        </button>
     </form>
     <p>
         {% url 'signups:signup' as signup_url %}
