@@ -8,9 +8,9 @@
 {% block content %}
 <div class="codex_content">
   <div class="content_box">
-    <h4>{% blocktrans with username=user.cn %}Unblock user: {{ username }}{% endblocktrans %}</h4>
+    <h4>{% blocktrans with username=user.attributes.cn.0 %}Unblock user: {{ username }}{% endblocktrans %}</h4>
     <ul>
-      <li><strong>Wikimedia Developer Account:</strong> {{ user.cn }}</li>
+      <li><strong>Wikimedia Developer Account:</strong> {{ user.attributes.cn.0 }}</li>
       <li><strong>Email:</strong> {{ user.attributes.mail.0 }}</li>
       <li><strong>LDAP status:</strong> {% if user.attributes.pwdAccountLockedTime %}
         {% blocktrans with user.attributes.pwdAccountLockedTime as lock_time %}

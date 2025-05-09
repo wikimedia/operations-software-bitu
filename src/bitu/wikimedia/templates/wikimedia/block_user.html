@@ -8,7 +8,7 @@
 {% block content %}
 <div class="codex_content">
   <div class="content_box">
-    <h4>{% blocktrans with username=user.cn %}Block user: {{ username }}{% endblocktrans %}</h4>
+    <h4>{% blocktrans with username=user.attributes.cn.0 %}Block user: {{ username }}{% endblocktrans %}</h4>
     <div class="cdx-message cdx-message--block cdx-message--warning" aria-live="polite">
       <span class="cdx-message__icon"></span>
       <div class="cdx-message__content">
@@ -19,7 +19,7 @@
       </div>
   </div>
     <ul>
-        <li><strong>Wikimedia Developer Account:</strong> {{ user.cn }}</li>
+        <li><strong>Wikimedia Developer Account:</strong> {{ user.attributes.cn.0 }}</li>
         <li><strong>Email:</strong> {{ user.attributes.mail.0 }}</li>
         <li><strong>LDAP status:</strong> {% if user.attributes.pwdAccountLockedTime %}
           {% blocktrans with user.attributes.pwdAccountLockedTime as lock_time %}
