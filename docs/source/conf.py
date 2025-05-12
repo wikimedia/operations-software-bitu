@@ -11,13 +11,11 @@ from pkg_resources import get_distribution
 # Ensure that Django has been configured to avoid import errors on
 # automodule / autoclass documentation
 sys.path.insert(0, os.path.abspath('../../src/bitu'))
-print(sys.path)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'bitu.test_settings'
 django.setup()
 
 # Adjust path
 sys.path.insert(0, Path('.').__str__())
-print(__file__)
 
 #sys.path.insert(0, Path(__file__).parent.parent.resolve())
 
@@ -32,7 +30,7 @@ print(__file__)
 project = 'Bitu'
 copyright = '2024, Wikimedia Foundation'
 author = 'Simon Lyngshede'
-release = '0.6.0'
+release = '0.1.11'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -69,7 +67,7 @@ typehints_use_signature_return = True
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'alabaster'
-html_static_path = ['_static']
+#html_static_path = ['_static']
 
 # Autodoc settings
 autodoc_default_options = {

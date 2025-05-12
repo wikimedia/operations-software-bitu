@@ -9,7 +9,7 @@ exclude = ["**/__pycache__/*"]  # exclude packages matching these glob patterns 
 
 # Allow the build system to pick up template and assets.
 [tool.setuptools.package-data]
-bitu = ["**/*.html", "**/*.txt", "**/*.js", "**/*.css", "**/*.ico", "**/*.png", "**/*.jpg", "**/*.svg"]
+bitu = ["**/*.html", "**/*.txt", "**/*.js", "**/*.css", "**/*.ico", "**/*.png", "**/*.jpg", "**/*.svg", "**/*.json", "**/*.map"]
 
 [project]
 name = "bitu"

@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = INSTALLED_APPS + [
     'django.contrib.admin',
+    'django_vite'
 ]
 
 # Database
@@ -114,6 +115,14 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATICFILES_DIRS = [
     BASE_DIR / "static", # noqa
 ]
+
+DJANGO_VITE = {
+    "default": {
+        "dev_mode": True,
+        #"static_url_prefix": "bundler",
+        "manifest_path": BASE_DIR / ".." / ".." / "frontend" / "dist" / "manifest.json",
+    },
+}
 
 RQ_QUEUES = {
     'default': {
@@ -196,6 +205,7 @@ BITU_SSH_KEY_VALIDATOR = {
         'ssh-rsa': {'min_key_size': 2048},
         'ssh-ecdsa': {},
         'ssh-ed25519': {},
+        'ecdsa-sha2-nistp256': {},
         'sk-ssh-ed25519@openssh.com': {}
     }
 }

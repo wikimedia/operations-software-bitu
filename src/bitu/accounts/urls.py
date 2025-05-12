@@ -7,7 +7,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.views import LogoutView
 
 
-from .api import SecurityTokenValidationAPI
+from .api import SecurityTokenValidationAPI, UserAPI, CreateSSHKey
 
 from .views import (
     TokenCreateView,
@@ -29,6 +29,9 @@ urlpatterns = [
     path('api/tokens/', login_required(TokensListView.as_view()), name='api_tokens'),
     path('api/tokens/create/', login_required(TokenCreateView.as_view()), name='api_token_create'),
     path('api/tokens/delete/<pk>', login_required(TokenDeleteView.as_view()), name='api_token_delete'),
+    path('api/user', login_required(UserAPI.as_view()), name='user_api'),
+    path('api/ssh', login_required(CreateSSHKey.as_view()), name='ssh'),
+    path('api/ssh/<pk>', login_required(CreateSSHKey.as_view()), name='ssh'),
 ]
 
 if settings.ENABLE_2FA:

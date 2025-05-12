@@ -18,12 +18,11 @@ Example:
 
 .. code-block:: python3
 
-BITU_SUB_SYSTEMS = {
-    'ldapbackend': {
-        'manage_ssh_keys': True,
-        'permissions': 'ldapbackend.permission.LDAPPermissions',
-   ...
-
+    BITU_SUB_SYSTEMS = {
+            'ldapbackend': {
+            'manage_ssh_keys': True,
+            'permissions': 'ldapbackend.permission.LDAPPermissions',
+        ...
 
 
 Configuration approval rules
@@ -50,5 +49,3 @@ count, indicating how many managers must approve of the request.
 .. rubric:: Subpackages and Submodules
 
 .. toctree::
-
-   permission.validators

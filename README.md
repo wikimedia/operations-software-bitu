@@ -48,5 +48,33 @@ MariaDB can be accessed on db.local.wmftest.net, port 3306, using either the use
 CAS is exposed via https, which means including a certificate. This certificate has a 90 expiration and will routinely need to be updated/regenerated. This can be done using the following command:
 
 ```
-keytool -genkeypair -alias cas -keyalg RSA -keypass changeit -storepass changeit -keystore docker/cas/keystore.jks -dname "CN=cas.example.org,OU=Example,OU=Org,C=US" -storetype PKCS12 -ext "SAN=dns:example.org,dns:localhost,ip:127.0.0.1"
+$ keytool -genkeypair -alias cas -keyalg RSA -keypass changeit -storepass changeit -keystore docker/cas/keystore.jks -dname "CN=cas.example.org,OU=Example,OU=Org,C=US" -storetype PKCS12 -ext "SAN=dns:example.org,dns:localhost,ip:127.0.0.1"
 ```
+
+## Vue JS environment
+
+The Vue JS applications are stored in the "frontend" subdirectory. The integration into Django is managed by the Django Vite module, which will load the Vue applications either from the Vite development environment, or from "compiled" Javascript files in production, served by the webserver.
+
+Bitu requires each "page" to be its own separate Vue appliction, rather than having one large Vue application. This is done to allow all routing to be handled by Django, as well to avoid dealing with authentication and tokens within the Vue code.
+
+
+### Running the development server
+
+You can either run the NPM commands manually, or use the supplied Makefile.
+
+To run the development server using NPM do:
+
+```
+$ npm ci
+$ npm run dev
+```
+
+Alternatively run:
+```
+$ make dev
+```
+
+This will fetch the required Javascript packages, and update any packages with security issues and start the Vite development server.
+
+### Building the Vue applications for release
+Due to limitation of our build environment and the need to deploy Bitu as a Debian package, the updated and compiled Vue applications must be checked into Git. Running ```make release``` will update and install dependencies, build the application and add them to Git. You must manually handle ```git commit``` and write the appropriote commit message.

@@ -1,0 +1,11 @@
+{
+  "frontend/src/ssh.js": {
+    "file": "assets/ssh-CEd4-oWk.js",
+    "name": "ssh",
+    "src": "frontend/src/ssh.js",
+    "isEntry": true,
+    "css": [
+      "assets/ssh-BV9SsnSP.css"
+    ]
+  }
+}
