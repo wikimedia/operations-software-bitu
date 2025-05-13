@@ -109,7 +109,7 @@ def update_account(entry: bituldap.Entry, manager: 'User', parent: UserBlockEven
 
     clients = {
         ldap.LDAP(): uid,
-        gerrit.Gerrit(): entry.cn.__str__(),
+        gerrit.Gerrit(): entry.uid.__str__(),
         gitlab.Gitlab(): entry.cn.__str__(),
         phabricator.PhabClient(): entry.cn.__str__(),
     }

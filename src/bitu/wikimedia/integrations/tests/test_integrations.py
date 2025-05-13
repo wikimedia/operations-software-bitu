@@ -111,13 +111,13 @@ class TestIntegrations(TestCase):
                 'update_api': requests.delete,
                 'returns': 204,
                 'action': 'block_user',
-                'expected_log': 'INFO:bitu:Jane Doe (id: 7777) is now blocked in Gerrit',
+                'expected_log': 'INFO:bitu:jdoe (id: 7777) is now blocked in Gerrit',
             },
             'already blocked': {
                 'update_api': requests.delete,
                 'returns': 409,
                 'action': 'block_user',
-                'expected_log': 'INFO:bitu:Jane Doe (id: 7777) is already blocked in Gerrit',
+                'expected_log': 'INFO:bitu:jdoe (id: 7777) is already blocked in Gerrit',
             },
             'blocking action fails': {
                 'update_api': requests.delete,
@@ -130,13 +130,13 @@ class TestIntegrations(TestCase):
                 'update_api': requests.put,
                 'returns': 200,
                 'action': 'unblock_user',
-                'expected_log': 'INFO:bitu:Jane Doe (id: 7777) was not blocked in Gerrit',
+                'expected_log': 'INFO:bitu:jdoe (id: 7777) was not blocked in Gerrit',
             },
             'already unblocked': {
                 'update_api': requests.put,
                 'returns': 201,
                 'action': 'unblock_user',
-                'expected_log': 'INFO:bitu:Jane Doe (id: 7777) is now active in Gerrit',
+                'expected_log': 'INFO:bitu:jdoe (id: 7777) is now active in Gerrit',
             },
             'unblocking action fails': {
                 'update_api': requests.put,
