@@ -135,6 +135,7 @@ export default defineComponent( {
 		const columns = [
 			{ id: 'system_display', label: 'System' },
 			{ id: 'data', label: 'Key' },
+            { id: 'comment', label: 'Comment'},
             { id: 'actions', label: 'Actions' }
 		];
 
@@ -212,6 +213,10 @@ export default defineComponent( {
 		<!-- Truncated ssh key, key data is stored in data variable, therefor item-data -->
 		<template #item-data="{ item }">
             <span style="word-break: break-all;">{{ truncateKey(item) }}</span>
+		</template>
+
+		<template #item-comment="{ item }">
+            <span>{{ item }}</span>
 		</template>
 
 		<!-- Setup action "buttons". Codex guide recommends not using buttons here -->

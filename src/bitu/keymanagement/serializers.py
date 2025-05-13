@@ -18,6 +18,7 @@ class SSHKeySerializer(serializers.Serializer):
     system_display = serializers.SerializerMethodField(read_only=True)
     type = serializers.CharField(source='key_type', required=False)
     data = serializers.CharField(source='ssh_public_key', required=False, validators=[ssh_key_validator, ssh_key_usage_validator])
+    comment = serializers.CharField(read_only=True)
 
     def validate_data(self, data):
         try:
