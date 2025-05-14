@@ -13,6 +13,7 @@ User = get_user_model()
 
 class SSHKeySerializer(serializers.Serializer):
     uuid = serializers.UUIDField(source='id', read_only=True)
+    active = serializers.BooleanField(required=False)
     user = serializers.PrimaryKeyRelatedField(required=True, queryset=User.objects.all())
     system = serializers.CharField(required=False)
     system_display = serializers.SerializerMethodField(read_only=True)
@@ -45,8 +46,9 @@ class SSHKeySerializer(serializers.Serializer):
         return SSHKey.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.system = validated_data['system']
-        instance.active = True
+        instance.active = validated_data['active'] if 'active' in validated_data else True
+        if 'system' in validated_data:
+            instance.system =  validated_data['system']
         instance.save()
         return instance
 

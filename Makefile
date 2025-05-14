@@ -17,4 +17,5 @@ pre_release:
 release: ci build
 	git add src/bitu/static/bundler/assets/*.css
 	git add src/bitu/static/bundler/assets/*.js
+	git add src/bitu/static/bundler/manifest.json
 
