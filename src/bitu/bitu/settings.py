@@ -43,7 +43,7 @@ INSTALLED_APPS = INSTALLED_APPS + [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'idm',
         'HOST': 'db.local.wmftest.net',
         'PORT': 3306,

@@ -1,11 +1,13 @@
 <script>
 import { defineComponent, ref } from 'vue';
 import { CdxTable, CdxButton, CdxIcon, CdxDialog, CdxField, CdxTextArea, CdxSelect } from '@wikimedia/codex';
-import { cdxIconEdit, cdxIconTrash, cdxIconEye } from '@wikimedia/codex-icons';
+import { cdxIconTrash, cdxIconEye, cdxIconPause, cdxIconPlay } from '@wikimedia/codex-icons';
 
 export default defineComponent( {
 	name: 'SSHKeyManagement',
-	components: { CdxTable, CdxButton, CdxIcon, CdxDialog, CdxField, CdxTextArea, CdxSelect },
+	components: {
+        CdxTable, CdxButton, CdxIcon, CdxDialog, CdxField, CdxTextArea, CdxSelect,
+    },
     data() {
       return {
         listItems: [],
@@ -102,7 +104,50 @@ export default defineComponent( {
             this.keyStatus = 'default'
             this.open = false
             this.edit = false
-        }}
+        }
+    },
+    onSuspendAction(){
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        let body = { user: this.userId , active: !this.edit_target.active, system: this.selected}
+        const requestOptions = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(body)
+        }
+
+        // TODO: Add error handling
+        const uuid = this.edit_target.uuid
+        const system = this.selected
+        let system_display = ''
+        const active = !this.edit_target.active
+        this.systemsItems.forEach(function(elm, i, arr){
+            if(elm.value === system){
+                system_display = elm.label
+            }
+        })
+
+        fetch("/accounts/api/ssh/" + this.edit_target.uuid, requestOptions)
+        this.listItems.forEach(function(elm, i, arr){
+            if( elm.uuid == uuid){
+                elm.active = active
+                if(active){
+                    elm.system = system
+                    elm.system_display = system_display
+                } else {
+                    elm.system = ''
+                    elm.system_display = ''
+                }
+            }
+        })
+        this.edit_target = null
+        this.inputValue = ''
+        this.keyStatus = 'default'
+        this.open = false
+        this.edit = false
+    }
     },
 	setup() {
         /* State variables */
@@ -115,6 +160,7 @@ export default defineComponent( {
         const keyMessages = ref( {error: 'Invalid key'} )
         const keyStatus = ref('default')
         const view_title = ref('SSH Key')
+        const edit_title = ref('Suspend selected key')
 
         /* Actions */
         const defaultAction = {
@@ -126,6 +172,11 @@ export default defineComponent( {
 			actionType: 'progressive'
 		};
 
+        const suspendAction = {
+			label: 'Suspend',
+            actionType: 'progressive'
+		};
+
         const deleteAction = {
 			label: 'Delete',
 			actionType: 'destructive'
@@ -135,13 +186,21 @@ export default defineComponent( {
 		const columns = [
 			{ id: 'system_display', label: 'System' },
 			{ id: 'data', label: 'Key' },
-            { id: 'comment', label: 'Comment'},
             { id: 'actions', label: 'Actions' }
 		];
 
         /* functions for accessing dialogs via table actions */
         function editKey( row ) {
             this.edit_target = row
+            if(row.active){
+                this.edit_title = "Suspend selected key"
+                suspendAction.label = "Suspend"
+                suspendAction.actionType = "destructive"
+            } else {
+                this.edit_title = "Active selected key"
+                suspendAction.label = "Activate"
+                suspendAction.actionType = "progressive"
+            }
             this.edit = true
 		}
 
@@ -161,7 +220,14 @@ export default defineComponent( {
 
         /* Truncate SSH keys to save space on the page */
         function truncateKey(key){
-            return key.slice(0, 50) + "..."
+            let a = key.split(' ')
+            const keyLength = a[1].length
+            let comment = a.splice(2).join(' ')
+            let truncated = a[1].slice(0, 68)
+            if(truncated.length < keyLength){
+                truncated = truncated + "..."
+            }
+            return a[0] + " " + truncated + " " + comment
         }
 
 
@@ -175,13 +241,16 @@ export default defineComponent( {
             keyMessages,
             keyStatus,
             view_title,
+            edit_title,
             primaryAction,
             deleteAction,
+            suspendAction,
             defaultAction,
 			columns,
-			cdxIconEdit,
 			cdxIconTrash,
             cdxIconEye,
+            cdxIconPause,
+            cdxIconPlay,
 			editKey,
 			removeKey,
             viewKey,
@@ -222,12 +291,16 @@ export default defineComponent( {
 		<!-- Setup action "buttons". Codex guide recommends not using buttons here -->
 		<template #item-actions="{ row }">
 			<div class="cdx-docs-table-custom-cells__actions">
-				<cdx-button weight="quiet" aria-label="Edit" @click="editKey( row )">
-                    <cdx-icon :icon="cdxIconEdit" />
-                </cdx-button>
-
                 <cdx-button weight="quiet" aria-label="View full" @click="viewKey( row )">
                     <cdx-icon :icon="cdxIconEye" />
+                </cdx-button>
+
+                <cdx-button v-if="row.active" weight="quiet" aria-label="Edit" @click="editKey( row )">
+                    <cdx-icon :icon="cdxIconPause" />
+                </cdx-button>
+
+                <cdx-button v-if="!row.active" weight="quiet" aria-label="Edit" @click="editKey( row )">
+                    <cdx-icon :icon="cdxIconPlay" />
                 </cdx-button>
 
 				<cdx-button weight="quiet" action="destructive" aria-label="Remove" @click="removeKey( row )">
@@ -251,11 +324,33 @@ export default defineComponent( {
     </cdx-dialog>
 
     <!-- Edit dialog / assign system -->
-    <cdx-dialog v-model:open="edit" class="cdx-dialog-form-inputs" title="Select where to use your SSH key" :use-close-button="true" :default-action="defaultAction" :primary-action="primaryAction" @primary="onPrimaryAction" @default="onDefaultAction">
-	    <cdx-field>
-	        <template #label>System</template>
-		    <cdx-select v-model:selected="selected" class="cdx-demo-dialog-form-inputs__select" :menu-items="systemsItems" />
-	    </cdx-field>
+    <cdx-dialog
+        v-model:open="edit"
+        class="cdx-dialog-form-inputs"
+        :title=edit_title
+        :use-close-button="true"
+        :stacked-actions="true"
+        :default-action="defaultAction"
+        :primary-action="suspendAction"
+        @primary="onSuspendAction"
+        @default="onDefaultAction">
+        <span v-if="edit_target.active">
+        <div>
+            <strong>{{ edit_target.system_display }}</strong>
+        </div>
+        <div>
+            <code>{{ edit_target.data }}</code>
+        </div>
+        </span>
+        <span v-else>
+        <div>
+            <code>{{ edit_target.data }}</code>
+        </div>
+            <cdx-field>
+                <template #label>System</template>
+                <cdx-select v-model:selected="selected" class="cdx-demo-dialog-form-inputs__select" :menu-items="systemsItems" />
+            </cdx-field>
+        </span>
     </cdx-dialog>
 
     <!-- Delete SSH key dialog -->
