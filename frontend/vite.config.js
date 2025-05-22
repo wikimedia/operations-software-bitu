@@ -11,6 +11,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         ssh: resolve("./frontend/src/ssh.js"),
+        perms: resolve("./frontend/src/perm.js")
       },
     },
   },

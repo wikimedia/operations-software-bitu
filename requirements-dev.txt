@@ -20,3 +20,4 @@ setuptools
 sshpubkeys==3.1.0
 structlog==22.3.0
 passlib==1.7.4
+django_vite==3.1.0

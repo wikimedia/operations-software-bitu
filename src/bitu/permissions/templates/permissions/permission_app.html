@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% load django_vite %}
+
+
+{% block headerscripts %}
+    {% vite_hmr_client %}
+    {% vite_asset 'frontend/src/perm.js' %}
+{% endblock %}
