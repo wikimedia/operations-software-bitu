@@ -1,13 +1,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-import base64
-
 from typing import Any
 
 from django_rq import job
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
-from django.urls import reverse
 
 
 def load_templates() -> dict[str:Any]:
@@ -21,13 +18,10 @@ def load_templates() -> dict[str:Any]:
 
 @job('notification')
 def send_activation_email(signup):
-    token = signup.generate_activation_token()
-    sid = base64.b64encode(bytes(signup.pk.hex, 'utf8'))
-    url = reverse('signups:activate', kwargs={'token': token, 'uidb64': sid.decode(encoding='utf8')})
     timeout = settings.PASSWORD_RESET_TIMEOUT / 60  # From seconds to minutes.
 
     templates = load_templates()
-    context = {'url': settings.BITU_DOMAIN + url, 'timeout': timeout}
+    context = {'url': signup.generate_activation_link(), 'timeout': timeout}
     subject = settings.BITU_NOTIFICATION.get('signup_subject', 'Bitu IDM account activation')
     from_email = settings.BITU_NOTIFICATION['default_sender']
     to_email = signup.email

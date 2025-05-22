@@ -1,9 +1,11 @@
+import base64
 import ipaddress
 import re
 import uuid
 
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django.utils.module_loading import import_string
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
@@ -92,6 +94,12 @@ class Signup(models.Model):
         gen: SignupActivationTokenGenerator = default_token_generator
         token = gen.make_token(self)
         return token
+
+    def generate_activation_link(self):
+        token = self.generate_activation_token()
+        sid = base64.b64encode(bytes(self.pk.hex, 'utf8'))
+        url = reverse('signups:activate', kwargs={'token': token, 'uidb64': sid.decode(encoding='utf8')})
+        return settings.BITU_DOMAIN + url
 
     def validate_activation_token(self, token: str) -> bool:
         gen: SignupActivationTokenGenerator = default_token_generator
