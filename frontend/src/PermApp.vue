@@ -79,7 +79,8 @@ export default defineComponent( {
             logs: [],
             userId: null,
             errorMessage: null,
-            view_title: ''
+            view_title: '',
+            request_deny_states: ['AP', 'SY', 'PN'] /* States for which we do not show the "Request" button. */
         }
     },
     setup() {
@@ -167,7 +168,7 @@ export default defineComponent( {
 
 		<template #item-actions="{ row }">
             <div class="cdx-table__table__cell--align-number">
-            <cdx-button v-if="!row.existing && (row.state != 'PN' && row.state != 'AP') " action="progressive" weight="primary" @click="requestPerm( row )">
+            <cdx-button v-if="!row.existing && request_deny_states.indexOf(row.state) == -1 " action="progressive" weight="primary" @click="requestPerm( row )">
 				Request
 			</cdx-button>
             &nbsp;
