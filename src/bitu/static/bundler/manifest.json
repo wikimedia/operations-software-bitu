@@ -3,32 +3,32 @@
     "file": "assets/_plugin-vue_export-helper-BV9SsnSP.css",
     "src": "__plugin-vue_export-helper-BV9SsnSP.css"
   },
-  "__plugin-vue_export-helper-DsS0xRz5.js": {
-    "file": "assets/_plugin-vue_export-helper-DsS0xRz5.js",
+  "__plugin-vue_export-helper-CckzA7WH.js": {
+    "file": "assets/_plugin-vue_export-helper-CckzA7WH.js",
     "name": "_plugin-vue_export-helper",
     "css": [
       "assets/_plugin-vue_export-helper-BV9SsnSP.css"
     ]
   },
   "frontend/src/perm.js": {
-    "file": "assets/perms-DXuNsROp.js",
+    "file": "assets/perms-D0uaic5t.js",
     "name": "perms",
     "src": "frontend/src/perm.js",
     "isEntry": true,
     "imports": [
-      "__plugin-vue_export-helper-DsS0xRz5.js"
+      "__plugin-vue_export-helper-CckzA7WH.js"
     ],
     "css": [
-      "assets/perms-CVsOvjQd.css"
+      "assets/perms-CmVH3__I.css"
     ]
   },
   "frontend/src/ssh.js": {
-    "file": "assets/ssh-Y1cXOsJ6.js",
+    "file": "assets/ssh-C1j8ztqq.js",
     "name": "ssh",
     "src": "frontend/src/ssh.js",
     "isEntry": true,
     "imports": [
-      "__plugin-vue_export-helper-DsS0xRz5.js"
+      "__plugin-vue_export-helper-CckzA7WH.js"
     ]
   }
 }

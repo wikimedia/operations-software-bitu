@@ -1,11 +1,11 @@
 <script>
 import { defineComponent, ref } from 'vue';
-import { CdxTable, CdxButton, CdxDialog, CdxField, CdxIcon, CdxMessage, CdxTextArea, CdxInfoChip } from '@wikimedia/codex';
+import { CdxTable, CdxButton, CdxDialog, CdxField, CdxIcon, CdxMessage, CdxTextArea, CdxInfoChip, CdxProgressIndicator } from '@wikimedia/codex';
 import { cdxIconJournal } from '@wikimedia/codex-icons';
 
 export default defineComponent( {
     name: 'Permissions',
-    components: {CdxTable, CdxButton, CdxDialog, CdxField, CdxIcon, CdxMessage, CdxTextArea, CdxInfoChip},
+    components: {CdxTable, CdxButton, CdxDialog, CdxField, CdxIcon, CdxMessage, CdxTextArea, CdxInfoChip, CdxProgressIndicator},
     methods: {
         async getData() {
         /* Fetch the users SSH keys */
@@ -13,6 +13,7 @@ export default defineComponent( {
         const finalRes = await res.json();
         this.userId = finalRes['id']
         this.permissions = finalRes['permissions']
+        this.isLoading = false
       },
       onDefaultAction() {
         /* Default (close) action for dialogs should clear various fields and states */
@@ -80,7 +81,8 @@ export default defineComponent( {
             userId: null,
             errorMessage: null,
             view_title: '',
-            request_deny_states: ['AP', 'SY', 'PN'] /* States for which we do not show the "Request" button. */
+            request_deny_states: ['AP', 'SY', 'PN'], /* States for which we do not show the "Request" button. */
+            isLoading: true
         }
     },
     setup() {
@@ -135,12 +137,17 @@ export default defineComponent( {
 </script>
 
 <template>
+    <div v-if="isLoading" class="loader d-flex justify-content-center align-middle">
+        <cdx-progress-indicator show-label>Loading permissions</cdx-progress-indicator>
+    </div>
+
+
     <cdx-message v-if="errorMessage" type="error" :fade-in="true">
         <p><strong>Error!</strong> {{ errorMessage }}</p>
   </cdx-message>
   <br>
 
-    <cdx-table class="cdx-docs-table-custom-cells" caption="Permissions" :columns="columns" :data="permissions">
+    <cdx-table v-if="!isLoading" class="cdx-docs-table-custom-cells" caption="Permissions" :columns="columns" :data="permissions">
         <!-- System column e.g. WMCS/LDAP/Puppet -->
         <template #item-source_display="{ item }">
             {{ item }}
@@ -245,6 +252,11 @@ export default defineComponent( {
 */
 .cdx-dialog:has(table) {
     max-width: 64rem;
+}
+
+.loader {
+  top: 50%;
+  height: 50vh;
 }
 
 </style>
