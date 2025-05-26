@@ -1,3 +1,17 @@
+bitu (0.1.12) bookworm-wikimedia; urgency=low
+
+  [Antoine Musso]
+  * Improvements to Gerrit account blocking
+  * Block Gerrit users with uid rather than cn
+  [Simon Lyngshede]
+  * Pagination for permission request approval log.
+  * Provide approver comments in email to users.
+  * Fix redirect on login. Ensure that OIDC redirects correctly after sign in.
+  * Inform users that new permissions require reauthentication with OIDC.
+  * Management command for generating account activation link.
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Tue, 27 Apr 2025 13:42:03 +0200
+
 bitu (0.1.11) bookworm-wikimedia; urgency=low
 
   * Fixes docker builds. No functional changes.
