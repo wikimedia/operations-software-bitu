@@ -53,7 +53,7 @@ services:
           - db.local.wmftest.net
 
   cas:
-    image: cas:7.1.4
+    image: cas:7.2.4
     ports:
       - "8443:8443"
     links:
@@ -72,6 +72,9 @@ services:
       - type: bind
         source: docker/cas/services/
         target: /etc/cas/services/
+      - type: bind
+        source: docker/cas/webauthn
+        target: /etc/cas/webauthn
   bitu:
     build:
       context: .
