@@ -57,7 +57,7 @@ class UserValidationTests(APITestCase):
     def test_ldap_validation(self, mock_connect):
         response = self.client.post('/signup/api/username/', {'username': self.user.username}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['username'][0], 'Invalid username, may already in use.')
+        self.assertEqual(response.data['username'][0], 'Invalid username, may already be in use.')
 
     @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
     def test_url_validation(self, mock_connect):

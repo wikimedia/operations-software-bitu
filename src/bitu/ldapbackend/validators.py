@@ -35,7 +35,7 @@ def LDAPUsernameValidator(username: str):
 
     if user:
         raise ValidationError(
-            _("Invalid username, may already in use."))
+            _("Invalid username, may already be in use."))
 
 
 def LDAPCommonNameValidator(username: str):
@@ -59,7 +59,7 @@ def LDAPCommonNameValidator(username: str):
 
     if user:
         raise ValidationError(
-            _("Invalid username, may already in use."))
+            _("Invalid username, may already be in use."))
 
 
 def LDAPEmailValidator(email: str):
