@@ -2,6 +2,7 @@ FROM docker-registry.wikimedia.org/python3-bookworm:latest
 
 RUN apt-get update && apt-get install -y git \
 python3-bitu-ldap \
+python3-bs4 \
 python3-django \
 python3-django-auth-ldap \
 python3-django-captcha \
