@@ -206,7 +206,8 @@ BITU_SSH_KEY_VALIDATOR = {
         'ssh-ecdsa': {},
         'ssh-ed25519': {},
         'ecdsa-sha2-nistp256': {},
-        'sk-ssh-ed25519@openssh.com': {}
+        'sk-ssh-ed25519@openssh.com': {},
+        'sk-ecdsa-sha2-nistp256@openssh.com': {}
     }
 }
 
