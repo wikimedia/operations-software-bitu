@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models.query import QuerySet
 from django.forms import BaseModelForm
 from django.http import HttpRequest, HttpResponse, Http404
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
@@ -34,6 +35,16 @@ class PermissionRequestView(CreateView):
     success_url = reverse_lazy('permissions:list')
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        # Check if the user already has an open request for this permission.
+        requests = PermissionRequest.objects.filter(
+            user=self.request.user,
+            key=self.kwargs['key'],
+            system=self.kwargs['system'],
+            status=PermissionRequest.PENDING)
+
+        if requests:
+            return redirect("permissions:list")
+
         form.instance.user = self.request.user
         form.instance.key = self.kwargs['key']
         form.instance.system = self.kwargs['system']
