@@ -1,3 +1,12 @@
+bitu (0.1.13) bookworm-wikimedia; urgency=low
+
+  * Improvements to Docker containers.
+  * sk-ecdsa-sha2-nistp256@openssh.com are now allowed as default.
+  * New management command for creating account activation links.
+  * Prevent duplicate permission requests (T403691).
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Thu, 18 Sep 2025 08:50:25 +0200
+
 bitu (0.1.12) bookworm-wikimedia; urgency=low
 
   [Antoine Musso]
