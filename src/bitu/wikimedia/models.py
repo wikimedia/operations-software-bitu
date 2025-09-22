@@ -7,6 +7,7 @@ class UserBlockEventLog(models.Model):
     username = models.CharField(max_length=256)
     action = models.CharField(max_length=256)
     comment = models.TextField()
+    unset_email = models.BooleanField(default=False)
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
 
     def get_display_action(self):

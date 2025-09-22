@@ -127,6 +127,10 @@ def update_account(entry: bituldap.Entry, manager: 'User', parent: UserBlockEven
         try:
             getattr(client, action)(user)
 
+            if hasattr(client, "unset_email") and action == "block_user":
+                client.unset_email(user)
+
+
             logger.info(f'user block/unblock success, system: {name}, action: {action}, user: {uid}, manager: {manager.get_username()}')
             UserBlockEventLog.objects.create(
                 username=uid,

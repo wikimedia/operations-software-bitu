@@ -165,7 +165,7 @@ class AccountManagersPermissionMixin():
 
 class BlockUserView(AccountManagersPermissionMixin, CreateView):
     model = UserBlockEventLog
-    fields = ['action', 'comment', 'created_by', 'username']
+    fields = ['action', 'comment', 'created_by', 'username', 'unset_email']
     template_name = 'wikimedia/block_user.html'
     success_url = reverse_lazy('wikimedia:block_search')
     action = 'block_user'

@@ -71,13 +71,5 @@ class UserLookup(forms.Form):
     username = forms.CharField(label="Username")
 
 
-class BlockUserForm(forms.Form):
-    username = forms.CharField(label="Username")
-    ldap = forms.BooleanField(label="LDAP", initial=True)
-
-
-class UnblockUserForm(forms.Form):
-    pass
-
 class BlockUserSearchForm(forms.Form):
     username = forms.CharField(label="Username")

@@ -43,6 +43,9 @@
                       placeholder=""
                     ></textarea>
                 </div>
+                {% elif field.name == 'unset_email' %}
+                  <label for="unset_email">Remove email address from LDAP</label>
+                  <input type="checkbox" id="id_unset_email" name="unset_email">
                 {% else %}
                 {{ field.as_hidden }}
                 {% endif %}

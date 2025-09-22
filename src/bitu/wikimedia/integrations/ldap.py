@@ -63,6 +63,11 @@ class LDAP():
         reader.search()
         return reader
 
+    def unset_email(self, uid: str):
+        entry: bituldap.Entry = bituldap.get_user(uid)
+        entry.mail = ''
+        entry.entry_commit_changes()
+
     def block_user(self, uid: str):
         entry = self.fetch_entry(uid)
         timestamp = timezone.now().strftime('%Y%m%d%H%MZ')
