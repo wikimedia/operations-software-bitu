@@ -50,3 +50,49 @@ def global_account_link(strategy, details, backend, user=None, *args, **kwargs):
     request = kwargs['request']
     request.session['wikimedia_global'] = True
     messages.success(request, _("Accounts successfully linked. Please allow for a few minutes for the change to propagate."))
+
+
+def phabricator_account_link(strategy, details, backend, user=None, *args, **kwargs):
+    """Social Auth pipeline function for linking a Phorge/Phabricator account.
+
+    The pipeline function will intercept a callback from an OAuth authentication
+    request against Phorge/Phabricator and link the user account ID to the currently
+    logged in user.
+
+    .. code-block:: python
+
+        SOCIAL_AUTH_PIPELINE = (
+            'social_core.pipeline.social_auth.social_details',
+            ...
+            'phorge.social_pipeline.account_link',
+        )
+
+    Args:
+        strategy: Social Auth strategy (which gives access to current store, backend and request).
+        details: User details given by authentication provider
+        backend: The backend handling the authentication, we accept only mediawiki.
+        user: Django user object. Defaults to None.
+    """
+    logger.debug(f'strategy: {strategy}, details: {details}, backend: {backend}, user: {user}, args: {args}, kwargs: {kwargs}')
+    if not user:
+        return
+
+    if backend.name != 'phabricator':
+        return
+
+    if not 'response' in kwargs and 'result' not in kwargs['response']:
+        return
+
+    result = kwargs['response']['result']
+
+    # Enqueue LDAP attribute job.
+    update_ldap_attributes.delay(user, {'phabricatorAccountId': result['phid'],
+                                  'phabricatorAccountUsername': result['userName']})
+
+    # The LDAP update is queued, but may not be stored when
+    # rendering the next page. Set the session to indicate
+    # that we expect the attribute to be successfully
+    # updated in the near future.
+    request = kwargs['request']
+    request.session['phorge_auth'] = True
+    messages.success(request, _("Phabricator account successfully linked. Please allow for a few minutes for the change to propagate."))

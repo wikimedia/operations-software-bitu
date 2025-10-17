@@ -192,6 +192,9 @@ BITU_SUB_SYSTEMS = {
                        'action': reverse_lazy('social:begin', args=['mediawiki']), 'action_label': 'refresh ↺', 'action_label2': 'Link account'},
                       {'name': 'uidNumber', 'display': 'POSIX User ID', 'tooltip': 'If you have SSH access to Cloud VPS, Toolforge or other Wikimedia servers, this will be the ID they use to identify you.'},
                       {'name': 'gidNumber', 'display': 'POSIX Group ID', 'tooltip': 'If you have SSH access to Cloud VPS, Toolforge or other Wikimedia servers, this will be the ID of your primary user group.'},
+                      {'name': 'phabricatorAccountUsername', 'display': 'Phabricator User', 'tooltip': 'This is the account you use when signing into Phabricator',
+                       'action': reverse_lazy('social:begin', args=['phabricator']), 'action_label': 'refresh ↺', 'action_label2': 'Link account'},
+
                     ]
         },
     },
@@ -214,6 +217,7 @@ BITU_SSH_KEY_VALIDATOR = {
 AUTHENTICATION_BACKENDS = [
     "social_core.backends.open_id_connect.OpenIdConnectAuth",
     "social_core.backends.mediawiki.MediaWiki",
+    "social_core.backends.phabricator.PhabricatorOAuth2",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
@@ -265,6 +269,7 @@ SOCIAL_AUTH_PIPELINE = (
 
 SOCIAL_AUTH_AUTHENTICATION_BACKENDS = (
     'social_core.backends.open_id_connect.OpenIdConnectAuth',
+    'social_core.backends.phabricator.PhabricatorOAuth2'
 )
 
 # Byparse most pipelines to avoid issues with groups and
@@ -277,6 +282,10 @@ SOCIAL_AUTH_MEDIAWIKI_URL = 'https://meta.wikimedia.org/w/index.php'
 SOCIAL_AUTH_MEDIAWIKI_CALLBACK = 'http://localhost:8000/complete/mediawiki'
 SOCIAL_AUTH_VERIFY_SSL = False
 
+SOCIAL_AUTH_PHABRICATOR_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'wikimedia.social_pipeline.phabricator_account_link'
+)
 
 # Uncomment the lines below to test wikimedia IDP integration, leave commented
 # in developer environment to use LDAP backend directly.
