@@ -33,7 +33,7 @@ class SSHKey(models.Model):
         validators=(ssh_key_validator, ssh_key_usage_validator))
     comment = models.CharField(max_length=256, default='')
     active = models.BooleanField(default=False)
-    key_type = models.CharField(max_length=32, default='', null=True)
+    key_type = models.CharField(max_length=64, default='', null=True)
     key_size = models.IntegerField(default=0)
 
     # Allow users to indicte that signals should not be processed.
