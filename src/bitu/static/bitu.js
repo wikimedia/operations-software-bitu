@@ -10,8 +10,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const removable_elements = document.getElementsByClassName('cdx-message__dismiss-button');
     for (element of removable_elements) {
         element.onclick = function(event){
-            document.getElementsByClassName('cdx-message')[0].remove()
-            document.cookie = "wmf_link=no; path=/; SameSite=Strict";
+            //p = event.srcElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+            p = event.srcElement.closest(".message-box")
+            p_name = p.getAttribute("name");
+            p.remove()
+            if(document.cookie){
+                document.cookie = p_name + "=no; " + document.cookie;
+            } else {
+                document.cookie(p_name + "=no; path=/; SameSite=Strict");
+            }
         };
     }
 

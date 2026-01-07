@@ -1,7 +1,7 @@
 {% extends 'two_column_codex_with_nav.html' %}
 {% load i18n %}
 {% load ldapattr %}
-{% load sul %}
+{% load linking %}
 
 {% block title %}
 {% translate "My LDAP properties" %}
@@ -10,6 +10,7 @@
 {% block message %}
 {% include "messages_codex.html" %}
 {% wikimedia_global_account_linking %}
+{% phabricator_account_linking %}
 {% endblock %}
 
 {% block left %}
