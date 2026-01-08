@@ -6,9 +6,9 @@ register = template.Library()
 
 @register.inclusion_tag('sul.html', takes_context=True)
 def wikimedia_global_account_linking(context):
-    return {'linking_wanted': wikimedia_global_account(context['request'])}
+    return {'linking_wanted': not wikimedia_global_account(context['request'])}
 
 
 @register.inclusion_tag('phabricator.html', takes_context=True)
 def phabricator_account_linking(context):
-    return {'phabricator_linking_wanted': phabricator_account(context['request'])}
+    return {'phabricator_linking_wanted': not phabricator_account(context['request'])}

@@ -32,7 +32,9 @@ def wikimedia_global_account(request: HttpRequest) -> bool:
 
     # Account linking can be disabled completely in settings
     if hasattr(settings, "WIKIMEDIA_GLOBAL_ACCOUNT_LINKING") and not settings.WIKIMEDIA_GLOBAL_ACCOUNT_LINKING:
-        return False
+        # Account linking disabled, lie and suggest that the account is already linked,
+        # to hide the message box nagging the user to link.
+        return True
 
     # Check that the user has not previously dismissed
     # the request to link accounts.
@@ -84,7 +86,9 @@ def phabricator_account(request: HttpRequest) -> bool:
 
     # Account linking can be disabled completely in settings
     if hasattr(settings, "PHABRICATOR_ACCOUNT_LINKING") and not settings.PHABRICATOR_ACCOUNT_LINKING:
-        return False
+        # Account linking disabled, lie and suggest that the account is already linked,
+        # to hide the message box nagging the user to link.
+        return True
 
     # Check that the user has not previously dismissed
     # the request to link accounts.
