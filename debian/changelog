@@ -1,3 +1,12 @@
+bitu (0.1.15) bookworm-wikimedia; urgency=low
+
+  * Allow Phabricator account linking (T406495).
+  * Increase allowed size on key_type field (T411816).
+  * Fix label references in HTML for signup (T410492).
+  * Add option for unsetting email address on account blocking (T404430).
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Thu, 18 Sep 2025 08:50:25 +0200
+
 bitu (0.1.13) bookworm-wikimedia; urgency=low
 
   * Improvements to Docker containers.
