@@ -247,13 +247,13 @@ class BlockUserSearch(AccountManagersPermissionMixin, FormView):
 
         # The search term is probably an email.
         if '@' in value:
-            return self.l.query(f'mail: {value}*')
+            return self.l.query(f'mail: {value}')
 
         # Search both CN and UID in LDAP and add to entries dict for de-duplication.
         # Bituldap utilized the LDAP3 abstraction layer, which does not easily to OR queries. Instead we do two queries and merge
         # the results based on DN.
         entries = {}
-        for entry in self.l.query(f'CommonName: {value}*'):
+        for entry in self.l.query(f'CommonName: {value}'):
             entries[entry.entry_dn] = entry
         for entry in self.l.query(f'uid:{value}'):
             entries[entry.entry_dn] = entry

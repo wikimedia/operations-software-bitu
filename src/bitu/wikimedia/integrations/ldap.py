@@ -7,6 +7,7 @@ from django.utils import timezone
 from ldap3 import (SUBTREE, MODIFY_REPLACE, MODIFY_DELETE,
                    Connection, ObjectDef, Reader)
 from ldap3.core.exceptions import LDAPBindError
+from ldap3.utils.conv import escape_filter_chars
 
 
 logger = logging.getLogger('bitu')
@@ -43,7 +44,7 @@ class LDAP():
 , success: {success}, results: {len(conn.response)}')
         return conn.response[0]
 
-    def query(self, query: str, escape_filter_chars:bool = False) -> Reader:
+    def query(self, query: str, use_escape_filter_chars:bool = True) -> Reader:
         """Search LDAP and return a reader object (iterable Entry objects.)
 
         Args:
@@ -57,8 +58,8 @@ class LDAP():
         if not success:
             raise LDAPBindError()
         dn = settings.BITU_LDAP['users']['dn']
-        if escape_filter_chars:
-            query = escape_filter_chars(query)
+        if use_escape_filter_chars:
+            query = escape_filter_chars(query) + "*"
         reader = Reader(conn, self._user_definition(conn), dn, query)
         reader.search()
         return reader
