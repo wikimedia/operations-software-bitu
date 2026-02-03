@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 import uuid
 
 import structlog
@@ -165,6 +167,10 @@ class PermissionRequest(models.Model):
 
     def list_approvals(self):
         return self.log_set.filter(approved=True).order_by("-created")
+
+    def __str__(self):
+        return f"({self.id}) - {self.get_status_display() } - {self.system}|{self.key}; requested on: {self.created} by {self.user.get_username()}"
+
 
 
 class Log(models.Model):
