@@ -1,12 +1,19 @@
-Your request for access to {{ request.permission.name }} has been approved.
+<html>
+<head>
+    <title>Access request approved</title>
+</head>
+<body>
+<p>Your request for access to {{ request.permission.name }} has been approved.</p>
+
+<p>
 If you have an active Wikimedia SSO session, make sure to refresh it by
-forcing a logout via https://idp.wikimedia.org/logout
+forcing a logout via <a href="https://idp.wikimedia.org/logout">https://idp.wikimedia.org/logout</a>
+</p>
 
-Permission was granted with the following comments:
-===========================================================================
-{% for log in request.log_set.all %}
-* {{ log.created_by.get_username }} on {{ log.created }}:
-    {{ log.comment }}
-
+<h4>Permission was granted with the following comments:</h4>
+<ul>{% for log in request.log_set.all %}
+<li>{{ log.created_by.get_username }} on {{ log.created }}: {{ log.comment }}</li>
 {% endfor %}
-===========================================================================
+</ul>
+</body>
+</html>

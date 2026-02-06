@@ -1,10 +1,14 @@
-Your request for access to {{ request.permission.name }} has been rejected.
+<html>
+<head>
+    <title>Access request rejected</title>
+</head>
+<body>
+<p>Your request for access to {{ request.permission.name }} has been rejected.</p>
 
-Permission was rejected with the following comments:
-===========================================================================
-{% for log in request.log_set.all %}
-* {{ log.created_by.get_username }} on {{ log.created }}:
-    {{ log.comment }}
-
+<h4>Permission was rejectred with the following comments:</h4>
+<ul>{% for log in request.log_set.all %}
+<li>{{ log.created_by.get_username }} on {{ log.created }}: {{ log.comment }}</li>
 {% endfor %}
-===========================================================================
+</ul>
+</body>
+</html>
