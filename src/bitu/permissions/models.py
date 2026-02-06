@@ -109,7 +109,7 @@ class PermissionRequest(models.Model):
     system = models.CharField(max_length=150)
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="permission_requests")
     status = models.CharField(max_length=2, choices=REQUEST_STATUS, default=PENDING)
-    comment = models.TextField(blank=False, help_text=_('Please provide a reasoning for this access request'))
+    comment = models.TextField(blank=False, help_text=_('Please provide a reasoning for this access request. Requests which are not approved within 30 days are automatically closed.'))
     ticket = models.CharField(max_length=256,
                               blank=True,
                               default='',
