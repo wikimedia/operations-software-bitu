@@ -17,7 +17,11 @@
   <div class="form-field">
   <div class="cdx-field">
     <div class="cdx-label">
-      <label class="cdx-label__label" for="id_{{ field.name }}">
+    {% if field.name == "captcha" %}
+       <label class="cdx-label__label" for="id_{{ field.name }}_1">
+    {% else %}
+       <label class="cdx-label__label" for="id_{{ field.name }}">
+    {% endif %}
         <span class="cdx-label__label__text">{{ field.label }}</span>
       </label>
     </div>
