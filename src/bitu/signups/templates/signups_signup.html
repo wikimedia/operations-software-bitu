@@ -145,8 +145,6 @@ Questions? Contact&nbsp;<a href="mailto:idm-help@wikimedia.org">idm-help@wikimed
         .then(json => {
           formEl.querySelector('input[name="captcha_0"]').value = json.key
           captcha.setAttribute('src', json.image_url)
-          //document.getElementById('audioSource').setAttribute('src', json.audio_url)
-          document.getElementById('audio').load()
         })
         .catch(console.error)
 
