@@ -163,7 +163,10 @@ class VerifyEmailView(FormView):
 
             messages.success(self.request, _(
                 'Email address successfully updated. \
-                Please allow for a few minutes for the change to propagate.'))
+                Please allow for a few minutes for the change to propagate.<br><br> \
+                <strong>Note:</strong> To update your information in Gitlab please sign out, \
+                using the this link <a href="https://gitlab.wikimedia.org/users/sign_out">https://gitlab.wikimedia.org/users/sign_out</a>. \
+                Gitlab will learn about your new email address automatically upon your next Gitlab login.'), extra_tags="safe")
         return valid
 
 
