@@ -1,6 +1,7 @@
 import logging
 import re
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
@@ -47,4 +48,16 @@ def IsUsernameEmail(username):
         logger.info(f'username blocked, email addresses are not allowed, username: {username}')
         raise ValidationError(
             _("Invalid username, invalid format (email)")
+        )
+
+
+def EmailDomainValidator(email):
+    validator = EmailValidator()
+    blacklist = settings.SIGNUP_DOMAIN_BLACKLIST if hasattr(settings, "SIGNUP_DOMAIN_BLACKLIST") else []
+
+    validator(email)
+    domain = email.split('@')[1]
+    if domain in blacklist:
+        raise ValidationError(
+            _("Invalid email address")
         )

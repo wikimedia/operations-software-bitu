@@ -319,9 +319,13 @@ SIGNUP_UID_VALIDATORS = ['ldapbackend.validators.unix_username_regex_validator',
                          'ldapbackend.validators.LDAPUsernameValidator',
                          'ldapbackend.validators.LDAPCommonNameValidator']
 
-SIGNUP_EMAIL_VALIDATORS = ['ldapbackend.validators.LDAPEmailValidator',]
+SIGNUP_EMAIL_VALIDATORS = ['ldapbackend.validators.LDAPEmailValidator',
+                           'signups.validators.EmailDomainValidator'
+                           ]
 
 SIGNUP_INFO_TEMPLATE = 'signup_info_wmf.html'
+SIGNUP_DOMAIN_BLACKLIST = []
+
 LOGIN_REDIRECT_URL = 'ldapbackend:properties'
 
 TICKET_SYSTEM = {
