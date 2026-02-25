@@ -53,7 +53,7 @@ def IsUsernameEmail(username):
 
 def EmailDomainValidator(email):
     validator = EmailValidator()
-    blacklist = settings.SIGNUP_DOMAIN_BLACKLIST if hasattr(settings, "SIGNUP_DOMAIN_BLACKLIST") else []
+    blacklist = settings.SIGNUP_DOMAIN_DENY_LIST if hasattr(settings, "SIGNUP_DOMAIN_DENY_LIST") else []
 
     validator(email)
     domain = email.split('@')[1]
