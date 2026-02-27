@@ -11,6 +11,7 @@ from ldapbackend.validators import (unix_username_regex_validator,
                                     unix_username_length_validator,
                                     LDAPCommonNameValidator,
                                     LDAPUsernameValidator,
+                                    LDAPEmailValidator,
                                     ldap_password_verification)
 
 from . import dummy_ldap
@@ -51,10 +52,13 @@ class LDAPValidatorTestCase(TestCase):
         self.assertRaises(ValidationError, LDAPCommonNameValidator, 'Test1')
         self.assertRaises(ValidationError, LDAPUsernameValidator, 'Test1')
 
+        self.assertRaises(ValidationError, LDAPEmailValidator, 'test@example.org')
+
         LDAPCommonNameValidator('Test4')
         LDAPCommonNameValidator('test4')
         LDAPUsernameValidator('Test4')
         LDAPUsernameValidator('test4')
+        LDAPEmailValidator('test4@example.org')
 
     @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
     def test_ldap_overlap(self, mock_connect):

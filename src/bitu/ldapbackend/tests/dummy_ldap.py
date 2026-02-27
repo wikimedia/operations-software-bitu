@@ -40,6 +40,7 @@ def create_test_users():
     user = b.new_user('test1')
     user.cn = 'Test1'
     user.sn = 'test1'
+    user.mail = 'test@example.org'
     user.uidNumber = 1000
     user.gidNumber = 1000
     user.homeDirectory = '/home/test1'
@@ -48,6 +49,7 @@ def create_test_users():
     user = b.new_user('test2')
     user.cn = 'Test2'
     user.sn = 'test2'
+    user.mail = 'test@example.net'
     user.uidNumber = 2000
     user.gidNumber = 2000
     user.homeDirectory = '/home/test2'
@@ -56,6 +58,7 @@ def create_test_users():
     user = b.new_user('test3')
     user.cn = 'Test3'
     user.sn = 'test3'
+    user.mail = 'test@example.com'
     user.uidNumber = 3000
     user.gidNumber = 3000
     user.homeDirectory = '/home/test3'
