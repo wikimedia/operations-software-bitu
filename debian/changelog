@@ -1,3 +1,14 @@
+bitu (0.1.16) bookworm-wikimedia; urgency=low
+
+  * Add test for LDAPEmailValidator
+  * Add deny list blocking of domains during signup (T418201)
+  * Allow captcha to reload without refreshing page (T372247)
+  * Format HTML emails for permission requests (T416565)
+  * Add command for expiring permission requests (T416152)
+  * Use the escaping mechanism provided by LDAP3 (T412420)
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Thu, 3 Mar 2026 09:51:27 +0200
+
 bitu (0.1.15) bookworm-wikimedia; urgency=low
 
   * Allow Phabricator account linking (T406495).
