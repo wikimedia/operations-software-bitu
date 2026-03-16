@@ -5,14 +5,16 @@ html {
     min-height: 100%;
     width: 80%;
     background-color: white;
-    font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Inter", "Helvetica", "Arial", sans-serif;
+    font-family:
+        -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Inter",
+        "Helvetica", "Arial", sans-serif;
 }
 
 body {
     display: flex;
     flex-direction: column;
     min-height: 100%;
-  }
+}
 
 header.hero {
     display: flex;
@@ -22,7 +24,7 @@ header.hero {
 
 @media only screen and (max-width: 833px) {
     header.hero img {
-    max-width: 184px;
+        max-width: 184px;
     }
 }
 
@@ -124,7 +126,6 @@ div.warning a {
     color: black;
 }
 
-
 .field-help {
     width: 100%;
 }
@@ -177,7 +178,7 @@ p.center {
     width: 60vw;
 }
 
-pre.two_fa{
+pre.two_fa {
     font-size: 14pt;
 }
 
@@ -281,7 +282,6 @@ span.logo {
     text-decoration: none;
 }
 
-
 .menu ul li:focus-within a {
     outline: none;
 }
@@ -311,7 +311,7 @@ span.logo {
     border: 1px;
     border-color: black;
     border-style: solid;
-    display: block
+    display: block;
 }
 
 .menu ul li ul li {
@@ -320,41 +320,44 @@ span.logo {
     padding-bottom: 10px;
 }
 
-.menu ul li ul li:hover{
+.menu ul li ul li:hover {
     clear: both;
     width: 100%;
     text-decoration: underline;
 }
 
-.menu ul li ul li.no_hover:hover{
+.menu ul li ul li.no_hover:hover {
     clear: both;
     width: 100%;
     text-decoration: none;
 }
 
-.menu ul li:hover{
+.menu ul li:hover {
     clear: both;
     width: 100%;
     text-decoration: underline;
 }
 
-.menu li.bottom{
+.menu li.bottom {
     margin-top: 20px;
 }
 
 @media all and (min-width: 833px) {
-
 }
 
 /* end menu */
-
 
 /* fake tables */
 table.vertical {
     width: 100%;
 }
 
-table.vertical, thead.vertical, tbody.vertical, th.vertical, td.vertical, tr.vertical {
+table.vertical,
+thead.vertical,
+tbody.vertical,
+th.vertical,
+td.vertical,
+tr.vertical {
     display: block;
 }
 
@@ -386,7 +389,7 @@ table.vertical td a.cdx-button {
 
 .sshkey {
     word-wrap: break-word;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
 }
 
 table.vertical td:before {
@@ -402,9 +405,15 @@ table.vertical td:before {
     background-color: white;
 }
 
-table.vertical td:nth-of-type(1):before { content: attr(data-label); }
-table.vertical td:nth-of-type(2):before { content: attr(data-label); }
-table.vertical td:nth-of-type(3):before { content: attr(data-label); }
+table.vertical td:nth-of-type(1):before {
+    content: attr(data-label);
+}
+table.vertical td:nth-of-type(2):before {
+    content: attr(data-label);
+}
+table.vertical td:nth-of-type(3):before {
+    content: attr(data-label);
+}
 
 @media all and (min-width: 833px) {
     table.vertical td {
@@ -421,4 +430,8 @@ table.vertical td:nth-of-type(3):before { content: attr(data-label); }
     margin-top: 10px;
     margin-right: 10px;
     float: right;
+}
+
+p.permission_details {
+    width: 100%;
 }

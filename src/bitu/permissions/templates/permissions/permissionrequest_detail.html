@@ -11,12 +11,12 @@
   <div class="content_box">
     <h4>{% blocktranslate with object.permission.name as name and object.permission.source_display as source %}Eventlog for: '{{ name }} ({{ source }})' access request.{% endblocktranslate %}</h4>
 <div class="content">
-    <p>
+    <p class="permission_details">
     <strong>{% translate 'Permission' %}</strong>: {{ object.permission.name }}<br />
     <strong>{% translate 'Status' %}</strong>: {{ object.get_status_display}}<br />
     <strong>{% translate 'System' %}</strong>: {{ object.permission.source_display }}<br />
     <strong>{% translate 'Ticket' %}</strong>: {{ object.ticket|ticket_link }}<br />
-    <strong>{% translate 'Comment' %}</strong>: {{ object.comment }}<br />
+    <strong>{% translate 'Comment' %}</strong>: {{ object.comment|linebreaks }}
     </p>
     <div class="cdx-table">
           <div class="cdx-table">
