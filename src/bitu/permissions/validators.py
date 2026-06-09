@@ -34,7 +34,7 @@ def manager_approval(permission_request, **kwargs) -> tuple[bool, bool]:
         ).values_list('created_by__username', flat=True))
 
     # The request must be approved by at least the number of managers specified in the configuration.
-    approved = len(approvals) == kwargs['count']
+    approved = len(approvals) >= kwargs['count']
     if approved:
         return approved, True
 
