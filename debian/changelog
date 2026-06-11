@@ -1,3 +1,11 @@
+bitu (0.1.17) bookworm-wikimedia; urgency=low
+
+  * Permissions: better formating for long comments (T401720)
+  * Permissions: fix bug were multiple approvals for a request would lock state to pending.
+  * Styling: fix alignments and improve reability on password reset page (T425552)
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Thu, 11 Jun 2026 13:05:58 +0200
+
 bitu (0.1.16) bookworm-wikimedia; urgency=low
 
   * Add test for LDAPEmailValidator
