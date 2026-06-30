@@ -10,6 +10,7 @@ import bituldap
 from accounts.models import User
 from ldapbackend.tests import dummy_ldap
 from permissions.models import PermissionRequest
+from permissions.models import Log as PermissionLog
 from permissions.permission import permission_set
 
 
@@ -207,3 +208,24 @@ class PermissionRequestTest(TestCase):
         self.assertEqual(2, len(permissions))
         self.assertEqual(permissions[0].key, 'cn=NDA,ou=groups,dc=example,dc=org')
         self.assertEqual(permissions[1].key, 'cn=ITS,ou=groups,dc=example,dc=org')
+
+    @patch("bituldap.create_connection", return_value=dummy_ldap.connect())
+    def test_permission_request_expire(self, mock_connect):
+        """Test that requests are correctly expired and logged"""
+        user, _ = User.objects.get_or_create(username="hwalters")
+        request: PermissionRequest = PermissionRequest.objects.create(
+            user=user,
+            comment="Requesting DB permission, will expire",
+            key="cn=db,ou=groups,dc=example,dc=org",
+            system="ldapbackend",
+        )
+
+        comment: str = "Automatically expired"
+        request.expire(comment=comment)
+        request = PermissionRequest.objects.get(pk=request.pk)
+        log: PermissionLog = PermissionLog.objects.filter(request=request)
+
+        self.assertEqual(request.status, PermissionRequest.CANCELLED)
+        self.assertEqual(len(log), 1)
+        self.assertEqual(log.first().created_by, user)
+        self.assertEqual(log.first().comment, comment)

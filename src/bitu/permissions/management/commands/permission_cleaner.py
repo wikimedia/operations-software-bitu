@@ -51,6 +51,4 @@ class Command(BaseCommand):
             sys.exit(0)
 
         for r in requests:
-            r.status = r.CANCELLED
-            r.save()
-
+            r.expire()

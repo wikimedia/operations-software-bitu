@@ -165,6 +165,13 @@ class PermissionRequest(models.Model):
         backend = permission_set._backends[self.system]
         backend.grant(self.user, self.permission)
 
+    def expire(self, comment=""):
+        log_obj = Log(request=self, created_by=self.user, comment=comment)
+        log_obj.save()
+
+        self.status = PermissionRequest.CANCELLED
+        self.save()
+
     def list_approvals(self):
         return self.log_set.filter(approved=True).order_by("-created")
 
