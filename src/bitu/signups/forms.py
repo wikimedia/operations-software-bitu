@@ -59,7 +59,7 @@ class SignupForm(ModelForm):
         self.fields['uid'].widget.attrs['placeholder'] = _('Type your username')
         self.fields['uid'].widget.attrs['autocomplete'] = 'off'
         self.fields['uid'].widget.attrs['max_length'] = 32
-        self.fields['email'].widget.attrs['placeholder'] = _('example@email.org')
+        self.fields['email'].widget.attrs['placeholder'] = _('user@example.com')
         self.fields['captcha'].widget.attrs['placeholder'] = _('Enter captcha text')
         self.fields['password1'].widget.attrs['placeholder'] = _('Unique password')
         self.fields['password2'].widget.attrs['placeholder'] = _('Confirm password')
