@@ -199,32 +199,36 @@ class BlockUserView(AccountManagersPermissionMixin, CreateView):
 
     def form_valid(self, form: Any) -> HttpResponse:
         user = bituldap.get_user(self.kwargs['username'])
+        unset_email = False
         if form.is_valid():
             if form.cleaned_data['created_by'] != self.request.user.get_username():
                 # Form data manipulated.
                 raise PermissionDenied()
 
+            if form.cleaned_data['unset_email']:
+                unset_email = True
+
             # Ensure that the log message from the form is created first.
             valid = super().form_valid(form)
-            self.update_user(user, form.instance)
+            self.update_user(user, form.instance, unset_email)
             return valid
 
         return super().form_valid(form)
 
-    def update_user(self, user: bituldap.Entry, log: UserBlockEventLog):
+    def update_user(self, user: bituldap.Entry, log: UserBlockEventLog, unset_email: bool):
         # Flash success message and queue blocking actions.
         messages.add_message(self.request, level=messages.SUCCESS, message=f'{user.cn} scheduled for blocking')
-        jobs.update_account(user, self.request.user, log, self.action)
+        jobs.update_account(user, self.request.user, log, self.action, unset_email)
 
 
 class UnBlockUserView(BlockUserView):
     action = 'unblock_user'
     template_name = 'wikimedia/unblock_user.html'
 
-    def update_user(self, user: bituldap.Entry, log: UserBlockEventLog):
+    def update_user(self, user: bituldap.Entry, log: UserBlockEventLog, unset_email: bool = False):
         # Flash success message and queue blocking actions.
         messages.add_message(self.request, level=messages.SUCCESS, message=f'{user.cn} scheduled for unblocking')
-        jobs.update_account(user, self.request.user, log, self.action)
+        jobs.update_account(user, self.request.user, log, self.action, unset_email)
 
 
 class BlockUserSearch(AccountManagersPermissionMixin, FormView):

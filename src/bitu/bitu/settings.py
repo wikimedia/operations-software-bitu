@@ -346,3 +346,6 @@ API_PERMISSIONS = (
 if DEBUG:
     for queueConfig in RQ_QUEUES.values():
         queueConfig['ASYNC'] = False
+
+
+_UPDATE_ACCOUNT_CLIENTS_NAMES = ["ldap"]

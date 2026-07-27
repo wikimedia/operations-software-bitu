@@ -96,7 +96,7 @@ def send_forgot_username_email(email):
 
 
 @job('default')
-def update_account(entry: bituldap.Entry, manager: 'User', parent: UserBlockEventLog, action: str):
+def update_account(entry: bituldap.Entry, manager: 'User', parent: UserBlockEventLog, action: str, unset_email: bool = False):
     """Block account across systems, given an LDAP username
 
     Args:
@@ -127,7 +127,7 @@ def update_account(entry: bituldap.Entry, manager: 'User', parent: UserBlockEven
         try:
             getattr(client, action)(user)
 
-            if hasattr(client, "unset_email") and action == "block_user":
+            if hasattr(client, "unset_email") and unset_email and action == "block_user":
                 client.unset_email(user)
 
 
