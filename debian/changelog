@@ -1,3 +1,13 @@
+bitu (0.1.18) bookworm-wikimedia; urgency=low
+
+  [Taavi Väänänen]
+  * Do not use a valid, unrelated domain as a placeholder
+  [Simon Lyngshede]
+  * Account blocking: Only unset email if requested (T431114)
+  * Permissions: Create log entry on auto-expire (T418843)
+
+ -- Simon Lyngshede <slyngshede@wikimedia.org>  Fri, 31 Jul 2026 12:51:00 +0200
+
 bitu (0.1.17) bookworm-wikimedia; urgency=low
 
   * Permissions: better formating for long comments (T401720)
