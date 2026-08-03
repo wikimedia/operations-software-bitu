@@ -3,7 +3,7 @@
 Minimum required settings for running tests.
 """
 
-import os
+from os import environ
 
 import ldap
 
@@ -13,46 +13,46 @@ from ldap3 import HASHED_SALTED_SHA
 
 from bitu.base_settings import *  # noqa
 
-allowed_hosts = os.environ['ALLOWED_HOSTS'].split(',') if 'ALLOWED_HOSTS' in os.environ else ['*']
-redis_rq_host = os.environ['RQ_REDIS_HOST']
-redis_rq_port = os.environ['RQ_REDIS_PORT'] if 'RQ_REDIS_PORT' in os.environ else '6379'
-ldap_uri = os.environ['LDAP_SERVER_URI']
-ldap_user_dn = os.environ['LDAP_USER_DN']
-ldap_password = os.environ['LDAP_PASSWORD']
-ldap_user_search_base = os.environ['LDAP_USER_SEARCH_BASE'] if 'LDAP_USER_SEARCH_BASE' in os.environ else 'ou=people,dc=example,dc=org'
-ldap_user_search = os.environ['LDAP_USER_SEARCH_QUERY'] if 'LDAP_USER_SEARCH_QUERY' in os.environ else '(uid=%(user)s)'
-ldap_group_search_base = os.environ['LDAP_BASE_DN'] if 'LDAP_BASE_DN' in os.environ else 'ou=groups,dc=example,dc=org'
-ldap_aux_groups = os.environ['LDAP_AUX_GROUPS'].split(',') if 'LDAP_AUX_GROUPS' in os.environ else ['posixAccount', 'wikimediaPerson', 'ldapPublicKey']
-ldap_user_active = os.environ['ACTIVE_GROUP_DN'] if 'ACTIVE_GROUP_DN' in os.environ else 'cn=staff,ou=groups,dc=example,dc=org'
-ldap_user_staff = os.environ['STAFF_GROUP_DN'] if 'STAFF_GROUP_DN' in os.environ else 'cn=staff,ou=groups,dc=example,dc=org'
-ldap_user_superuser = os.environ['SUPERUSER_GROUP_DN'] if 'SUPERUSER_GROUP_DN' in os.environ else 'cn=admin,ou=groups,dc=example,dc=org'
-database_username = os.environ['DATABASE_USER'] if 'DATABASE_USER' in os.environ else ''
-database_password = os.environ['DATABASE_PASSWORD'] if 'DATABASE_PASSWORD' in os.environ else ''
-database_name = os.environ['DATABASE_NAME']
-database_host = os.environ['DATABASE_HOST'] if 'DATABASE_HOST' in os.environ else ''
-database_port = os.environ['DATABASE_PORT'] if 'DATABASE_PORT' in os.environ else '3306'
-database_driver = os.environ['DATABASE_ENGINE'] if 'DATABASE_ENGINE' in os.environ else 'django.db.backends.sqlite3'
+allowed_hosts = environ.get('ALLOWED_HOSTS', '*').split(',')
+redis_rq_host = environ['RQ_REDIS_HOST']
+redis_rq_port = environ.get('RQ_REDIS_PORT', '6379')
+ldap_uri = environ['LDAP_SERVER_URI']
+ldap_user_dn = environ['LDAP_USER_DN']
+ldap_password = environ['LDAP_PASSWORD']
+ldap_user_search_base = environ.get('LDAP_USER_SEARCH_BASE', 'ou=people,dc=example,dc=org')
+ldap_user_search = environ.get('LDAP_USER_SEARCH_QUERY', '(uid=%(user)s)')
+ldap_group_search_base = environ.get('LDAP_BASE_DN', 'ou=groups,dc=example,dc=org')
+ldap_aux_groups = environ.get('LDAP_AUX_GROUPS', 'posixAccount,wikimediaPerson,ldapPublicKey').split(',')
+ldap_user_active = environ.get('ACTIVE_GROUP_DN', 'cn=staff,ou=groups,dc=example,dc=org')
+ldap_user_staff = environ.get('STAFF_GROUP_DN', 'cn=staff,ou=groups,dc=example,dc=org')
+ldap_user_superuser = environ.get('SUPERUSER_GROUP_DN', 'cn=admin,ou=groups,dc=example,dc=org')
+database_username = environ.get('DATABASE_USER', '')
+database_password = environ.get('DATABASE_PASSWORD', '')
+database_name = environ['DATABASE_NAME']
+database_host = environ.get('DATABASE_HOST', '')
+database_port = environ.get('DATABASE_PORT', '3306')
+database_driver = environ.get('DATABASE_ENGINE', 'django.db.backends.sqlite3')
 
 # Allow API usage.
-ENABLE_API = os.environ['ENABLE_API'] if 'ENABLE_API' in os.environ else False
+ENABLE_API = environ.get('ENABLE_API', False)
 
 # Allow signups.
-ENABLE_SIGNUP = os.environ['ENABLE_SIGNUP'] if 'ENABLE_SIGNUP' in os.environ else True
+ENABLE_SIGNUP = environ.get('ENABLE_SIGNUP', True)
 
 # 2FA Proxy / MediaWiki.
 # Currently only used for the 2FA proxy, but may be reused for other MediaWiki integrations in the future.
 # Access to MediaWiki functionality is limited to the permissions granted by the provided keys.
-mediawiki_url = os.environ['MEDIAWIKI_URL'] if 'MEDIAWIKI_URL' in os.environ else None
-mediawiki_consumer_token = os.environ['MEDIAWIKI_CONSUMER_TOKEN'] if 'MEDIAWIKI_CONSUMER_TOKEN' in os.environ else None
-mediawiki_consumer_secret = os.environ['MEDIAWIKI_CONSUMER_SECRET'] if 'MEDIAWIKI_CONSUMER_SECRET' in os.environ else None
-mediawiki_access_token = os.environ['MEDIAWIKI_ACCESS_TOKEN'] if 'MEDIAWIKI_ACCESS_TOKEN' in os.environ else None
-mediawiki_access_secret = os.environ['MEDIAWIKI_ACCESS_SECRET'] if 'MEDIAWIKI_ACCESS_SECRET' in os.environ else None
+mediawiki_url = environ.get('MEDIAWIKI_URL')
+mediawiki_consumer_token = environ.get('MEDIAWIKI_CONSUMER_TOKEN')
+mediawiki_consumer_secret = environ.get('MEDIAWIKI_CONSUMER_SECRET')
+mediawiki_access_token = environ.get('MEDIAWIKI_ACCESS_TOKEN')
+mediawiki_access_secret = environ.get('MEDIAWIKI_ACCESS_SECRET')
 
 # MediaWiki SUL account linking
-mediawiki_sul_url = os.environ['MEDIAWIKI_SUL_URL'] if 'MEDIAWIKI_SUL_URL' in os.environ else 'https://meta.wikimedia.org/w/index.php'
-mediawiki_sul_key = os.environ['MEDIAWIKI_SUL_KEY'] if 'MEDIAWIKI_SUL_KEY' in os.environ else None
-mediawiki_sul_secret = os.environ['MEDIAWIKI_SUL_SECRET'] if 'MEDIAWIKI_SUL_SECRET' in os.environ else None
-mediawiki_sul_callback = os.environ['MEDIAWIKI_SUL_CALLBACK'] if 'MEDIAWIKI_SUL_CALLBACK' in os.environ else None
+mediawiki_sul_url = environ.get('MEDIAWIKI_SUL_URL', 'https://meta.wikimedia.org/w/index.php')
+mediawiki_sul_key = environ.get('MEDIAWIKI_SUL_KEY')
+mediawiki_sul_secret = environ.get('MEDIAWIKI_SUL_SECRET')
+mediawiki_sul_callback = environ.get('MEDIAWIKI_SUL_CALLBACK')
 
 
 if mediawiki_url:
@@ -69,10 +69,10 @@ INSTALLED_APPS = INSTALLED_APPS + [
 ]
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+SECRET_KEY = environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUGGING', False)
+DEBUG = environ.get('DJANGO_DEBUGGING', False)
 TESTING = True
 ALLOWED_HOSTS = allowed_hosts
 
