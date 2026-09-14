@@ -4,7 +4,7 @@ djangorestframework==3.14.0
 django-rq==2.5.1
 ldap3==2.9.1
 #redis
-social-auth-core>=4.4.2
+social-auth-core>=4.7.0
 social-auth-app-django==5.0.0
 pyotp==2.6.0
 python-jose==3.3.0

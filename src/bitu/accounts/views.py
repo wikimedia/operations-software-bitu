@@ -1,7 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import bituldap
 
+from urllib.parse import urlencode
+
+from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import BACKEND_SESSION_KEY
+from django.contrib.auth.views import LogoutView
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.forms import BaseModelForm
 from django.http import HttpResponse, HttpResponseRedirect
@@ -29,6 +34,70 @@ from bitu.views import ObjectAccessRestrictMixin
 
 
 INTERNAL_EMAIL_UPDATE_SESSION_TOKEN = "_email_update_token"
+
+
+class OIDCLogoutView(LogoutView):
+    """Sign the user out of Bitu and of the OpenID Connect provider.
+
+    Django only tears down its own session on logout, so a user who signed in
+    through the IDP was silently signed back in the moment they pressed the
+    single sign-on button again, because the IDP still considered them
+    authenticated. When the session was established through the OpenID Connect
+    backend, hand the user over to the provider's end session endpoint so that
+    the single sign-on session is terminated as well.
+
+    The end session endpoint is read from SOCIAL_AUTH_OIDC_END_SESSION_URL and
+    otherwise derived from SOCIAL_AUTH_OIDC_OIDC_ENDPOINT. Without either of
+    them this behaves exactly like Django's own LogoutView.
+    """
+
+    oidc_backend = 'social_core.backends.open_id_connect.OpenIdConnectAuth'
+    oidc_provider = 'oidc'
+
+    def dispatch(self, request, *args, **kwargs):
+        # The session is flushed before the redirect target is calculated, so
+        # the ID token has to be read while the user is still signed in.
+        self.id_token = self.get_id_token(request)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_id_token(self, request):
+        if request.user.is_anonymous:
+            return None
+
+        if request.session.get(BACKEND_SESSION_KEY) != self.oidc_backend:
+            return None
+
+        association = request.user.social_auth.filter(provider=self.oidc_provider).first()
+        if association is None:
+            return None
+
+        return (association.extra_data or {}).get('id_token')
+
+    def get_end_session_url(self):
+        url = getattr(settings, 'SOCIAL_AUTH_OIDC_END_SESSION_URL', None)
+        if url:
+            return url
+
+        endpoint = getattr(settings, 'SOCIAL_AUTH_OIDC_OIDC_ENDPOINT', None)
+        if endpoint:
+            return '{}/logout'.format(endpoint.rstrip('/'))
+
+        return None
+
+    def get_next_page(self):
+        # Django has already verified that the redirect stays within Bitu, so
+        # the value is safe to pass on as a post logout redirect.
+        next_page = super().get_next_page()
+        end_session_url = self.get_end_session_url()
+
+        if not self.id_token or not end_session_url:
+            return next_page
+
+        parameters = {'id_token_hint': self.id_token}
+        if next_page:
+            parameters['post_logout_redirect_uri'] = self.request.build_absolute_uri(next_page)
+
+        return '{}?{}'.format(end_session_url, urlencode(parameters))
 
 
 class UpdateEmailView(FormView):
