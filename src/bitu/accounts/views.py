@@ -52,7 +52,13 @@ class OIDCLogoutView(LogoutView):
     """
 
     oidc_backend = 'social_core.backends.open_id_connect.OpenIdConnectAuth'
-    oidc_provider = 'oidc'
+    oidc_provider = getattr(settings, 'oidc_provider', 'oidc')
+
+    if oidc_provider == 'cas':
+        oidc_backend = 'social_core.backends.cas.CASOpenIdConnectAuth'
+
+    END_SESSION_URL = f'SOCIAL_AUTH_{oidc_provider.upper()}_END_SESSION_URL'
+    OIDC_ENDPOINT = f'SOCIAL_AUTH_{oidc_provider.upper()}_OIDC_ENDPOINT'
 
     def dispatch(self, request, *args, **kwargs):
         # The session is flushed before the redirect target is calculated, so
@@ -74,11 +80,11 @@ class OIDCLogoutView(LogoutView):
         return (association.extra_data or {}).get('id_token')
 
     def get_end_session_url(self):
-        url = getattr(settings, 'SOCIAL_AUTH_OIDC_END_SESSION_URL', None)
+        url = getattr(settings, self.END_SESSION_URL, None)
         if url:
             return url
 
-        endpoint = getattr(settings, 'SOCIAL_AUTH_OIDC_OIDC_ENDPOINT', None)
+        endpoint = getattr(settings, self.OIDC_ENDPOINT, None)
         if endpoint:
             return '{}/logout'.format(endpoint.rstrip('/'))
 
