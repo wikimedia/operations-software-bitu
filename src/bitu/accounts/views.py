@@ -52,7 +52,7 @@ class OIDCLogoutView(LogoutView):
     """
 
     oidc_backend = 'social_core.backends.open_id_connect.OpenIdConnectAuth'
-    oidc_provider = getattr(settings, 'oidc_provider', 'oidc')
+    oidc_provider = getattr(settings, 'OIDC_PROVIDER', 'oidc')
 
     if oidc_provider == 'cas':
         oidc_backend = 'social_core.backends.cas.CASOpenIdConnectAuth'
